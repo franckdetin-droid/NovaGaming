@@ -1,0 +1,677 @@
+/* =========================================================
+   GAME STORE — ADMIN.CSS
+   ========================================================= */
+
+.admin-page{
+    width:100%;
+    max-width:1050px;
+    margin:auto;
+}
+
+
+/* =========================
+   EN-TÊTE
+   ========================= */
+
+.admin-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.admin-header h1{
+    margin:6px 0;
+    font-size:28px;
+}
+
+.admin-header p{
+    color:#8f99a7;
+    font-size:13px;
+}
+
+.admin-badge,
+.small-label{
+    color:#4da3ff;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:1.5px;
+}
+
+.logout-btn{
+    background:#252d39;
+    color:white;
+    text-decoration:none;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:12px;
+}
+
+
+/* =========================
+   STATISTIQUES
+   ========================= */
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.dashboard-card{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:17px;
+    background:#181d27;
+    border:1px solid #293140;
+    border-radius:16px;
+}
+
+.dashboard-icon{
+    width:45px;
+    height:45px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#222b38;
+    border-radius:13px;
+    font-size:21px;
+}
+
+.dashboard-card strong{
+    display:block;
+    font-size:22px;
+}
+
+.dashboard-card span{
+    display:block;
+    color:#8e98a7;
+    font-size:11px;
+}
+
+
+/* =========================
+   SECTIONS
+   ========================= */
+
+.admin-section{
+    background:#181d27;
+    border:1px solid #293140;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:18px;
+}
+
+.section-title h2{
+    margin-top:5px;
+    font-size:20px;
+}
+
+.count-badge{
+    background:#1d2d3e;
+    color:#4da3ff;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:11px;
+}
+
+.see-all{
+    color:#4da3ff;
+    text-decoration:none;
+    font-size:12px;
+}
+
+
+/* =========================
+   FORMULAIRE ADMIN
+   ========================= */
+
+.admin-form{
+    background:#12161e;
+    border-radius:15px;
+    padding:18px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group.full{
+    grid-column:1 / -1;
+}
+
+.form-group label{
+    color:#c4ccd7;
+    font-size:12px;
+    font-weight:600;
+}
+
+.admin-form input,
+.admin-form textarea{
+    width:100%;
+    padding:12px;
+    background:#202631;
+    border:1px solid #303947;
+    border-radius:10px;
+    color:white;
+    outline:none;
+}
+
+.admin-form input::placeholder,
+.admin-form textarea::placeholder{
+    color:#687383;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus{
+    border-color:#4da3ff;
+}
+
+.form-divider{
+    height:1px;
+    background:#29313d;
+    margin:22px 0;
+}
+
+.upload-section h3,
+.download-section h3{
+    margin:6px 0;
+    font-size:15px;
+}
+
+.upload-section p,
+.download-section p{
+    color:#808b9b;
+    font-size:11px;
+    margin-bottom:12px;
+}
+
+.images-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+}
+
+.publish-btn{
+    width:100%;
+    margin-top:20px;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    background:#4da3ff;
+    color:white;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.publish-btn:hover{
+    opacity:.9;
+}
+
+
+/* =========================
+   LISTE DES JEUX
+   ========================= */
+
+.games-admin-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.admin-game-card{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:12px;
+    background:#12161e;
+    border:1px solid #293140;
+    border-radius:14px;
+}
+
+.game-cover{
+    width:80px;
+    height:95px;
+    flex-shrink:0;
+}
+
+.game-cover img,
+.no-cover{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+.no-cover{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#252d39;
+    font-size:28px;
+}
+
+.game-details{
+    flex:1;
+    min-width:0;
+}
+
+.game-top h3{
+    margin-bottom:5px;
+    font-size:16px;
+}
+
+.console-tag{
+    color:#7e8998;
+    font-size:11px;
+}
+
+.game-meta{
+    display:flex;
+    gap:15px;
+    margin:10px 0;
+    color:#7d8796;
+    font-size:11px;
+}
+
+.game-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
+
+.game-actions a{
+    padding:7px 10px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:600;
+}
+
+.action-view{
+    background:#24354a;
+    color:#70b7ff;
+}
+
+.action-edit{
+    background:#3b3422;
+    color:#ffc857;
+}
+
+.action-delete{
+    background:#3b2529;
+    color:#ff7d88;
+}
+
+
+/* =========================
+   COMMENTAIRES
+   ========================= */
+
+.comments-admin{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.admin-comment{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    background:#12161e;
+    padding:13px;
+    border-radius:12px;
+}
+
+.comment-avatar{
+    width:38px;
+    height:38px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#252d39;
+    border-radius:50%;
+}
+
+.comment-content{
+    flex:1;
+    min-width:0;
+}
+
+.comment-content strong{
+    display:block;
+    font-size:13px;
+}
+
+.comment-content span{
+    color:#697586;
+    font-size:10px;
+}
+
+.comment-content p{
+    margin-top:7px;
+    color:#bdc5d0;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.comment-delete{
+    padding:7px;
+    border-radius:8px;
+    background:#3b2529;
+    color:#ff7d88;
+    text-decoration:none;
+}
+
+
+/* =========================
+   NOTIFICATIONS
+   ========================= */
+
+.notifications-admin{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.notification-item{
+    display:flex;
+    gap:12px;
+    padding:13px;
+    background:#12161e;
+    border-radius:12px;
+}
+
+.notification-icon{
+    font-size:20px;
+}
+
+.notification-item strong{
+    font-size:13px;
+}
+
+.notification-item p{
+    margin:4px 0;
+    color:#aab2be;
+    font-size:12px;
+}
+
+.notification-item small{
+    color:#697586;
+    font-size:10px;
+}
+
+
+/* =========================
+   ACTIONS RAPIDES
+   ========================= */
+
+.quick-actions{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.quick-card{
+    background:#12161e;
+    border:1px solid #293140;
+    border-radius:13px;
+    padding:15px;
+    color:white;
+    text-decoration:none;
+    transition:.2s;
+}
+
+.quick-card:hover{
+    border-color:#4da3ff;
+    transform:translateY(-2px);
+}
+
+.quick-card span{
+    display:block;
+    font-size:24px;
+    margin-bottom:9px;
+}
+
+.quick-card strong{
+    display:block;
+    font-size:12px;
+}
+
+.quick-card small{
+    display:block;
+    color:#7e8998;
+    margin-top:4px;
+    font-size:10px;
+}
+
+
+/* =========================
+   PUBLICITÉ
+   ========================= */
+
+.ad-preview{
+    background:#12161e;
+    padding:15px;
+    border-radius:13px;
+}
+
+.ad-label{
+    text-align:center;
+    color:#697586;
+    font-size:9px;
+    letter-spacing:1px;
+    margin-bottom:8px;
+}
+
+.ad-placeholder{
+    min-height:90px;
+    border:1px dashed #394352;
+    border-radius:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#778292;
+}
+
+.ad-placeholder span{
+    font-size:25px;
+}
+
+.ad-placeholder p{
+    margin:5px 0;
+    font-size:12px;
+}
+
+.ad-placeholder small{
+    font-size:10px;
+}
+
+
+/* =========================
+   ETAT VIDE
+   ========================= */
+
+.empty-state{
+    text-align:center;
+    padding:40px 15px;
+    background:#12161e;
+    border-radius:14px;
+    color:#8490a0;
+}
+
+.empty-state.small{
+    padding:25px;
+}
+
+.empty-icon{
+    font-size:35px;
+    margin-bottom:8px;
+}
+
+.empty-state h3{
+    color:white;
+    margin-bottom:5px;
+}
+
+
+/* =========================
+   FOOTER ADMIN
+   ========================= */
+
+.admin-footer{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+    padding:20px 0;
+    color:#697586;
+    font-size:11px;
+}
+
+.admin-footer a{
+    color:#4da3ff;
+    text-decoration:none;
+}
+
+
+/* =========================
+   TELEPHONE
+   ========================= */
+
+@media(max-width:700px){
+
+    .admin-page{
+        width:100%;
+    }
+
+    .admin-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .logout-btn{
+        width:100%;
+        text-align:center;
+    }
+
+    .dashboard{
+        grid-template-columns:1fr;
+    }
+
+    .admin-section{
+        padding:14px;
+        border-radius:14px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+
+    .images-grid{
+        grid-template-columns:1fr;
+    }
+
+    .admin-game-card{
+        align-items:flex-start;
+    }
+
+    .game-cover{
+        width:65px;
+        height:80px;
+    }
+
+    .game-meta{
+        flex-direction:column;
+        gap:4px;
+    }
+
+    .game-actions{
+        width:100%;
+    }
+
+    .game-actions a{
+        flex:1;
+        text-align:center;
+    }
+
+    .quick-actions{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .admin-footer{
+        flex-direction:column;
+        text-align:center;
+    }
+
+}
+
+
+/* =========================
+   PETITS TELEPHONES
+   ========================= */
+
+@media(max-width:400px){
+
+    .admin-header h1{
+        font-size:23px;
+    }
+
+    .dashboard-card{
+        padding:14px;
+    }
+
+    .admin-game-card{
+        gap:9px;
+    }
+
+    .game-cover{
+        width:58px;
+        height:72px;
+    }
+
+    .game-top h3{
+        font-size:14px;
+    }
+
+    .game-actions{
+        flex-direction:column;
+    }
+
+    .game-actions a{
+        width:100%;
+    }
+
+    .quick-actions{
+        grid-template-columns:1fr;
+    }
+
+}

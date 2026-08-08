@@ -1,0 +1,495 @@
+/* =========================================================
+   static/style.css
+   GAME STORE
+   ========================================================= */
+
+
+/* =========================
+   RESET
+   ========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#10131a;
+    color:#f5f7fa;
+    font-family:Poppins,Arial,sans-serif;
+    min-height:100vh;
+}
+
+a{
+    color:inherit;
+}
+
+button,
+input,
+textarea{
+    font-family:inherit;
+}
+
+
+/* =========================
+   BARRE PRINCIPALE
+   ========================= */
+
+.topbar{
+    position:sticky;
+    top:0;
+    z-index:999;
+    background:#181d27;
+    border-bottom:1px solid #293140;
+    box-shadow:0 5px 20px rgba(0,0,0,.35);
+    padding:12px 15px;
+}
+
+.topbar-inner{
+    max-width:1100px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    color:white;
+    font-size:22px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.logo-icon{
+    font-size:25px;
+}
+
+.logo-text{
+    color:#4da3ff;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.header-btn{
+    position:relative;
+    text-decoration:none;
+    color:#c4ccd7;
+    padding:8px 10px;
+    border-radius:9px;
+    font-size:12px;
+}
+
+.header-btn:hover{
+    background:#222a36;
+    color:white;
+}
+
+.notification-btn{
+    font-size:18px;
+}
+
+.notification-dot{
+    position:absolute;
+    top:5px;
+    right:5px;
+    width:7px;
+    height:7px;
+    background:#ff4d5f;
+    border-radius:50%;
+}
+
+
+/* =========================
+   RECHERCHE
+   ========================= */
+
+.search-box{
+    max-width:1100px;
+    margin:12px auto 0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#12161e;
+    border:1px solid #303947;
+    border-radius:12px;
+    padding:5px;
+}
+
+.search-icon{
+    padding-left:8px;
+    font-size:16px;
+}
+
+.search-box input{
+    flex:1;
+    min-width:0;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:white;
+    padding:10px;
+    font-size:13px;
+}
+
+.search-box input::placeholder{
+    color:#707b8a;
+}
+
+.search-box button{
+    width:auto;
+    margin:0;
+    padding:9px 15px;
+    border:0;
+    border-radius:9px;
+    background:#4da3ff;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+
+
+/* =========================
+   CONTENU
+   ========================= */
+
+.conteneur{
+    width:100%;
+    max-width:1100px;
+    margin:auto;
+    padding:20px 15px 80px;
+}
+
+
+/* =========================
+   BOUTONS GENERAUX
+   ========================= */
+
+.btn{
+    display:inline-block;
+    text-align:center;
+    text-decoration:none;
+    border:0;
+    cursor:pointer;
+}
+
+.voir{
+    background:#26374b;
+    color:#70b7ff;
+}
+
+.telecharger{
+    background:#2e9b5b;
+    color:white;
+}
+
+
+/* =========================
+   NAVIGATION MOBILE
+   ========================= */
+
+.bottom-nav{
+    display:none;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.site-footer{
+    margin-top:30px;
+    padding:30px 15px 20px;
+    background:#181d27;
+    border-top:1px solid #293140;
+}
+
+.footer-content{
+    max-width:1100px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+}
+
+.footer-logo{
+    font-weight:800;
+    color:#4da3ff;
+}
+
+.footer-brand p{
+    color:#737e8e;
+    font-size:12px;
+    margin-top:6px;
+}
+
+.footer-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.footer-links a{
+    color:#9ba5b4;
+    text-decoration:none;
+    font-size:12px;
+}
+
+.footer-links a:hover{
+    color:white;
+}
+
+.footer-bottom{
+    max-width:1100px;
+    margin:25px auto 0;
+    padding-top:15px;
+    border-top:1px solid #293140;
+    display:flex;
+    justify-content:space-between;
+    color:#687383;
+    font-size:11px;
+}
+
+
+/* =========================
+   MESSAGE FLASH
+   ========================= */
+
+.flash-container{
+    position:fixed;
+    top:90px;
+    right:15px;
+    z-index:2000;
+}
+
+.flash-message{
+    background:#202936;
+    color:white;
+    border:1px solid #394555;
+    padding:12px 16px;
+    border-radius:10px;
+    box-shadow:0 8px 25px rgba(0,0,0,.4);
+    transition:.4s;
+}
+
+
+/* =========================
+   FORMULAIRES
+   ========================= */
+
+input,
+textarea{
+    background:#12161e;
+    color:white;
+    border:1px solid #303947;
+    outline:none;
+}
+
+input:focus,
+textarea:focus{
+    border-color:#4da3ff;
+}
+
+textarea{
+    resize:vertical;
+}
+
+
+/* =========================
+   ANCIENS ELEMENTS COMPATIBLES
+   ========================= */
+
+main{
+    padding:0;
+}
+
+.recherche{
+    display:flex;
+    gap:8px;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media(max-width:700px){
+
+    .topbar{
+        padding:10px;
+    }
+
+    .topbar-inner{
+        gap:8px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .logo-icon{
+        font-size:21px;
+    }
+
+    .header-btn span{
+        display:none;
+    }
+
+    .header-btn{
+        padding:7px;
+        font-size:17px;
+    }
+
+    .search-box{
+        margin-top:9px;
+    }
+
+    .search-box button{
+        font-size:11px;
+        padding:9px 11px;
+    }
+
+    .conteneur{
+        padding:15px 10px 85px;
+    }
+
+    .site-footer{
+        padding-bottom:85px;
+    }
+
+    .footer-content{
+        flex-direction:column;
+    }
+
+    .footer-links{
+        gap:12px;
+    }
+
+    .footer-bottom{
+        flex-direction:column;
+        gap:7px;
+        text-align:center;
+    }
+
+    .bottom-nav{
+        position:fixed;
+        left:0;
+        right:0;
+        bottom:0;
+        z-index:1500;
+        height:62px;
+        background:#181d27;
+        border-top:1px solid #293140;
+        display:flex;
+        justify-content:space-around;
+        align-items:center;
+        box-shadow:0 -5px 20px rgba(0,0,0,.35);
+    }
+
+    .bottom-nav-item{
+        flex:1;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:3px;
+        text-decoration:none;
+        color:#7d8796;
+        font-size:17px;
+    }
+
+    .bottom-nav-item small{
+        font-size:9px;
+    }
+
+    .bottom-nav-item:hover,
+    .bottom-nav-item:active{
+        color:#4da3ff;
+    }
+
+}
+
+
+/* =========================
+   PETITS TELEPHONES
+   ========================= */
+
+@media(max-width:380px){
+
+    .logo-text{
+        font-size:16px;
+    }
+
+    .conteneur{
+        padding-left:8px;
+        padding-right:8px;
+    }
+
+    .search-box button{
+        padding-left:8px;
+        padding-right:8px;
+    }
+
+}
+/* =========================
+   CARTES ADMIN
+   ========================= */
+
+.games-admin-list{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.admin-game-card{
+    display:flex;
+    gap:15px;
+    background:#181d27;
+    border:1px solid #293140;
+    border-radius:12px;
+    padding:12px;
+    align-items:center;
+}
+
+.game-cover{
+    width:90px;
+    min-width:90px;
+    height:120px;
+    overflow:hidden;
+    border-radius:10px;
+    background:#222;
+}
+
+.game-cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.no-cover{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+}
+
+.game-details{
+    flex:1;
+}
