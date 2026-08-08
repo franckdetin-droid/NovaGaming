@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - Game Store{% endblock %}
+
+{% block content %}
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <div class="login-icon">🎮</div>
+
+        <span class="small-label">GAME STORE</span>
+
+        <h1>Connexion admin</h1>
+
+        <p class="login-description">
+            Entre ton code administrateur pour continuer.
+        </p>
+
+        {% if erreur %}
+        <div class="login-error">
+            ⚠️ {{ erreur }}
+        </div>
+        {% endif %}
+
+        <form
+            action="{{ url_for('login') }}"
+            method="POST"
+            class="login-form">
+
+            <label for="code">
+                🔐 Code administrateur
+            </label>
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="code"
+                    name="code"
+                    placeholder="Entrer le code"
+                    autocomplete="current-password"
+                    required>
+
+                <button
+                    type="button"
+                    onclick="toggleCode()"
+                    class="show-password">
+                    👁️
+                </button>
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-button">
+                🔓 Se connecter
+            </button>
+
+        </form>
+
+        <a
+            href="{{ url_for('accueil') }}"
+            class="back-home">
+            ← Retour à l'accueil
+        </a>
+
+    </div>
+
+</div>
+
+<style>
+
+.login-page{
+    min-height:70vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.login-card{
+    width:100%;
+    max-width:400px;
+    background:#181d27;
+    border:1px solid #293140;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+.login-icon{
+    width:65px;
+    height:65px;
+    margin:0 auto 15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#222d3b;
+    border-radius:18px;
+    font-size:32px;
+}
+
+.small-label{
+    color:#4da3ff;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:1.5px;
+}
+
+.login-card h1{
+    margin-top:7px;
+    color:white;
+    font-size:25px;
+}
+
+.login-description{
+    color:#7f8a99;
+    font-size:12px;
+    margin:6px 0 22px;
+}
+
+.login-error{
+    background:#3b2529;
+    border:1px solid #63343b;
+    color:#ff8993;
+    padding:11px;
+    border-radius:10px;
+    margin-bottom:15px;
+    font-size:11px;
+    text-align:left;
+}
+
+.login-form{
+    text-align:left;
+}
+
+.login-form label{
+    display:block;
+    color:#c4ccd7;
+    font-size:11px;
+    font-weight:600;
+    margin:13px 0 6px;
+}
+
+.password-box{
+    position:relative;
+}
+
+.login-form input{
+    width:100%;
+    padding:13px;
+    padding-right:45px;
+    background:#12161e;
+    border:1px solid #303947;
+    border-radius:10px;
+    color:white;
+    outline:none;
+    font-size:13px;
+}
+
+.login-form input::placeholder{
+    color:#687383;
+}
+
+.login-form input:focus{
+    border-color:#4da3ff;
+}
+
+.show-password{
+    position:absolute;
+    right:5px;
+    top:5px;
+    width:35px;
+    height:35px;
+    margin:0;
+    padding:0;
+    background:transparent;
+    color:#8994a3;
+    border:0;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.login-button{
+    width:100%;
+    margin-top:20px;
+    padding:13px;
+    border:0;
+    border-radius:10px;
+    background:#4da3ff;
+    color:white;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.login-button:hover{
+    opacity:.9;
+}
+
+.back-home{
+    display:inline-block;
+    margin-top:20px;
+    color:#7eaedb;
+    text-decoration:none;
+    font-size:11px;
+}
+
+.back-home:hover{
+    color:#4da3ff;
+}
+
+@media(max-width:450px){
+
+    .login-page{
+        min-height:65vh;
+        padding:15px;
+    }
+
+    .login-card{
+        padding:23px 18px;
+        border-radius:16px;
+    }
+
+    .login-card h1{
+        font-size:22px;
+    }
+
+}
+
+</style>
+
+<script>
+
+function toggleCode(){
+
+    const code = document.getElementById("code");
+    const button = document.querySelector(".show-password");
+
+    if(code.type === "password"){
+        code.type = "text";
+        button.textContent = "🙈";
+    }else{
+        code.type = "password";
+        button.textContent = "👁️";
+    }
+
+}
+
+</script>
+
+{% endblock %}
