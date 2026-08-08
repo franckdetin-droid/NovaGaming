@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Game Store - Découvrez les derniers jeux disponibles.">
+
+    <meta name="theme-color"
+          content="#10131a">
+
+    <title>{% block title %}Game Store{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="topbar-inner">
+
+        <a href="{{ url_for('accueil') }}"
+           class="logo">
+
+            <span class="logo-icon">🎮</span>
+            <span class="logo-text">Game Store</span>
+
+        </a>
+
+        <div class="header-actions">
+
+            <a href="{{ url_for('nouveautes') }}"
+               class="header-btn">
+                🆕 <span>Nouveautés</span>
+            </a>
+
+            <a href="{{ url_for('populaires') }}"
+               class="header-btn">
+                🔥 <span>Populaires</span>
+            </a>
+
+            <a href="{{ url_for('notifications') }}"
+               class="header-btn notification-btn">
+
+                🔔
+
+                {% if notifications_non_lues is defined
+                      and notifications_non_lues > 0 %}
+
+                    <span class="notification-dot"></span>
+
+                {% endif %}
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <form action="{{ url_for('recherche') }}"
+          method="GET"
+          class="search-box">
+
+        <div class="search-icon">🔍</div>
+
+        <input
+            type="search"
+            name="q"
+            value="{{ recherche|default('') }}"
+            placeholder="Rechercher un jeu..."
+            autocomplete="off">
+
+        <button type="submit">
+            Rechercher
+        </button>
+
+    </form>
+
+</header>
+
+
+<main class="conteneur">
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+<nav class="bottom-nav">
+
+    <a href="{{ url_for('accueil') }}"
+       class="bottom-nav-item">
+
+        <span>🏠</span>
+        <small>Accueil</small>
+
+    </a>
+
+    <a href="{{ url_for('nouveautes') }}"
+       class="bottom-nav-item">
+
+        <span>🆕</span>
+        <small>Nouveautés</small>
+
+    </a>
+
+    <a href="{{ url_for('populaires') }}"
+       class="bottom-nav-item">
+
+        <span>🔥</span>
+        <small>Populaires</small>
+
+    </a>
+
+    <a href="{{ url_for('notifications') }}"
+       class="bottom-nav-item">
+
+        <span>🔔</span>
+        <small>Alertes</small>
+
+    </a>
+
+</nav>
+
+
+<footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+
+            <div class="footer-logo">
+                🎮 Game Store
+            </div>
+
+            <p>
+                Ton espace pour découvrir
+                de nouveaux jeux.
+            </p>
+
+        </div>
+
+        <div class="footer-links">
+
+            <a href="{{ url_for('accueil') }}">
+                Accueil
+            </a>
+
+            <a href="{{ url_for('nouveautes') }}">
+                Nouveautés
+            </a>
+
+            <a href="{{ url_for('populaires') }}">
+                Populaires
+            </a>
+
+            <a href="{{ url_for('notifications') }}">
+                Notifications
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <span>© 2026 Game Store</span>
+
+        <span>Fait par Franck</span>
+
+    </div>
+
+</footer>
+
+
+{% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+
+        <div class="flash-container">
+
+            {% for message in messages %}
+
+                <div class="flash-message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+{% endwith %}
+
+
+<script>
+
+setTimeout(function(){
+
+    const messages =
+        document.querySelectorAll(".flash-message");
+
+    messages.forEach(function(message){
+
+        message.style.opacity = "0";
+
+        setTimeout(function(){
+            message.remove();
+        }, 400);
+
+    });
+
+}, 4000);
+
+
+document
+    .querySelectorAll(".action-delete")
+    .forEach(function(button){
+
+        button.addEventListener("click", function(event){
+
+            if(!confirm(
+                "Voulez-vous vraiment supprimer cet élément ?"
+            )){
+
+                event.preventDefault();
+
+            }
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
