@@ -4,6 +4,9 @@
 import os
 import sqlite3
 
+import cloudinary
+import cloudinary.uploader
+
 from flask import (
     Flask,
     render_template,
@@ -34,18 +37,13 @@ CODE_ADMIN = "3004"
 
 
 # ==========================
-# DOSSIERS IMAGES
+# CONFIGURATION CLOUDINARY
 # ==========================
 
-DOSSIER_UPLOADS = os.path.join(
-    app.static_folder,
-    "uploads",
-    "jeux"
-)
-
-os.makedirs(
-    DOSSIER_UPLOADS,
-    exist_ok=True
+cloudinary.config(
+    cloud_name="zgp2vxel",
+    api_key="357264626165689",
+    api_secret="CkGRcrzSyk4gR-PIA3WC5jMItFI"
 )
 
 
