@@ -129,7 +129,7 @@ def enregistrer_image(fichier, nom_base):
     if not fichier.filename:
         return None
 
-    # Vérification simple du type
+    # Vérification du type MIME
     if not fichier.mimetype.startswith("image/"):
         return None
 
@@ -148,29 +148,30 @@ def enregistrer_image(fichier, nom_base):
     if extension not in extensions_autorisees:
         return None
 
-    # Nom sécurisé
-    nom_fichier = (
-        nom_base
-        + "_"
-        + str(os.getpid())
-        + "_"
-        + str(abs(hash(fichier.filename)))
-        + extension
-    )
+    try:
 
-    chemin = os.path.join(
-        DOSSIER_UPLOADS,
-        nom_fichier
-    )
+        # Envoi directement vers Cloudinary
+        resultat = cloudinary.uploader.upload(
+            fichier,
+            folder="novagaming/jeux",
+            public_id=(
+                nom_base
+                + "_"
+                + str(os.getpid())
+                + "_"
+                + str(abs(hash(fichier.filename)))
+            ),
+            resource_type="image"
+        )
 
-    fichier.save(chemin)
+        # URL HTTPS de l'image Cloudinary
+        return resultat.get("secure_url")
 
-    # Chemin utilisable par Flask
-    return url_for(
-        "static",
-        filename="uploads/jeux/" + nom_fichier
-    )
+    except Exception as e:
 
+        print("ERREUR CLOUDINARY :", e)
+
+        return None
 
 # ==========================
 # PROTECTION ADMIN
