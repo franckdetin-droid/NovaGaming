@@ -4,3 +4,4 @@ requests
 firebase-admin
 python-dotenv
 Pillow
+cloudinary
