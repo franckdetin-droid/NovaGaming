@@ -1811,7 +1811,13 @@ def verifier_base():
 
 verifier_base()
 
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory(".", "robots.txt")
 
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory(".", "sitemap.xml")
 # ==========================
 # LANCEMENT
 # ==========================
