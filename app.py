@@ -116,26 +116,24 @@ def creer_tables_supplementaires():
 
 creer_tables_supplementaires()
 
-
 # ==========================
 # FONCTION UPLOAD IMAGE
+# CLOUDINARY
 # ==========================
 
 def enregistrer_image(fichier, nom_base):
 
-    if not fichier:
+    if fichier is None:
         return None
 
     if not fichier.filename:
         return None
 
-    # Vérification du type MIME
-    if not fichier.mimetype.startswith("image/"):
+    if not fichier.mimetype:
         return None
 
-    extension = os.path.splitext(
-        fichier.filename
-    )[1].lower()
+    if not fichier.mimetype.startswith("image/"):
+        return None
 
     extensions_autorisees = {
         ".jpg",
@@ -145,31 +143,45 @@ def enregistrer_image(fichier, nom_base):
         ".gif"
     }
 
+    extension = os.path.splitext(
+        fichier.filename
+    )[1].lower()
+
     if extension not in extensions_autorisees:
+        print("Extension non autorisée :", extension)
         return None
 
     try:
 
-        # Envoi directement vers Cloudinary
         resultat = cloudinary.uploader.upload(
             fichier,
             folder="novagaming/jeux",
-            public_id=(
-                nom_base
-                + "_"
-                + str(os.getpid())
-                + "_"
-                + str(abs(hash(fichier.filename)))
-            ),
             resource_type="image"
         )
 
-        # URL HTTPS de l'image Cloudinary
-        return resultat.get("secure_url")
+        image_url = resultat.get(
+            "secure_url"
+        )
+
+        if not image_url:
+            print(
+                "Cloudinary n'a pas retourné d'URL."
+            )
+            return None
+
+        print(
+            "IMAGE CLOUDINARY :",
+            image_url
+        )
+
+        return image_url
 
     except Exception as e:
 
-        print("ERREUR CLOUDINARY :", e)
+        print(
+            "ERREUR UPLOAD CLOUDINARY :",
+            str(e)
+        )
 
         return None
 
