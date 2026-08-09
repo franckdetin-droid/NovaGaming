@@ -1,0 +1,9 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "NovaGaming",
+  "url": "https://novagaming.up.railway.app",
+  "logo": "https://novagaming.up.railway.app/static/images/logo.png"
+}
+</script>
