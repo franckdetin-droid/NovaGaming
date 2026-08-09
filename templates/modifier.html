@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Modifier {{ jeu["nom"] }}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #111827, #2563eb);
+            color: white;
+            padding: 20px;
+        }
+
+        .header-inner {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .retour {
+            background: white;
+            color: #2563eb;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #111827;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .champ {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .champ.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: bold;
+            color: #374151;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .aide {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .preview {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+
+        .preview img {
+            max-width: 180px;
+            max-height: 220px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .galerie {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .image-box {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 6px;
+            min-height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .vide {
+            color: #9ca3af;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 13px 20px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-cancel {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .danger {
+            margin-top: 25px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .danger a {
+            color: #dc2626;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        @media (max-width: 700px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .champ.full {
+                grid-column: auto;
+            }
+
+            .galerie {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <h1>✏️ Modifier le jeu</h1>
+
+        <a href="{{ url_for('admin') }}" class="retour">
+            ← Retour à l'administration
+        </a>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="card">
+
+        <h2>{{ jeu["nom"] }}</h2>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <!-- ========================= -->
+            <!-- INFORMATIONS -->
+            <!-- ========================= -->
+
+            <h3 class="section-title">
+                🎮 Informations du jeu
+            </h3>
+
+            <div class="grid">
+
+                <div class="champ">
+                    <label for="nom">
+                        Nom du jeu *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nom"
+                        name="nom"
+                        value="{{ jeu['nom'] or '' }}"
+                        required
+                    >
+                </div>
+
+
+                <div class="champ">
+                    <label for="console">
+                        Console
+                    </label>
+
+                    <input
+                        type="text"
+                        id="console"
+                        name="console"
+                        value="{{ jeu['console'] or '' }}"
+                        placeholder="Ex : PSP, PS2, PC..."
+                    >
+                </div>
+
+
+                <div class="champ">
+                    <label for="version">
+                        Version
+                    </label>
+
+                    <input
+                        type="text"
+                        id="version"
+                        name="version"
+                        value="{{ jeu['version'] or '' }}"
+                        placeholder="Ex : 1.0, 2026..."
+                    >
+                </div>
+
+
+                <div class="champ">
+                    <label for="langue">
+                        Langue
+                    </label>
+
+                    <input
+                        type="text"
+                        id="langue"
+                        name="langue"
+                        value="{{ jeu['langue'] or '' }}"
+                        placeholder="Ex : Français, Anglais..."
+                    >
+                </div>
+
+
+                <div class="champ">
+                    <label for="taille">
+                        Taille
+                    </label>
+
+                    <input
+                        type="text"
+                        id="taille"
+                        name="taille"
+                        value="{{ jeu['taille'] or '' }}"
+                        placeholder="Ex : 1.5 Go"
+                    >
+                </div>
+
+
+                <div class="champ">
+                    <label for="lien">
+                        Lien de téléchargement *
+                    </label>
+
+                    <input
+                        type="url"
+                        id="lien"
+                        name="lien"
+                        value="{{ jeu['lien'] or '' }}"
+                        required
+                        placeholder="https://..."
+                    >
+                </div>
+
+
+                <div class="champ full">
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Description du jeu..."
+                    >{{ jeu['description'] or '' }}</textarea>
+                </div>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- COUVERTURE -->
+            <!-- ========================= -->
+
+            <h3 class="section-title">
+                🖼️ Couverture
+            </h3>
+
+            <div class="champ">
+
+                <label for="couverture">
+                    URL de la couverture
+                </label>
+
+                <input
+                    type="url"
+                    id="couverture"
+                    name="couverture"
+                    value="{{ jeu['couverture'] or '' }}"
+                    placeholder="https://..."
+                >
+
+                <span class="aide">
+                    Tu peux garder l'image actuelle ou mettre une nouvelle URL.
+                </span>
+
+            </div>
+
+
+            <div class="champ" style="margin-top:15px;">
+
+                <label for="couverture_file">
+                    Ou envoyer une nouvelle couverture
+                </label>
+
+                <input
+                    type="file"
+                    id="couverture_file"
+                    name="couverture_file"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            {% if jeu["couverture"] %}
+
+            <div class="preview">
+
+                <strong>Couverture actuelle :</strong>
+
+                <br><br>
+
+                <img
+                    src="{{ jeu['couverture'] }}"
+                    alt="Couverture actuelle"
+                >
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ========================= -->
+            <!-- GALERIE EXISTANTE -->
+            <!-- ========================= -->
+
+            <h3 class="section-title">
+                📸 Galerie actuelle
+            </h3>
+
+            <div class="galerie">
+
+                {% for i in range(1, 11) %}
+
+                    {% set image = jeu["image" ~ i] %}
+
+                    <div class="image-box">
+
+                        {% if image %}
+
+                            <img
+                                src="{{ image }}"
+                                alt="Image {{ i }}"
+                            >
+
+                        {% else %}
+
+                            <span class="vide">
+                                Image {{ i }}<br>
+                                vide
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- NOUVELLES IMAGES -->
+            <!-- ========================= -->
+
+            <div class="champ" style="margin-top:20px;">
+
+                <label for="images">
+                    Remplacer la galerie
+                </label>
+
+                <input
+                    type="file"
+                    id="images"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                >
+
+                <span class="aide">
+                    Sélectionne jusqu'à 10 images.
+                    Si tu n'en sélectionnes aucune, les anciennes images
+                    seront conservées.
+                </span>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- BOUTONS -->
+            <!-- ========================= -->
+
+            <div class="actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-save"
+                >
+                    💾 Enregistrer les modifications
+                </button>
+
+                <a
+                    href="{{ url_for('admin') }}"
+                    class="btn btn-cancel"
+                >
+                    Annuler
+                </a>
+
+                <a
+                    href="{{ url_for('jeu', jeu_id=jeu['id']) }}"
+                    class="btn btn-cancel"
+                    target="_blank"
+                >
+                    👁️ Voir le jeu
+                </a>
+
+            </div>
+
+        </form>
+
+
+        <!-- ========================= -->
+        <!-- SUPPRESSION -->
+        <!-- ========================= -->
+
+        <div class="danger">
+
+            <strong>⚠️ Zone dangereuse</strong>
+
+            <p>
+                La suppression du jeu supprimera également
+                ses commentaires, favoris et vues.
+            </p>
+
+            <a
+                href="{{ url_for('supprimer', jeu_id=jeu['id']) }}"
+                onclick="return confirm('Voulez-vous vraiment supprimer ce jeu ? Cette action est irréversible.');"
+            >
+                🗑️ Supprimer ce jeu
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+
+    // Aperçu de la nouvelle couverture
+    const couvertureFile =
+        document.getElementById("couverture_file");
+
+    couvertureFile.addEventListener(
+        "change",
+        function () {
+
+            const fichier = this.files[0];
+
+            if (!fichier) {
+                return;
+            }
+
+            const url =
+                URL.createObjectURL(fichier);
+
+            const preview =
+                document.querySelector(".preview");
+
+            if (preview) {
+
+                const ancienneImage =
+                    preview.querySelector("img");
+
+                if (ancienneImage) {
+                    ancienneImage.src = url;
+                }
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
