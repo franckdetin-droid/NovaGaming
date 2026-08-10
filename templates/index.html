@@ -32,16 +32,32 @@ Game Store - Jeux
     </section>
 
 
-    <!-- BANNIÈRE PUBLICITAIRE -->
+    <!-- ==========================
+         PUBLICITÉ ADSTERRA 300x250
+         ========================== -->
 
-    <div class="home-ad">
+    <div class="ad-container ad-300">
 
-        <span>PUBLICITÉ</span>
+        <span class="ad-label">PUBLICITÉ</span>
+
+        <script>
+          atOptions = {
+            'key' : '9c3cffc4768251e062fab64f53dfb612',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+
+        <script
+          src="https://www.highperformanceformat.com/9c3cffc4768251e062fab64f53dfb612/invoke.js">
+        </script>
 
     </div>
 
 
-    <!-- TITRE -->
+    <!-- TITRE DU CATALOGUE -->
 
     <div class="catalogue-header">
 
@@ -96,6 +112,7 @@ Game Store - Jeux
 
             </div>
 
+
             <div class="card-content">
 
                 <h3>
@@ -114,6 +131,7 @@ Game Store - Jeux
 
                 </div>
 
+
                 <div class="download-count">
 
                     ⬇️
@@ -121,6 +139,7 @@ Game Store - Jeux
                     téléchargements
 
                 </div>
+
 
                 <div class="boutons">
 
@@ -131,6 +150,7 @@ Game Store - Jeux
                         👀 Voir l'aperçu
 
                     </a>
+
 
                     <a
                         href="{{ url_for('telecharger', jeu_id=jeu.id) }}"
@@ -145,6 +165,7 @@ Game Store - Jeux
             </div>
 
         </article>
+
 
         {% else %}
 
@@ -167,11 +188,29 @@ Game Store - Jeux
         {% endfor %}
 
     </div>
-        <!-- PUBLICITÉ -->
 
-    <div class="home-ad home-ad-bottom">
 
-        <span>PUBLICITÉ</span>
+    <!-- ==========================
+         PUBLICITÉ ADSTERRA 320x50
+         ========================== -->
+
+    <div class="ad-container ad-320">
+
+        <span class="ad-label">PUBLICITÉ</span>
+
+        <script>
+          atOptions = {
+            'key' : 'c732d42e6f7e245c8bb1b979f900c5d4',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+          };
+        </script>
+
+        <script
+          src="https://www.highperformanceformat.com/c732d42e6f7e245c8bb1b979f900c5d4/invoke.js">
+        </script>
 
     </div>
 
@@ -196,14 +235,12 @@ Game Store - Jeux
 
             </div>
 
-            <a
-                href="{{ url_for('populaires') }}">
-
+            <a href="{{ url_for('populaires') }}">
                 Voir tout →
-
             </a>
 
         </div>
+
 
         <div class="mini-games">
 
@@ -221,6 +258,7 @@ Game Store - Jeux
                     loading="lazy">
 
                 {% endif %}
+
 
                 <div>
 
@@ -243,9 +281,7 @@ Game Store - Jeux
     </section>
 
     {% endif %}
-
-
-    <!-- INFORMATIONS -->
+        <!-- INFORMATIONS -->
 
     <section class="info-home">
 
@@ -267,7 +303,9 @@ Game Store - Jeux
         </div>
 
     </section>
-        <!-- NAVIGATION RAPIDE -->
+
+
+    <!-- NAVIGATION RAPIDE -->
 
     <section class="quick-home">
 
@@ -275,9 +313,7 @@ Game Store - Jeux
             href="{{ url_for('nouveautes') }}"
             class="quick-home-card">
 
-            <span>
-                🆕
-            </span>
+            <span>🆕</span>
 
             <strong>
                 Nouveautés
@@ -289,13 +325,12 @@ Game Store - Jeux
 
         </a>
 
+
         <a
             href="{{ url_for('populaires') }}"
             class="quick-home-card">
 
-            <span>
-                🔥
-            </span>
+            <span>🔥</span>
 
             <strong>
                 Populaires
@@ -307,13 +342,12 @@ Game Store - Jeux
 
         </a>
 
+
         <a
             href="{{ url_for('notifications') }}"
             class="quick-home-card">
 
-            <span>
-                🔔
-            </span>
+            <span>🔔</span>
 
             <strong>
                 Notifications
@@ -333,10 +367,19 @@ Game Store - Jeux
 
 <style>
 
+/* ==========================
+   PAGE
+   ========================== */
+
 .home-page{
     max-width:1100px;
     margin:auto;
 }
+
+
+/* ==========================
+   HERO
+   ========================== */
 
 .home-hero{
     background:linear-gradient(
@@ -344,6 +387,7 @@ Game Store - Jeux
         #182536,
         #171c27
     );
+
     border:1px solid #293746;
     border-radius:20px;
     padding:30px;
@@ -367,28 +411,84 @@ Game Store - Jeux
     color:#8e98a7;
 }
 
-.home-ad{
-    height:75px;
-    border:1px dashed #303947;
-    background:#12161e;
-    border-radius:12px;
+
+/* ==========================
+   PUBLICITÉS
+   ========================== */
+
+.ad-container{
+
+    width:100%;
+
     display:flex;
-    justify-content:center;
+
+    flex-direction:column;
+
     align-items:center;
-    margin-bottom:25px;
+
+    justify-content:center;
+
+    overflow:hidden;
+
+    margin:20px auto;
+
+    background:#12161e;
+
+    border:1px dashed #303947;
+
+    border-radius:12px;
+
+    padding:8px 0;
+
 }
 
-.home-ad span{
-    font-size:10px;
+.ad-label{
+
+    display:block;
+
     color:#697586;
+
+    font-size:9px;
+
     letter-spacing:1px;
+
+    margin-bottom:5px;
+
 }
+
+
+/* 300 x 250 */
+
+.ad-300{
+
+    min-height:268px;
+
+}
+
+
+/* 320 x 50 */
+
+.ad-320{
+
+    min-height:70px;
+
+}
+
+
+/* ==========================
+   CATALOGUE
+   ========================== */
 
 .catalogue-header{
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
+
     margin-bottom:15px;
+
 }
 
 .titre{
@@ -396,308 +496,573 @@ Game Store - Jeux
 }
 
 .game-count{
+
     color:#4da3ff;
+
     background:#1c2a39;
+
     padding:7px 12px;
+
     border-radius:20px;
+
     font-size:11px;
+
 }
 
+
+/* ==========================
+   LISTE DES JEUX
+   ========================== */
+
 .liste-jeux{
+
     display:grid;
+
     grid-template-columns:
-        repeat(3, minmax(0,1fr));
+        repeat(3,minmax(0,1fr));
+
     gap:16px;
+
 }
 
 .carte{
+
     overflow:hidden;
+
     background:#181d27;
+
     border:1px solid #293140;
+
     border-radius:17px;
+
     transition:.2s;
+
 }
 
 .carte:hover{
+
     transform:translateY(-3px);
+
     border-color:#40516a;
+
 }
 
+
+/* ==========================
+   COUVERTURE
+   ========================== */
+
 .cover-container{
+
     position:relative;
+
     height:230px;
+
 }
 
 .couverture,
 .cover-empty{
+
     width:100%;
+
     height:100%;
+
     object-fit:cover;
+
 }
 
 .cover-empty{
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
+
     background:#252d39;
+
     font-size:50px;
+
 }
 
 .game-badge{
+
     position:absolute;
+
     top:10px;
+
     left:10px;
+
     background:#111820dd;
+
     color:#fff;
+
     padding:5px 9px;
+
     border-radius:8px;
+
     font-size:10px;
+
 }
 
+
+/* ==========================
+   CONTENU CARTE
+   ========================== */
+
 .card-content{
+
     padding:15px;
+
 }
 
 .card-content h3{
+
     margin-bottom:10px;
+
     font-size:17px;
+
 }
 
 .game-details{
+
     display:flex;
+
     justify-content:space-between;
+
     gap:5px;
+
     color:#8d97a6;
+
     font-size:11px;
+
 }
 
 .download-count{
+
     margin:12px 0;
+
     color:#707b8b;
+
     font-size:10px;
+
 }
 
+
+/* ==========================
+   BOUTONS
+   ========================== */
+
 .boutons{
+
     display:grid;
+
     grid-template-columns:1fr 1fr;
+
     gap:7px;
+
 }
 
 .btn{
+
     text-align:center;
+
     padding:10px 6px;
+
     border-radius:9px;
+
     text-decoration:none;
+
     font-size:11px;
+
     font-weight:700;
+
 }
 
 .btn.voir{
+
     background:#26374b;
+
     color:#75baff;
+
 }
 
 .btn.telecharger{
+
     background:#2e9b5b;
+
     color:#fff;
+
 }
 
+
+/* ==========================
+   AUCUN JEU
+   ========================== */
+
 .empty-home{
+
     grid-column:1 / -1;
+
     text-align:center;
+
     padding:50px 20px;
+
     background:#181d27;
+
     border-radius:17px;
+
     color:#8490a0;
+
 }
 
 .empty-home div{
+
     font-size:45px;
-}
-.home-ad-bottom{
-    margin-top:25px;
+
 }
 
+
+/* ==========================
+   SECTION POPULAIRE
+   ========================== */
+
 .home-section{
+
     margin-top:25px;
+
 }
 
 .home-section-title{
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
+
     margin-bottom:12px;
+
 }
 
 .home-section-title h2{
+
     margin-top:5px;
+
 }
 
 .home-section-title a{
+
     color:#4da3ff;
+
     text-decoration:none;
+
     font-size:12px;
+
 }
 
+
+/* ==========================
+   MINI JEUX
+   ========================== */
+
 .mini-games{
+
     display:grid;
+
     grid-template-columns:
-        repeat(4, minmax(0,1fr));
+        repeat(4,minmax(0,1fr));
+
     gap:10px;
+
 }
 
 .mini-game{
+
     display:flex;
+
     gap:10px;
+
     align-items:center;
+
     padding:10px;
+
     background:#181d27;
+
     border:1px solid #293140;
+
     border-radius:12px;
+
     text-decoration:none;
+
     color:white;
+
 }
 
 .mini-game img{
+
     width:45px;
+
     height:55px;
+
     object-fit:cover;
+
     border-radius:7px;
+
 }
 
 .mini-game strong{
+
     display:block;
+
     font-size:11px;
+
 }
 
 .mini-game small{
+
     display:block;
+
     margin-top:4px;
+
     color:#7f8a99;
+
     font-size:9px;
+
 }
 
+
+/* ==========================
+   INFORMATIONS
+   ========================== */
+
 .info-home{
+
     display:flex;
+
     align-items:center;
+
     gap:15px;
+
     margin-top:25px;
+
     padding:18px;
+
     background:#181d27;
+
     border:1px solid #293140;
+
     border-radius:16px;
+
 }
 
 .info-icon{
+
     font-size:30px;
+
 }
 
 .info-home h3{
+
     margin-bottom:4px;
+
 }
 
 .info-home p{
+
     margin:0;
+
     color:#8993a1;
+
     font-size:12px;
+
 }
 
+
+/* ==========================
+   NAVIGATION RAPIDE
+   ========================== */
+
 .quick-home{
+
     display:grid;
+
     grid-template-columns:
         repeat(3,1fr);
+
     gap:10px;
+
     margin-top:15px;
+
 }
 
 .quick-home-card{
+
     padding:17px;
+
     background:#181d27;
+
     border:1px solid #293140;
+
     border-radius:14px;
+
     text-decoration:none;
+
     color:white;
+
 }
 
 .quick-home-card span{
+
     display:block;
+
     font-size:24px;
+
     margin-bottom:9px;
+
 }
 
 .quick-home-card strong,
 .quick-home-card small{
+
     display:block;
+
 }
 
 .quick-home-card small{
+
     color:#7d8796;
+
     font-size:10px;
+
     margin-top:4px;
+
 }
 
 
-/* ADAPTATION TÉLÉPHONE */
+/* ==========================
+   TÉLÉPHONE
+   ========================== */
 
 @media(max-width:750px){
 
     .home-hero{
+
         padding:22px;
+
     }
 
     .home-hero h1{
+
         font-size:24px;
+
     }
+
 
     .liste-jeux{
+
         grid-template-columns:
             repeat(2,minmax(0,1fr));
+
         gap:10px;
+
     }
+
 
     .cover-container{
+
         height:200px;
+
     }
+
 
     .card-content{
+
         padding:11px;
+
     }
+
 
     .card-content h3{
+
         font-size:14px;
+
     }
+
 
     .game-details{
+
         flex-direction:column;
+
     }
+
 
     .boutons{
+
         grid-template-columns:1fr;
+
     }
+
 
     .mini-games{
+
         grid-template-columns:1fr 1fr;
+
     }
 
+
     .quick-home{
+
         grid-template-columns:1fr;
+
+    }
+
+
+    /* PUBLICITÉ MOBILE */
+
+    .ad-300{
+
+        min-height:268px;
+
+        overflow-x:auto;
+
+    }
+
+    .ad-320{
+
+        min-height:70px;
+
+        overflow-x:auto;
+
     }
 
 }
 
 
+/* ==========================
+   PETIT ÉCRAN
+   ========================== */
+
 @media(max-width:420px){
 
     .liste-jeux{
+
         grid-template-columns:1fr;
+
     }
+
 
     .cover-container{
+
         height:250px;
+
     }
 
+
     .mini-games{
+
         grid-template-columns:1fr;
+
     }
 
 }
