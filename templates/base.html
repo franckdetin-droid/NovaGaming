@@ -8,7 +8,10 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <!-- Icône NovaGaming -->
+    <!-- ==================================================
+         NOVAGAMING
+    ================================================== -->
+
     <link rel="icon"
           type="image/png"
           href="{{ url_for('static', filename='images/logo.png') }}">
@@ -16,31 +19,53 @@
     <link rel="apple-touch-icon"
           href="{{ url_for('static', filename='images/logo.png') }}">
 
-    <!-- Google tag (gtag.js) -->
+
+    <!-- Google Analytics -->
+
     <script async
             src="https://www.googletagmanager.com/gtag/js?id=G-BPNC77TV9T"></script>
 
     <script>
+
         window.dataLayer = window.dataLayer || [];
 
         function gtag(){
+
             dataLayer.push(arguments);
+
         }
 
         gtag('js', new Date());
-        gtag('config', 'G-BPNC77TV9T');
+
+        gtag(
+            'config',
+            'G-BPNC77TV9T'
+        );
+
     </script>
 
-    <meta name="description"
-          content="NovaGaming - Découvrez les derniers jeux disponibles.">
 
-    <meta name="theme-color"
-          content="#10131a">
+    <meta
+        name="description"
+        content="NovaGaming - Découvrez les derniers jeux disponibles.">
 
-    <meta name="google-site-verification"
-          content="RARc8emy2eT_XwrT90Q0wvtCbyuvcn_SU-8E8UII-xI">
+
+    <meta
+        name="theme-color"
+        content="#10131a">
+
+
+    <meta
+        name="google-site-verification"
+        content="RARc8emy2eT_XwrT90Q0wvtCbyuvcn_SU-8E8UII-xI">
+
+
+    <!-- ==================================================
+         SEO
+    ================================================== -->
 
     <script type="application/ld+json">
+
     {
         "@context": "https://schema.org",
         "@type": "Organization",
@@ -48,61 +73,259 @@
         "url": "https://novagaming.up.railway.app",
         "logo": "https://novagaming.up.railway.app/static/images/logo.png"
     }
+
     </script>
+
 
     <title>
         {% block title %}NovaGaming{% endblock %}
     </title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <!-- ==================================================
+         CSS PRINCIPAL
+    ================================================== -->
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet">
 
-    <!-- Petit logo NovaGaming -->
+    <!-- ==================================================
+         GOOGLE FONT
+    ================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+
+    <!-- ==================================================
+         STYLE NOVAGAMING
+    ================================================== -->
+
     <style>
 
         .logo-image {
+
             width: 28px;
             height: 28px;
+
             object-fit: contain;
+
             vertical-align: middle;
+
         }
 
-        /* Bouton notifications */
+
+        /* ==================================================
+           BOUTON NOTIFICATIONS
+        ================================================== */
+
         .notification-activate-btn {
+
             position: fixed;
-            bottom: 80px;
+
+            bottom: 82px;
             right: 15px;
+
             z-index: 9999;
 
-            padding: 10px 14px;
+            display: flex;
 
-            border: none;
-            border-radius: 10px;
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 11px 15px;
+
+            border: 1px solid #303947;
+
+            border-radius: 12px;
 
             background: #202632;
-            color: white;
+
+            color: #ffffff;
 
             font-family: Poppins, sans-serif;
+
             font-size: 13px;
+
             font-weight: 600;
 
             cursor: pointer;
 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            box-shadow:
+                0 5px 20px rgba(0,0,0,.30);
+
+            transition:
+                transform .2s ease,
+                opacity .2s ease,
+                background .2s ease;
+
         }
 
+
         .notification-activate-btn:hover {
-            opacity: 0.9;
+
+            transform: translateY(-2px);
+
+            background: #293241;
+
+        }
+
+
+        .notification-activate-btn:active {
+
+            transform: scale(.96);
+
+        }
+
+
+        .notification-activate-btn.hidden {
+
+            display: none;
+
+        }
+
+
+        .notification-activate-btn.loading {
+
+            opacity: .7;
+
+            pointer-events: none;
+
+        }
+
+
+        /* ==================================================
+           NOVA ADS
+        ================================================== */
+
+        .nova-ad {
+
+            width: 100%;
+
+            margin: 15px auto;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            overflow: hidden;
+
+            border-radius: 12px;
+
+        }
+
+
+        .nova-ad img {
+
+            width: 100%;
+
+            height: auto;
+
+            max-height: 250px;
+
+            object-fit: cover;
+
+            display: block;
+
+        }
+
+
+        .nova-ad video {
+
+            width: 100%;
+
+            max-height: 250px;
+
+            object-fit: cover;
+
+            display: block;
+
+            border-radius: 12px;
+
+        }
+
+
+        .nova-ad iframe {
+
+            width: 100%;
+
+            min-height: 120px;
+
+            border: 0;
+
+            border-radius: 12px;
+
+        }
+
+
+        .nova-ad-link {
+
+            display: block;
+
+            width: 100%;
+
+            text-decoration: none;
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .nova-ad {
+
+                margin: 10px auto;
+
+                border-radius: 10px;
+
+            }
+
+
+            .nova-ad img {
+
+                max-height: 180px;
+
+            }
+
+
+            .nova-ad video {
+
+                max-height: 180px;
+
+            }
+
+        }
+
+
+        @media (min-width: 768px) {
+
+            .nova-ad img {
+
+                max-height: 250px;
+
+            }
+
+
+            .nova-ad video {
+
+                max-height: 300px;
+
+            }
+
         }
 
     </style>
@@ -112,73 +335,105 @@
 
 <body>
 
+
+<!-- ==================================================
+     HEADER
+================================================== -->
+
 <header class="topbar">
+
 
     <div class="topbar-inner">
 
-        <a href="{{ url_for('accueil') }}"
-           class="logo">
 
-            <!-- Petit logo uniquement ici -->
+        <a
+            href="{{ url_for('accueil') }}"
+            class="logo">
+
+
             <img
                 src="{{ url_for('static', filename='images/logo.png') }}"
                 alt="NovaGaming"
                 class="logo-image">
 
+
             <span class="logo-text">
                 NovaGaming
             </span>
+
 
         </a>
 
 
         <div class="header-actions">
 
-            <a href="{{ url_for('nouveautes') }}"
-               class="header-btn">
+
+            <a
+                href="{{ url_for('nouveautes') }}"
+                class="header-btn">
 
                 🆕
-                <span>Nouveautés</span>
+
+                <span>
+                    Nouveautés
+                </span>
 
             </a>
 
 
-            <a href="{{ url_for('populaires') }}"
-               class="header-btn">
+            <a
+                href="{{ url_for('populaires') }}"
+                class="header-btn">
 
                 🔥
-                <span>Populaires</span>
+
+                <span>
+                    Populaires
+                </span>
 
             </a>
 
 
-            <a href="{{ url_for('notifications') }}"
-               class="header-btn notification-btn">
+            <a
+                href="{{ url_for('notifications') }}"
+                class="header-btn notification-btn">
 
                 🔔
+
 
                 {% if notifications_non_lues is defined
                       and notifications_non_lues > 0 %}
 
-                    <span class="notification-dot"></span>
+                    <span
+                        class="notification-dot">
+                    </span>
 
                 {% endif %}
 
+
             </a>
 
+
         </div>
+
 
     </div>
 
 
-    <form action="{{ url_for('recherche') }}"
-          method="GET"
-          class="search-box">
+    <!-- ==================================================
+         RECHERCHE
+    ================================================== -->
 
-        <!-- Recherche normale -->
+    <form
+        action="{{ url_for('recherche') }}"
+        method="GET"
+        class="search-box">
+
+
         <div class="search-icon">
             🔍
         </div>
+
 
         <input
             type="search"
@@ -187,118 +442,391 @@
             placeholder="Rechercher un jeu..."
             autocomplete="off">
 
+
         <button type="submit">
             Rechercher
         </button>
 
+
     </form>
+
 
 </header>
 
+
+<!-- ==================================================
+     CONTENU
+================================================== -->
 
 <main class="conteneur">
 
     {% block content %}
     {% endblock %}
 
-</main>
+        </main>
+        <!-- ==================================================
+     NOVA ADS
+     Affichage des publicités actives
+================================================== -->
 
+{% macro afficher_pub(pub) %}
+
+    {% if pub and pub.actif %}
+
+        <div
+            class="nova-ad"
+            data-publicite-id="{{ pub.id }}"
+            data-emplacement="{{ pub.emplacement }}">
+
+            {% if pub.type == "image" %}
+
+                {% if pub.lien %}
+
+                    <a
+                        href="{{ url_for('ads_clic', publicite_id=pub.id) }}"
+                        class="nova-ad-link"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        <img
+                            src="{{ pub.contenu_url }}"
+                            alt="{{ pub.nom }}"
+                            loading="lazy">
+
+                    </a>
+
+                {% else %}
+
+                    <img
+                        src="{{ pub.contenu_url }}"
+                        alt="{{ pub.nom }}"
+                        loading="lazy">
+
+                {% endif %}
+
+
+            {% elif pub.type == "video" %}
+
+                {% if pub.lien %}
+
+                    <a
+                        href="{{ url_for('ads_clic', publicite_id=pub.id) }}"
+                        class="nova-ad-link"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        <video
+                            controls
+                            muted
+                            playsinline
+                            preload="metadata">
+
+                            <source
+                                src="{{ pub.contenu_url }}"
+                                type="video/mp4">
+
+                            Votre navigateur ne peut pas lire cette vidéo.
+
+                        </video>
+
+                    </a>
+
+                {% else %}
+
+                    <video
+                        controls
+                        muted
+                        playsinline
+                        preload="metadata">
+
+                        <source
+                            src="{{ pub.contenu_url }}"
+                            type="video/mp4">
+
+                        Votre navigateur ne peut pas lire cette vidéo.
+
+                    </video>
+
+                {% endif %}
+
+
+            {% elif pub.type == "html" %}
+
+                <div class="nova-ad-html">
+
+                    {{ pub.contenu_url | safe }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+{% endmacro %}
+
+
+
+<!-- ==================================================
+     EMPLACEMENT :
+     ACCUEIL BANNIÈRE 1
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('accueil_banniere_1') %}
+
+    {{ afficher_pub(
+        nova_ads.get('accueil_banniere_1')
+    ) }}
+
+{% endif %}
+
+
+
+<!-- ==================================================
+     EMPLACEMENT :
+     ACCUEIL BANNIÈRE 2
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('accueil_banniere_2') %}
+
+    {{ afficher_pub(
+        nova_ads.get('accueil_banniere_2')
+    ) }}
+
+{% endif %}
+
+
+
+<!-- ==================================================
+     EMPLACEMENT :
+     ACCUEIL BANNIÈRE 3
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('accueil_banniere_3') %}
+
+    {{ afficher_pub(
+        nova_ads.get('accueil_banniere_3')
+    ) }}
+
+{% endif %}
+
+
+
+<!-- ==================================================
+     EMPLACEMENT :
+     ACCUEIL PUBLICITÉ 1
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('accueil_publicite_1') %}
+
+    {{ afficher_pub(
+        nova_ads.get('accueil_publicite_1')
+    ) }}
+
+{% endif %}
+
+
+
+<!-- ==================================================
+     EMPLACEMENT :
+     ACCUEIL PUBLICITÉ 2
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('accueil_publicite_2') %}
+
+    {{ afficher_pub(
+        nova_ads.get('accueil_publicite_2')
+    ) }}
+
+{% endif %}
+
+
+
+<!-- ==================================================
+     EMPLACEMENT :
+     PAGE JEU PUBLICITÉ 1
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('jeu_publicite_1') %}
+
+    {{ afficher_pub(
+        nova_ads.get('jeu_publicite_1')
+    ) }}
+
+{% endif %}
+
+
+
+<!-- ==================================================
+     EMPLACEMENT :
+     PAGE JEU PUBLICITÉ 2
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('jeu_publicite_2') %}
+
+    {{ afficher_pub(
+        nova_ads.get('jeu_publicite_2')
+    ) }}
+
+{% endif %}
+
+
+
+<!-- ==================================================
+     NAVIGATION BASSE
+================================================== -->
 
 <nav class="bottom-nav">
 
-    <a href="{{ url_for('accueil') }}"
-       class="bottom-nav-item">
 
-        <span>🏠</span>
-        <small>Accueil</small>
+    <a
+        href="{{ url_for('accueil') }}"
+        class="bottom-nav-item">
 
-    </a>
+        <span>
+            🏠
+        </span>
 
-
-    <a href="{{ url_for('nouveautes') }}"
-       class="bottom-nav-item">
-
-        <span>🆕</span>
-        <small>Nouveautés</small>
+        <small>
+            Accueil
+        </small>
 
     </a>
 
 
-    <a href="{{ url_for('populaires') }}"
-       class="bottom-nav-item">
+    <a
+        href="{{ url_for('nouveautes') }}"
+        class="bottom-nav-item">
 
-        <span>🔥</span>
-        <small>Populaires</small>
+        <span>
+            🆕
+        </span>
+
+        <small>
+            Nouveautés
+        </small>
+
+    </a>
+
+
+    <a
+        href="{{ url_for('populaires') }}"
+        class="bottom-nav-item">
+
+        <span>
+            🔥
+        </span>
+
+        <small>
+            Populaires
+        </small>
 
     </a>
 
 
-    <a href="{{ url_for('notifications') }}"
-       class="bottom-nav-item">
+    <a
+        href="{{ url_for('notifications') }}"
+        class="bottom-nav-item">
 
-        <span>🔔</span>
-        <small>Alertes</small>
+        <span>
+            🔔
+        </span>
+
+        <small>
+            Alertes
+        </small>
 
     </a>
+
 
 </nav>
 
 
+
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
 <footer class="site-footer">
+
 
     <div class="footer-content">
 
+
         <div class="footer-brand">
+
 
             <div class="footer-logo">
                 🎮 NovaGaming
             </div>
+
 
             <p>
                 Ton espace pour découvrir
                 de nouveaux jeux.
             </p>
 
+
         </div>
 
 
         <div class="footer-links">
 
+
             <a href="{{ url_for('accueil') }}">
                 Accueil
             </a>
+
 
             <a href="{{ url_for('nouveautes') }}">
                 Nouveautés
             </a>
 
+
             <a href="{{ url_for('populaires') }}">
                 Populaires
             </a>
+
 
             <a href="{{ url_for('notifications') }}">
                 Notifications
             </a>
 
+
         </div>
+
 
     </div>
 
 
     <div class="footer-bottom">
 
+
         <span>
             © 2026 NovaGaming
         </span>
+
 
         <span>
             Fait par Franck
         </span>
 
+
     </div>
 
-</footer>
 
+    </footer>
+    <!-- ==================================================
+     MESSAGES FLASH
+================================================== -->
 
 {% with messages = get_flashed_messages() %}
 
@@ -309,7 +837,9 @@
             {% for message in messages %}
 
                 <div class="flash-message">
+
                     {{ message }}
+
                 </div>
 
             {% endfor %}
@@ -321,39 +851,61 @@
 {% endwith %}
 
 
-<!-- ========================== -->
-<!-- BOUTON NOTIFICATIONS PUSH -->
-<!-- ========================== -->
+
+<!-- ==================================================
+     BOUTON NOTIFICATIONS PUSH
+================================================== -->
 
 <button
+    id="notificationActivateBtn"
     type="button"
     class="notification-activate-btn"
     onclick="activerNotifications()">
 
-    🔔 Activer les notifications
+    <span class="notification-activate-icon">
+        🔔
+    </span>
+
+    <span>
+        Activer les notifications
+    </span>
 
 </button>
 
 
+
 <script>
+
+/* ==================================================
+   DISPARITION DES MESSAGES
+================================================== */
 
 setTimeout(function(){
 
     const messages =
         document.querySelectorAll(".flash-message");
 
+
     messages.forEach(function(message){
 
         message.style.opacity = "0";
 
+
         setTimeout(function(){
+
             message.remove();
+
         }, 400);
 
     });
 
 }, 4000);
 
+
+
+/* ==================================================
+   CONFIRMATION SUPPRESSION
+================================================== */
 
 document
     .querySelectorAll(".action-delete")
@@ -376,15 +928,220 @@ document
 
     });
 
+
+
+/* ==================================================
+   NOTIFICATIONS
+================================================== */
+
+function verifierNotifications(){
+
+    const bouton =
+        document.getElementById(
+            "notificationActivateBtn"
+        );
+
+
+    if(!bouton){
+
+        return;
+
+    }
+
+
+    /*
+     * Navigateur incompatible
+     */
+
+    if(!("Notification" in window)){
+
+        bouton.classList.add("hidden");
+
+        return;
+
+    }
+
+
+    /*
+     * Notifications déjà autorisées
+     */
+
+    if(Notification.permission === "granted"){
+
+        bouton.classList.add("hidden");
+
+        return;
+
+    }
+
+
+    /*
+     * Notifications refusées
+     */
+
+    if(Notification.permission === "denied"){
+
+        bouton.classList.remove("loading");
+
+        bouton.querySelector(
+            "span:last-child"
+        ).textContent =
+            "Notifications bloquées";
+
+        return;
+
+    }
+
+
+    /*
+     * Autorisation encore inconnue
+     */
+
+    bouton.classList.remove("hidden");
+
+}
+
+
+
+/* ==================================================
+   ACTIVATION NOTIFICATIONS
+================================================== */
+
+async function activerNotifications(){
+
+    const bouton =
+        document.getElementById(
+            "notificationActivateBtn"
+        );
+
+
+    if(bouton){
+
+        bouton.classList.add("loading");
+
+
+        bouton.querySelector(
+            "span:last-child"
+        ).textContent =
+            "Activation...";
+
+    }
+
+
+    try {
+
+
+        /*
+         * Demande d'autorisation navigateur.
+         */
+
+        if(
+            !("Notification" in window)
+        ){
+
+            throw new Error(
+                "Les notifications ne sont pas supportées."
+            );
+
+        }
+
+
+        const permission =
+            await Notification.requestPermission();
+
+
+        if(permission !== "granted"){
+
+            verifierNotifications();
+
+            return;
+
+        }
+
+
+        /*
+         * Firebase Messaging
+         *
+         * Si firebase-messaging.js expose
+         * une fonction globale, elle sera utilisée.
+         */
+
+        if(
+            typeof window.activerNotifications
+            === "function"
+        ){
+
+            await window.activerNotifications();
+
+        }
+
+
+        verifierNotifications();
+
+
+    } catch(erreur){
+
+        console.error(
+            "Erreur notifications :",
+            erreur
+        );
+
+
+        if(bouton){
+
+            bouton.classList.remove(
+                "loading"
+            );
+
+
+            bouton.querySelector(
+                "span:last-child"
+            ).textContent =
+                "🔔 Activer les notifications";
+
+        }
+
+    }
+
+}
+
+
+
+/* ==================================================
+   INITIALISATION
+================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        verifierNotifications();
+
+    }
+);
+
 </script>
 
 
-<!-- Firebase Cloud Messaging -->
+
+<!-- ==================================================
+     FIREBASE CLOUD MESSAGING
+================================================== -->
+
 <script
     type="module"
-    src="{{ url_for('static', filename='firebase-messaging.js') }}">
+    src="{{ url_for(
+        'static',
+        filename='firebase-messaging.js'
+    ) }}">
 </script>
 
 
+
+<!-- ==================================================
+     FIN BASE.HTML
+================================================== -->
+
 </body>
-                </html>
+
+    </html>
