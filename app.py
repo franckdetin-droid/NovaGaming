@@ -22,8 +22,111 @@ from flask import (
 from functools import wraps
 
 from supabase import create_client, Client
+# ==========================
+# FIREBASE CLOUD MESSAGING
+# ==========================
+
+import json
+
+import firebase_admin
+from firebase_admin import (
+    credentials,
+    messaging
+)
 
 
+# ==========================
+# INITIALISATION FIREBASE
+# ==========================
+
+if not firebase_admin._apps:
+
+    firebase_json = os.environ.get(
+        "FIREBASE_SERVICE_ACCOUNT"
+    )
+
+    if not firebase_json:
+
+        print(
+            "⚠️ FIREBASE_SERVICE_ACCOUNT "
+            "n'est pas configurée."
+        )
+
+    else:
+
+        try:
+
+            service_account = json.loads(
+                firebase_json
+            )
+
+            cred = credentials.Certificate(
+                service_account
+            )
+
+            firebase_admin.initialize_app(
+                cred
+            )
+
+            print(
+                "✅ Firebase Cloud Messaging "
+                "initialisé."
+            )
+
+        except Exception as e:
+
+            print(
+                "❌ ERREUR INITIALISATION FIREBASE :",
+                str(e)
+            )
+
+
+# ==========================
+# ENVOYER UNE NOTIFICATION PUSH
+# ==========================
+
+def envoyer_notification_push(
+    token,
+    titre,
+    message
+):
+
+    if not token:
+
+        return False
+
+    try:
+
+        notification = messaging.Notification(
+            title=titre,
+            body=message
+        )
+
+        message_firebase = messaging.Message(
+            notification=notification,
+            token=token
+        )
+
+        resultat = messaging.send(
+            message_firebase
+        )
+
+        print(
+            "✅ Notification Firebase envoyée :",
+            resultat
+        )
+
+        return True
+
+    except Exception as e:
+
+        print(
+            "❌ ERREUR NOTIFICATION FIREBASE :",
+            str(e)
+        )
+
+        return False
+    
 # ==========================
 # CONFIGURATION FLASK
 # ==========================
@@ -2315,72 +2418,7 @@ def sitemap():
         ".",
         "sitemap.xml"
     )
-    # ==========================
-# FIREBASE CLOUD MESSAGING
-# ==========================
-
-import firebase_admin
-from firebase_admin import credentials, messaging
-
-
-# Fichier de compte de service Firebase
-FIREBASE_CREDENTIALS = "firebase-service-account.json"
-
-
-# Initialisation Firebase
-if not firebase_admin._apps:
-
-    cred = credentials.Certificate(
-        FIREBASE_CREDENTIALS
-    )
-
-    firebase_admin.initialize_app(
-        cred
-    )
-
-
-# ==========================
-# ENVOYER UNE NOTIFICATION PUSH
-# ==========================
-
-def envoyer_notification_push(
-    token,
-    titre,
-    message
-):
-
-    try:
-
-        notification = messaging.Notification(
-            title=titre,
-            body=message
-        )
-
-        message_firebase = messaging.Message(
-            notification=notification,
-            token=token
-        )
-
-        resultat = messaging.send(
-            message_firebase
-        )
-
-        print(
-            "✅ Notification Firebase envoyée :",
-            resultat
-        )
-
-        return True
-
-    except Exception as e:
-
-        print(
-            "❌ ERREUR NOTIFICATION FIREBASE :",
-            str(e)
-        )
-
-        return False
-
+   
 
 # ==========================
 # TEST SUPABASE
