@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>NovaAds - Gestionnaire</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #10131a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .ads-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .ads-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .ads-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ads-title-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1c2430;
+            border: 1px solid #303947;
+            border-radius: 13px;
+            font-size: 24px;
+        }
+
+        .ads-title h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .ads-title p {
+            margin: 4px 0 0;
+            color: #8995a8;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            text-decoration: none;
+            color: white;
+            background: #252d3a;
+            border: 1px solid #354052;
+            padding: 10px 14px;
+            border-radius: 9px;
+            font-size: 13px;
+        }
+
+        .section {
+            background: #171c25;
+            border: 1px solid #293140;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+        }
+
+        .section-description {
+            color: #8995a8;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* STATISTIQUES */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #11161e;
+            border: 1px solid #293140;
+            border-radius: 13px;
+            padding: 16px;
+        }
+
+        .stat-card span {
+            display: block;
+            color: #8995a8;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .stat-card strong {
+            font-size: 25px;
+        }
+
+        /* FORMULAIRE */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: #dce2ea;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border-radius: 9px;
+            border: 1px solid #354052;
+            background: #10151d;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #4da3ff;
+        }
+
+        .help {
+            color: #737f91;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .add-btn {
+            margin-top: 18px;
+            width: 100%;
+            border: 0;
+            padding: 14px;
+            border-radius: 10px;
+            background: #4da3ff;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            opacity: .9;
+        }
+
+        /* EMPLACEMENTS */
+
+        .placements {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .placement {
+            background: #11161e;
+            border: 1px solid #293140;
+            border-radius: 13px;
+            padding: 16px;
+        }
+
+        .placement-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .placement-name {
+            font-weight: 700;
+        }
+
+        .available {
+            color: #67d68a;
+            font-size: 12px;
+        }
+
+        .occupied {
+            color: #ffbd63;
+            font-size: 12px;
+        }
+
+        .placement-info {
+            color: #8995a8;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* LISTE DES PUBLICITES */
+
+        .ads-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ad-card {
+            background: #11161e;
+            border: 1px solid #293140;
+            border-radius: 13px;
+            padding: 16px;
+        }
+
+        .ad-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .ad-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .ad-code {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: #202936;
+            color: #8fc6ff;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .status {
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: rgba(70, 210, 120, .12);
+            color: #67d68a;
+        }
+
+        .status-off {
+            background: rgba(150, 160, 175, .12);
+            color: #9ba6b5;
+        }
+
+        .ad-meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .meta-box {
+            background: #171d27;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .meta-box span {
+            display: block;
+            color: #788496;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .meta-box strong {
+            font-size: 14px;
+        }
+
+        .ad-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .ad-actions form {
+            margin: 0;
+        }
+
+        .action-btn {
+            border: 1px solid #354052;
+            background: #202733;
+            color: white;
+            padding: 9px 11px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .action-btn:hover {
+            opacity: .85;
+        }
+
+        .delete-btn {
+            border-color: rgba(255, 80, 80, .3);
+            color: #ff8585;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px 15px;
+            color: #7d899a;
+        }
+
+        .warning {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 9px;
+            background: rgba(255, 190, 70, .08);
+            border: 1px solid rgba(255, 190, 70, .2);
+            color: #ffc76d;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px 0;
+            color: #5e6878;
+            font-size: 11px;
+        }
+
+        @media (max-width: 700px) {
+
+            .ads-header {
+                align-items: flex-start;
+            }
+
+            .ads-title h1 {
+                font-size: 22px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .placements {
+                grid-template-columns: 1fr;
+            }
+
+            .ad-meta {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .logout-btn {
+                font-size: 11px;
+                padding: 8px 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="ads-container">
+
+
+    <!-- ============================= -->
+    <!-- HEADER -->
+    <!-- ============================= -->
+
+    <header class="ads-header">
+
+        <div class="ads-title">
+
+            <div class="ads-title-icon">
+                📢
+            </div>
+
+            <div>
+
+                <h1>
+                    NovaAds
+                </h1>
+
+                <p>
+                    Gestionnaire publicitaire NovaGaming
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('ads_logout') }}"
+            class="logout-btn">
+
+            🚪 Déconnexion
+
+        </a>
+
+    </header>
+
+
+    <!-- ============================= -->
+    <!-- STATISTIQUES -->
+    <!-- ============================= -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <span>
+                📢 Publicités
+            </span>
+
+            <strong>
+                {{ publicites|length }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                👁️ Impressions
+            </span>
+
+            <strong>
+                {{ publicites|sum(attribute='impressions') }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                🖱️ Clics
+            </span>
+
+            <strong>
+                {{ publicites|sum(attribute='clics') }}
+            </strong>
+
+        </div>
+
+    </section>
+<!-- ============================= -->
+    <!-- AJOUTER UNE PUBLICITÉ -->
+    <!-- ============================= -->
+
+    <section class="section">
+
+        <h2>
+            ➕ Ajouter une publicité
+        </h2>
+
+        <div class="section-description">
+            Ajoute une publicité dans un emplacement libre.
+        </div>
+
+        <div class="warning">
+
+            🔒 Un emplacement déjà occupé par une publicité active
+            ne sera pas remplacé automatiquement.
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('ads_ajouter') }}">
+
+
+            <div class="form-grid">
+
+
+                <!-- NOM -->
+
+                <div class="form-group">
+
+                    <label>
+                        Nom de la publicité
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nom"
+                        placeholder="Ex : Publicité partenaire"
+                        required>
+
+                </div>
+
+
+                <!-- CODE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Code publicitaire
+                    </label>
+
+                    <input
+                        type="text"
+                        name="code"
+                        placeholder="PUB001"
+                        required>
+
+                    <span class="help">
+                        Identifiant unique de la publicité.
+                    </span>
+
+                </div>
+
+
+                <!-- EMPLACEMENT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Emplacement
+                    </label>
+
+                    <select
+                        name="emplacement"
+                        required>
+
+                        <option value="">
+                            Choisir un emplacement
+                        </option>
+
+                        <option value="accueil_banniere_3">
+                            🏠 Accueil — Bannière 3
+                        </option>
+
+                        <option value="accueil_publicite_1">
+                            🏠 Accueil — Publicité 1
+                        </option>
+
+                        <option value="accueil_publicite_2">
+                            🏠 Accueil — Publicité 2
+                        </option>
+
+                        <option value="jeu_publicite_1">
+                            🎮 Page jeu — Publicité 1
+                        </option>
+
+                        <option value="jeu_publicite_2">
+                            🎮 Page jeu — Publicité 2
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- TYPE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Type de publicité
+                    </label>
+
+                    <select
+                        name="type">
+
+                        <option value="image">
+                            🖼️ Image
+                        </option>
+
+                        <option value="video">
+                            🎬 Vidéo
+                        </option>
+
+                        <option value="html">
+                            💻 Code HTML
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- URL -->
+
+                <div class="form-group full">
+
+                    <label>
+                        URL de l'image ou de la vidéo
+                    </label>
+
+                    <input
+                        type="url"
+                        name="contenu_url"
+                        placeholder="https://res.cloudinary.com/...">
+
+                    <span class="help">
+                        Mets ici le lien Cloudinary de ton image
+                        ou de ta vidéo.
+                    </span>
+
+                </div>
+
+
+                <!-- LIEN -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Lien de destination
+                    </label>
+
+                    <input
+                        type="url"
+                        name="lien"
+                        placeholder="https://...">
+
+                    <span class="help">
+                        Le visiteur sera envoyé vers ce lien
+                        lorsqu'il clique sur la publicité.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="add-btn">
+
+                🚀 Ajouter la publicité
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- EMPLACEMENTS PUBLICITAIRES -->
+    <!-- ============================= -->
+
+    <section class="section">
+
+        <h2>
+            📍 Emplacements publicitaires
+        </h2>
+
+        <div class="section-description">
+            Vérifie rapidement quels emplacements sont libres
+            ou déjà utilisés.
+        </div>
+
+
+        <div class="placements">
+
+
+            {% set emplacements = [
+
+                (
+                    "accueil_banniere_3",
+                    "🏠 Accueil — Bannière 3"
+                ),
+
+                (
+                    "accueil_publicite_1",
+                    "🏠 Accueil — Publicité 1"
+                ),
+
+                (
+                    "accueil_publicite_2",
+                    "🏠 Accueil — Publicité 2"
+                ),
+
+                (
+                    "jeu_publicite_1",
+                    "🎮 Page jeu — Publicité 1"
+                ),
+
+                (
+                    "jeu_publicite_2",
+                    "🎮 Page jeu — Publicité 2"
+                )
+
+            ] %}
+
+
+            {% for code_emplacement, nom_emplacement
+               in emplacements %}
+
+
+                {% set occupee =
+                    namespace(value=false) %}
+
+
+                {% for pub in publicites %}
+
+                    {% if pub.emplacement ==
+                          code_emplacement
+                          and pub.actif %}
+
+                        {% set occupee.value = true %}
+
+                    {% endif %}
+
+                {% endfor %}
+
+
+                <div class="placement">
+
+
+                    <div class="placement-top">
+
+                        <span class="placement-name">
+
+                            {{ nom_emplacement }}
+
+                        </span>
+
+
+                        {% if occupee.value %}
+
+                            <span class="occupied">
+
+                                🟠 Occupé
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="available">
+
+                                🟢 Libre
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="placement-info">
+
+                        Code :
+
+                        <strong>
+                            {{ code_emplacement }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- LISTE DES PUBLICITÉS -->
+    <!-- ============================= -->
+
+    <section class="section">
+
+        <h2>
+            📋 Mes publicités
+        </h2>
+
+        <div class="section-description">
+            Gère ici toutes les publicités que tu as créées.
+        </div>
+
+
+        {% if publicites %}
+
+            <div class="ads-list">
+
+
+                {% for pub in publicites %}
+
+
+                <article class="ad-card">
+
+
+                    <!-- EN-TÊTE -->
+
+                    <div class="ad-card-top">
+
+
+                        <div>
+
+                            <div class="ad-name">
+
+                                {{ pub.nom }}
+
+                            </div>
+
+
+                            <span class="ad-code">
+
+                                {{ pub.code }}
+
+                            </span>
+
+                        </div>
+
+
+                        {% if pub.actif %}
+
+                            <span class="status status-active">
+
+                                🟢 ACTIVE
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="status status-off">
+
+                                ⚪ DÉSACTIVÉE
+
+                            </span>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <!-- INFORMATIONS -->
+
+                    <div class="ad-meta">
+
+
+                        <div class="meta-box">
+
+                            <span>
+                                Emplacement
+                            </span>
+
+                            <strong>
+                                {{ pub.emplacement }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="meta-box">
+
+                            <span>
+                                Type
+                            </span>
+
+                            <strong>
+                                {{ pub.type }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="meta-box">
+
+                            <span>
+                                Impressions
+                            </span>
+
+                            <strong>
+                                {{ pub.impressions or 0 }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="meta-box">
+
+                            <span>
+                                Clics
+                            </span>
+
+                            <strong>
+                                {{ pub.clics or 0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="ad-actions">
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'ads_toggle',
+                                pub_id=pub.id
+                            ) }}">
+
+
+                            <button
+                                type="submit"
+                                class="action-btn">
+
+
+                                {% if pub.actif %}
+
+                                    🔴 Désactiver
+
+                                {% else %}
+
+                                    🟢 Activer
+
+                                {% endif %}
+
+
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'ads_supprimer',
+                                pub_id=pub.id
+                            ) }}"
+                            onsubmit="return confirm(
+                                'Supprimer cette publicité ?'
+                            );">
+
+
+                            <button
+                                type="submit"
+                                class="action-btn delete-btn">
+
+                                🗑️ Supprimer
+
+                            </button>
+
+
+                        </form>
+
+
+                    </div>
+
+
+                </article>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="empty">
+
+                <div style="font-size: 35px;">
+                    📢
+                </div>
+
+                <p>
+                    Aucune publicité pour le moment.
+                </p>
+
+                <small>
+                    Ajoute ta première publicité
+                    avec le formulaire ci-dessus.
+                </small>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+<!-- ============================= -->
+    <!-- FOOTER -->
+    <!-- ============================= -->
+
+    <div class="footer">
+
+        NovaGaming • NovaAds
+        <br>
+
+        <span>
+            Gestion publicitaire
+        </span>
+
+    </div>
+
+
+</div>
+
+
+<!-- ============================= -->
+<!-- PETITES ANIMATIONS -->
+<!-- ============================= -->
+
+<script>
+
+document
+    .querySelectorAll("form")
+    .forEach(function(form) {
+
+        form.addEventListener(
+            "submit",
+            function() {
+
+                const bouton =
+                    form.querySelector(
+                        "button[type='submit']"
+                    );
+
+                if (bouton) {
+
+                    bouton.style.opacity = "0.6";
+                    bouton.style.pointerEvents = "none";
+
+                }
+
+            }
+        );
+
+    });
+
+
+/*
+    Confirmation supplémentaire
+    avant suppression
+*/
+
+document
+    .querySelectorAll(".delete-btn")
+    .forEach(function(bouton) {
+
+        bouton.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    !confirm(
+                        "Voulez-vous vraiment supprimer cette publicité ?"
+                    )
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+    });
+
+</script>
+
+
+</body>
+
+</html>
+
