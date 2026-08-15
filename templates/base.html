@@ -36,9 +36,7 @@
         window.dataLayer = window.dataLayer || [];
 
         function gtag(){
-
             dataLayer.push(arguments);
-
         }
 
         gtag('js', new Date());
@@ -122,12 +120,14 @@
 
 
     <!-- ==================================================
-         STYLE BASE
+         STYLE BASE + NOVA ADS
     ================================================== -->
 
     <style>
 
-        /* Logo */
+        /* ==================================================
+           LOGO
+        ================================================== */
 
         .logo-image {
 
@@ -142,6 +142,133 @@
 
 
         /* ==================================================
+           NOVA ADS
+        ================================================== */
+
+        .nova-ad-container {
+
+            width: 100%;
+
+            max-width: 1000px;
+
+            margin: 15px auto;
+
+            padding: 0 10px;
+
+            box-sizing: border-box;
+
+        }
+
+
+        .nova-ad {
+
+            position: relative;
+
+            width: 100%;
+
+            overflow: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #12161e;
+
+            border: 1px solid #293140;
+
+            border-radius: 12px;
+
+            min-height: 70px;
+
+        }
+
+
+        .nova-ad img {
+
+            display: block;
+
+            width: 100%;
+
+            height: auto;
+
+            max-height: 320px;
+
+            object-fit: cover;
+
+        }
+
+
+        .nova-ad video {
+
+            display: block;
+
+            width: 100%;
+
+            max-height: 320px;
+
+            background: #000;
+
+        }
+
+
+        .nova-ad-link {
+
+            display: block;
+
+            width: 100%;
+
+            text-decoration: none;
+
+        }
+
+
+        .nova-ad-html {
+
+            width: 100%;
+
+            min-height: 70px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            overflow: hidden;
+
+        }
+
+
+        .nova-ad-label {
+
+            position: absolute;
+
+            top: 5px;
+
+            left: 8px;
+
+            z-index: 10;
+
+            padding: 2px 5px;
+
+            border-radius: 4px;
+
+            background: rgba(0,0,0,.55);
+
+            color: #b8c0cc;
+
+            font-size: 8px;
+
+            letter-spacing: 1px;
+
+            pointer-events: none;
+
+        }
+
+
+        /* ==================================================
            BOUTON NOTIFICATIONS
         ================================================== */
 
@@ -150,6 +277,7 @@
             position: fixed;
 
             bottom: 82px;
+
             right: 15px;
 
             z-index: 9999;
@@ -246,6 +374,29 @@
 
             }
 
+
+            .nova-ad-container {
+
+                padding: 0 5px;
+
+                margin: 10px auto;
+
+            }
+
+
+            .nova-ad img {
+
+                max-height: 220px;
+
+            }
+
+
+            .nova-ad video {
+
+                max-height: 220px;
+
+            }
+
         }
 
     </style>
@@ -272,19 +423,14 @@
             href="{{ url_for('accueil') }}"
             class="logo">
 
-
             <img
                 src="{{ url_for('static', filename='images/logo.png') }}"
                 alt="NovaGaming"
                 class="logo-image">
 
-
             <span class="logo-text">
-
                 NovaGaming
-
             </span>
-
 
         </a>
 
@@ -332,7 +478,6 @@
 
                 🔔
 
-
                 {% if notifications_non_lues is defined
                       and notifications_non_lues > 0 %}
 
@@ -342,9 +487,7 @@
 
                 {% endif %}
 
-
             </a>
-
 
         </div>
 
@@ -360,13 +503,9 @@
         method="GET"
         class="search-box">
 
-
         <div class="search-icon">
-
             🔍
-
         </div>
-
 
         <input
             type="search"
@@ -375,26 +514,128 @@
             placeholder="Rechercher un jeu..."
             autocomplete="off">
 
-
         <button type="submit">
-
             Rechercher
-
         </button>
 
-
     </form>
-
 
 </header>
 
 
+
+<!-- ==================================================
+     NOVA ADS - HAUT
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('jeu_publicite_1') %}
+
+    {% set pub = nova_ads.get('jeu_publicite_1') %}
+
+    {% if pub.actif %}
+
+    <div class="nova-ad-container">
+
+        <div class="nova-ad">
+
+            <span class="nova-ad-label">
+                PUBLICITÉ
+            </span>
+
+
+            {% if pub.type == "image" %}
+
+                {% if pub.lien %}
+
+                    <a
+                        href="{{ pub.lien }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="nova-ad-link">
+
+                        <img
+                            src="{{ pub.contenu_url }}"
+                            alt="{{ pub.nom }}"
+                            loading="eager">
+
+                    </a>
+
+                {% else %}
+
+                    <img
+                        src="{{ pub.contenu_url }}"
+                        alt="{{ pub.nom }}"
+                        loading="eager">
+
+                {% endif %}
+
+
+            {% elif pub.type == "video" %}
+
+                {% if pub.lien %}
+
+                    <a
+                        href="{{ pub.lien }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="nova-ad-link">
+
+                        <video
+                            controls
+                            muted
+                            playsinline
+                            preload="metadata">
+
+                            <source
+                                src="{{ pub.contenu_url }}">
+
+                            Votre navigateur ne peut pas lire
+                            cette vidéo.
+
+                        </video>
+
+                    </a>
+
+                {% else %}
+
+                    <video
+                        controls
+                        muted
+                        playsinline
+                        preload="metadata">
+
+                        <source
+                            src="{{ pub.contenu_url }}">
+
+                        Votre navigateur ne peut pas lire
+                        cette vidéo.
+
+                    </video>
+
+                {% endif %}
+
+
+            {% elif pub.type == "html" %}
+
+                <div class="nova-ad-html">
+                    {{ pub.contenu_url | safe }}
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+{% endif %}
+
+
+
 <!-- ==================================================
      CONTENU DES PAGES
-     
-     IMPORTANT :
-     Le block content est fermé ici.
-     Cela évite l'erreur Jinja de admin.html.
 ================================================== -->
 
 <main class="conteneur">
@@ -404,6 +645,116 @@
 
     </main>
     <!-- ==================================================
+     NOVA ADS - MILIEU
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('jeu_publicite_2') %}
+
+    {% set pub = nova_ads.get('jeu_publicite_2') %}
+
+    {% if pub.actif %}
+
+    <div class="nova-ad-container">
+
+        <div class="nova-ad">
+
+            <span class="nova-ad-label">
+                PUBLICITÉ
+            </span>
+
+
+            {% if pub.type == "image" %}
+
+                {% if pub.lien %}
+
+                    <a
+                        href="{{ pub.lien }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="nova-ad-link">
+
+                        <img
+                            src="{{ pub.contenu_url }}"
+                            alt="{{ pub.nom }}"
+                            loading="lazy">
+
+                    </a>
+
+                {% else %}
+
+                    <img
+                        src="{{ pub.contenu_url }}"
+                        alt="{{ pub.nom }}"
+                        loading="lazy">
+
+                {% endif %}
+
+
+            {% elif pub.type == "video" %}
+
+                {% if pub.lien %}
+
+                    <a
+                        href="{{ pub.lien }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="nova-ad-link">
+
+                        <video
+                            controls
+                            muted
+                            playsinline
+                            preload="metadata">
+
+                            <source
+                                src="{{ pub.contenu_url }}">
+
+                            Votre navigateur ne peut pas lire
+                            cette vidéo.
+
+                        </video>
+
+                    </a>
+
+                {% else %}
+
+                    <video
+                        controls
+                        muted
+                        playsinline
+                        preload="metadata">
+
+                        <source
+                            src="{{ pub.contenu_url }}">
+
+                        Votre navigateur ne peut pas lire
+                        cette vidéo.
+
+                    </video>
+
+                {% endif %}
+
+
+            {% elif pub.type == "html" %}
+
+                <div class="nova-ad-html">
+                    {{ pub.contenu_url | safe }}
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+{% endif %}
+
+
+
+<!-- ==================================================
      NAVIGATION MOBILE
 ================================================== -->
 
@@ -476,7 +827,6 @@
         </small>
 
     </a>
-
 
 </nav>
 
@@ -645,8 +995,11 @@
     </span>
 
 
-            </button>
-            <!-- ==================================================
+</button>
+
+
+
+<!-- ==================================================
      JAVASCRIPT NOVAGAMING
 ================================================== -->
 
@@ -873,10 +1226,6 @@ async function activerNotifications(){
 
         /*
          * Firebase Messaging
-         *
-         * firebase-messaging.js peut utiliser
-         * cette autorisation pour récupérer
-         * le token FCM.
          */
 
         window.dispatchEvent(
@@ -972,4 +1321,4 @@ document.addEventListener(
 
 </body>
 
-</html>
+    </html>
