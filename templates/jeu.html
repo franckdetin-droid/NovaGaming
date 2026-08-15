@@ -10,18 +10,138 @@
 
 <div class="page-jeu">
 
-    <!-- BANNIÈRE PUBLICITAIRE -->
-    <div class="ad-space ad-top">
 
-        <span>PUBLICITÉ</span>
+    <!-- ==================================================
+         PUBLICITÉ NOVA ADS - HAUT
+         Emplacement : jeu_publicite_1
 
-    </div>
+         Si aucune publicité active n'est disponible,
+         l'emplacement reste vide.
+    ================================================== -->
 
-    <!-- EN-TÊTE DU JEU -->
+    {% if nova_ads is defined
+          and nova_ads.get('jeu_publicite_1') %}
+
+        {% set pub = nova_ads.get('jeu_publicite_1') %}
+
+        {% if pub.actif %}
+
+        <div
+            class="nova-ad nova-ad-top"
+            data-publicite-id="{{ pub.id }}"
+            data-emplacement="jeu_publicite_1">
+
+
+            {% if pub.type == "image" %}
+
+
+                {% if pub.lien %}
+
+                <a
+                    href="{{ url_for(
+                        'ads_clic',
+                        publicite_id=pub.id
+                    ) }}"
+                    class="nova-ad-link"
+                    target="_blank"
+                    rel="noopener noreferrer">
+
+                    <img
+                        src="{{ pub.contenu_url }}"
+                        alt="{{ pub.nom }}"
+                        loading="eager">
+
+                </a>
+
+                {% else %}
+
+                <img
+                    src="{{ pub.contenu_url }}"
+                    alt="{{ pub.nom }}"
+                    loading="eager">
+
+                {% endif %}
+
+
+            {% elif pub.type == "video" %}
+
+
+                {% if pub.lien %}
+
+                <a
+                    href="{{ url_for(
+                        'ads_clic',
+                        publicite_id=pub.id
+                    ) }}"
+                    class="nova-ad-link"
+                    target="_blank"
+                    rel="noopener noreferrer">
+
+                    <video
+                        controls
+                        muted
+                        playsinline
+                        preload="metadata">
+
+                        <source
+                            src="{{ pub.contenu_url }}"
+                            type="video/mp4">
+
+                        Votre navigateur ne peut pas lire
+                        cette vidéo.
+
+                    </video>
+
+                </a>
+
+                {% else %}
+
+                <video
+                    controls
+                    muted
+                    playsinline
+                    preload="metadata">
+
+                    <source
+                        src="{{ pub.contenu_url }}"
+                        type="video/mp4">
+
+                    Votre navigateur ne peut pas lire
+                    cette vidéo.
+
+                </video>
+
+                {% endif %}
+
+
+            {% elif pub.type == "html" %}
+
+                <div class="nova-ad-html">
+
+                    {{ pub.contenu_url | safe }}
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endif %}
+
+    {% endif %}
+
+
+
+    <!-- ==================================================
+         EN-TÊTE DU JEU
+    ================================================== -->
 
     <section class="jeu-header">
 
+
         <div class="cover-wrapper">
+
 
             {% if jeu.couverture %}
 
@@ -34,101 +154,165 @@
             {% else %}
 
             <div class="cover-placeholder">
+
                 🎮
+
             </div>
 
             {% endif %}
 
+
         </div>
+
+
 
         <div class="infos">
 
+
             <span class="game-label">
+
                 🎮 JEU
+
             </span>
 
+
             <h1>
+
                 {{ jeu.nom }}
+
             </h1>
+
 
             <div class="game-info-list">
 
+
                 <div>
-                    <span>Console</span>
+
+                    <span>
+                        Console
+                    </span>
+
                     <strong>
                         {{ jeu.console or "Non précisée" }}
                     </strong>
+
                 </div>
 
+
                 <div>
-                    <span>Taille</span>
+
+                    <span>
+                        Taille
+                    </span>
+
                     <strong>
                         {{ jeu.taille or "Non précisée" }}
                     </strong>
+
                 </div>
 
+
                 <div>
-                    <span>Version</span>
+
+                    <span>
+                        Version
+                    </span>
+
                     <strong>
                         {{ jeu.version or "Non précisée" }}
                     </strong>
+
                 </div>
 
+
                 <div>
-                    <span>Langue</span>
+
+                    <span>
+                        Langue
+                    </span>
+
                     <strong>
                         {{ jeu.langue or "Non précisée" }}
                     </strong>
+
                 </div>
 
+
             </div>
+
 
             <div class="download-info">
 
+
                 <span>
+
                     ⬇️ Téléchargements
+
                 </span>
 
+
                 <strong>
+
                     {{ jeu.telechargements or 0 }}
+
                 </strong>
+
 
             </div>
 
+
             <div class="actions">
 
+
                 <a
-                    href="{{ url_for('telecharger', jeu_id=jeu.id) }}"
+                    href="{{ url_for(
+                        'telecharger',
+                        jeu_id=jeu.id
+                    ) }}"
                     class="btn telecharger">
 
                     ⬇️ Télécharger
 
                 </a>
 
+
                 <a
-                    href="{{ url_for('favori', jeu_id=jeu.id) }}"
+                    href="{{ url_for(
+                        'favori',
+                        jeu_id=jeu.id
+                    ) }}"
                     class="btn voir">
 
                     ❤️ Favori
 
                 </a>
 
+
             </div>
+
 
         </div>
 
+
     </section>
-        <!-- DESCRIPTION -->
+        <!-- ==================================================
+         DESCRIPTION
+    ================================================== -->
 
     <section class="game-section description">
 
         <div class="section-heading">
 
-            <span>INFORMATIONS</span>
+            <span>
+                INFORMATIONS
+            </span>
 
-            <h2>📖 Description</h2>
+            <h2>
+                📖 Description
+            </h2>
 
         </div>
+
 
         <div class="description-box">
 
@@ -151,30 +335,150 @@
     </section>
 
 
-    <!-- PUBLICITÉ -->
 
-    <div class="ad-space ad-middle">
+    <!-- ==================================================
+         PUBLICITÉ NOVA ADS - MILIEU
+         Emplacement : jeu_publicite_2
+    ================================================== -->
 
-        <span>PUBLICITÉ</span>
+    {% if nova_ads is defined
+          and nova_ads.get('jeu_publicite_2') %}
 
-    </div>
+        {% set pub = nova_ads.get('jeu_publicite_2') %}
+
+        {% if pub.actif %}
+
+        <div
+            class="nova-ad nova-ad-middle"
+            data-publicite-id="{{ pub.id }}"
+            data-emplacement="jeu_publicite_2">
 
 
-    <!-- CAPTURES -->
+            {% if pub.type == "image" %}
+
+
+                {% if pub.lien %}
+
+                <a
+                    href="{{ url_for(
+                        'ads_clic',
+                        publicite_id=pub.id
+                    ) }}"
+                    class="nova-ad-link"
+                    target="_blank"
+                    rel="noopener noreferrer">
+
+                    <img
+                        src="{{ pub.contenu_url }}"
+                        alt="{{ pub.nom }}"
+                        loading="lazy">
+
+                </a>
+
+                {% else %}
+
+                <img
+                    src="{{ pub.contenu_url }}"
+                    alt="{{ pub.nom }}"
+                    loading="lazy">
+
+                {% endif %}
+
+
+            {% elif pub.type == "video" %}
+
+
+                {% if pub.lien %}
+
+                <a
+                    href="{{ url_for(
+                        'ads_clic',
+                        publicite_id=pub.id
+                    ) }}"
+                    class="nova-ad-link"
+                    target="_blank"
+                    rel="noopener noreferrer">
+
+                    <video
+                        controls
+                        muted
+                        playsinline
+                        preload="metadata">
+
+                        <source
+                            src="{{ pub.contenu_url }}"
+                            type="video/mp4">
+
+                        Votre navigateur ne peut pas lire
+                        cette vidéo.
+
+                    </video>
+
+                </a>
+
+                {% else %}
+
+                <video
+                    controls
+                    muted
+                    playsinline
+                    preload="metadata">
+
+                    <source
+                        src="{{ pub.contenu_url }}"
+                        type="video/mp4">
+
+                    Votre navigateur ne peut pas lire
+                    cette vidéo.
+
+                </video>
+
+                {% endif %}
+
+
+            {% elif pub.type == "html" %}
+
+                <div class="nova-ad-html">
+
+                    {{ pub.contenu_url | safe }}
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endif %}
+
+    {% endif %}
+
+
+
+    <!-- ==================================================
+         CAPTURES D'ÉCRAN
+    ================================================== -->
 
     <section class="game-section captures">
 
         <div class="section-heading">
 
-            <span>APERÇU</span>
+            <span>
+                APERÇU
+            </span>
 
-            <h2>📷 Captures d'écran</h2>
+            <h2>
+                📷 Captures d'écran
+            </h2>
 
         </div>
 
+
         <div class="galerie">
 
+
             {% for image in [
+
                 jeu.image1,
                 jeu.image2,
                 jeu.image3,
@@ -185,14 +489,18 @@
                 jeu.image8,
                 jeu.image9,
                 jeu.image10
+
             ] %}
 
+
                 {% if image %}
+
 
                 <a
                     href="{{ image }}"
                     target="_blank"
                     class="capture-link">
+
 
                     <img
                         src="{{ image }}"
@@ -200,13 +508,19 @@
                         class="capture"
                         loading="lazy">
 
+
                 </a>
+
 
                 {% endif %}
 
+
             {% endfor %}
 
+
         </div>
+
+
 
         {% if not jeu.image1
             and not jeu.image2
@@ -219,31 +533,45 @@
             and not jeu.image9
             and not jeu.image10 %}
 
+
             <div class="empty-gallery">
 
                 📷 Aucune capture disponible.
 
             </div>
 
+
         {% endif %}
 
-    </section>
-        <!-- COMMENTAIRES -->
+
+            </section>
+                <!-- ==================================================
+         COMMENTAIRES
+    ================================================== -->
 
     <section class="game-section commentaires">
 
         <div class="section-heading">
 
-            <span>COMMUNAUTÉ</span>
+            <span>
+                COMMUNAUTÉ
+            </span>
 
-            <h2>💬 Commentaires</h2>
+            <h2>
+                💬 Commentaires
+            </h2>
 
         </div>
 
+
         <form
-            action="{{ url_for('commentaire', jeu_id=jeu.id) }}"
+            action="{{ url_for(
+                'commentaire',
+                jeu_id=jeu.id
+            ) }}"
             method="POST"
             class="form-commentaire">
+
 
             <input
                 type="text"
@@ -251,12 +579,14 @@
                 maxlength="50"
                 placeholder="Votre nom (facultatif)">
 
+
             <textarea
                 name="commentaire"
                 maxlength="1000"
                 rows="5"
                 placeholder="Écrivez votre commentaire..."
                 required></textarea>
+
 
             <button
                 type="submit"
@@ -266,455 +596,963 @@
 
             </button>
 
+
         </form>
 
 
+
+        <!-- LISTE DES COMMENTAIRES -->
+
         <div class="comments-list">
+
 
             {% if commentaires %}
 
+
                 {% for commentaire in commentaires %}
+
 
                 <article class="commentaire">
 
+
                     <div class="comment-avatar">
+
                         👤
+
                     </div>
+
 
                     <div class="comment-body">
 
+
                         <div class="comment-header">
 
+
                             <strong>
-                                {{ commentaire.pseudo }}
+
+                                {{ commentaire.pseudo
+                                   or "Utilisateur" }}
+
                             </strong>
+
 
                             {% if commentaire.date_commentaire %}
 
                             <small>
+
                                 {{ commentaire.date_commentaire }}
+
                             </small>
 
                             {% endif %}
 
+
                         </div>
 
+
                         <p>
+
                             {{ commentaire.commentaire }}
+
                         </p>
+
 
                     </div>
 
+
                 </article>
+
 
                 {% endfor %}
 
+
             {% else %}
+
 
                 <div class="empty-comments">
 
-                    <span>💬</span>
+
+                    <span>
+
+                        💬
+
+                    </span>
+
 
                     <p>
+
                         Aucun commentaire pour le moment.
+
                     </p>
 
+
                     <small>
-                        Sois le premier à laisser un commentaire.
+
+                        Sois le premier à laisser
+                        un commentaire.
+
                     </small>
+
 
                 </div>
 
+
             {% endif %}
 
+
         </div>
+
 
     </section>
 
 
-    <!-- PUBLICITÉ BAS DE PAGE -->
 
-    <div class="ad-space ad-bottom">
+    <!-- ==================================================
+         PUBLICITÉ BAS DE PAGE
+         
+         IMPORTANT :
+         Aucun emplacement publicitaire automatique
+         n'est ajouté ici pour le moment.
 
-        <span>PUBLICITÉ</span>
+         Cela permet de ne pas toucher aux bannières
+         déjà occupées.
+    ================================================== -->
 
-    </div>
-        <!-- INFORMATIONS DE TÉLÉCHARGEMENT -->
+
+
+    <!-- ==================================================
+         INFORMATIONS DE TÉLÉCHARGEMENT
+    ================================================== -->
 
     <section class="download-card">
 
+
         <div class="download-icon">
+
             ⬇️
+
         </div>
+
 
         <div class="download-text">
 
+
             <h2>
+
                 Prêt à télécharger ?
+
             </h2>
 
+
             <p>
+
                 Appuie sur le bouton ci-dessous
                 pour commencer le téléchargement.
+
             </p>
+
 
         </div>
 
+
         <a
-            href="{{ url_for('telecharger', jeu_id=jeu.id) }}"
+            href="{{ url_for(
+                'telecharger',
+                jeu_id=jeu.id
+            ) }}"
             class="download-main-btn">
 
             ⬇️ Télécharger {{ jeu.nom }}
 
         </a>
 
+
     </section>
 
 
-    <!-- NOTE -->
+
+    <!-- ==================================================
+         NOTE
+    ================================================== -->
 
     <div class="download-note">
 
-        <span>ℹ️</span>
+
+        <span>
+
+            ℹ️
+
+        </span>
+
 
         <p>
+
             Le téléchargement est effectué depuis
             le lien configuré par l'administrateur.
+
         </p>
+
 
     </div>
 
 
-</div>
-
-
-<!-- STYLE RAPIDE DE LA PAGE -->
+                                </div>
+                                <!-- ==================================================
+     STYLE PAGE JEU + NOVA ADS
+================================================== -->
 
 <style>
+
+/* ==================================================
+   PAGE
+================================================== */
 
 .page-jeu{
     max-width:900px;
     margin:auto;
 }
 
-.ad-space{
-    min-height:70px;
-    border:1px dashed #303947;
+
+/* ==================================================
+   NOVA ADS
+================================================== */
+
+.nova-ad{
+    width:100%;
+    margin-bottom:20px;
+
     background:#12161e;
+
+    border:1px solid #293140;
+
     border-radius:12px;
+
+    overflow:hidden;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    margin-bottom:20px;
+
+    min-height:70px;
 }
 
-.ad-space span{
-    font-size:10px;
-    color:#697586;
-    letter-spacing:1px;
+
+/* Image publicitaire */
+
+.nova-ad img{
+    display:block;
+
+    width:100%;
+    height:auto;
+
+    max-height:320px;
+
+    object-fit:cover;
 }
+
+
+/* Lien */
+
+.nova-ad-link{
+    display:block;
+
+    width:100%;
+
+    text-decoration:none;
+}
+
+
+/* Vidéo publicitaire */
+
+.nova-ad video{
+    display:block;
+
+    width:100%;
+
+    max-height:320px;
+
+    background:#000;
+}
+
+
+/* Publicité HTML */
+
+.nova-ad-html{
+    width:100%;
+    min-height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    overflow:hidden;
+}
+
+
+/* Petite indication uniquement
+   si une publicité est réellement affichée */
+
+.nova-ad::before{
+    content:"PUBLICITÉ";
+
+    position:absolute;
+
+    margin-top:-1px;
+
+    margin-left:8px;
+
+    font-size:8px;
+
+    color:#697586;
+
+    letter-spacing:1px;
+
+    pointer-events:none;
+}
+
+
+/* ==================================================
+   EN-TÊTE DU JEU
+================================================== */
 
 .jeu-header{
+
     display:grid;
+
     grid-template-columns:280px 1fr;
+
     gap:25px;
+
     background:#181d27;
+
     border:1px solid #293140;
+
     border-radius:20px;
+
     padding:20px;
+
 }
+
 
 .image-principale,
 .cover-placeholder{
+
     width:100%;
+
     height:360px;
+
     object-fit:cover;
+
     border-radius:15px;
+
 }
 
+
 .cover-placeholder{
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     background:#252d39;
+
     font-size:60px;
+
 }
+
 
 .game-label,
 .section-heading span{
+
     color:#4da3ff;
+
     font-size:10px;
+
     font-weight:700;
+
     letter-spacing:1.5px;
+
 }
+
 
 .infos h1{
+
     font-size:30px;
+
     margin:8px 0 20px;
+
 }
+
 
 .game-info-list{
+
     display:grid;
+
     grid-template-columns:1fr 1fr;
+
     gap:12px;
+
 }
+
 
 .game-info-list div{
+
     background:#12161e;
+
     padding:12px;
+
     border-radius:10px;
+
 }
+
 
 .game-info-list span{
+
     display:block;
+
     color:#758091;
+
     font-size:11px;
+
 }
+
 
 .game-info-list strong{
+
     display:block;
+
     margin-top:4px;
+
 }
+
 
 .download-info{
+
     display:flex;
+
     justify-content:space-between;
+
     margin:18px 0;
+
     color:#aeb7c4;
+
 }
+
 
 .download-info strong{
+
     color:white;
+
 }
+
 
 .actions{
+
     display:flex;
+
     gap:10px;
+
 }
+
 
 .btn{
+
     flex:1;
+
     text-align:center;
+
     padding:13px;
+
     border-radius:11px;
+
     text-decoration:none;
+
     font-weight:700;
+
 }
+
 
 .telecharger{
+
     background:#2e9b5b;
+
     color:white;
+
 }
+
 
 .voir{
+
     background:#28384c;
+
     color:#70b7ff;
+
 }
+
+
+/* ==================================================
+   SECTIONS
+================================================== */
 
 .game-section{
+
     background:#181d27;
+
     border:1px solid #293140;
+
     border-radius:18px;
+
     padding:20px;
+
     margin-top:20px;
+
 }
+
 
 .section-heading{
+
     margin-bottom:15px;
+
 }
+
 
 .section-heading h2{
+
     margin-top:5px;
+
 }
+
+
+/* ==================================================
+   DESCRIPTION
+================================================== */
 
 .description-box{
+
     background:#12161e;
+
     border-radius:12px;
+
     padding:15px;
+
     color:#c0c8d3;
+
     line-height:1.7;
+
 }
+
+
+/* ==================================================
+   GALERIE
+================================================== */
 
 .galerie{
+
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+
+    grid-template-columns:
+        repeat(3,1fr);
+
     gap:10px;
+
 }
+
 
 .capture-link{
+
     display:block;
+
 }
+
 
 .capture{
+
     width:100%;
+
     height:150px;
+
     object-fit:cover;
+
     border-radius:10px;
+
     display:block;
+
 }
 
+
+/* ==================================================
+   COMMENTAIRES
+================================================== */
+
 .form-commentaire{
+
     display:flex;
+
     flex-direction:column;
+
     gap:10px;
+
 }
+
 
 .form-commentaire input,
 .form-commentaire textarea{
+
     width:100%;
+
     padding:13px;
+
     border:1px solid #303947;
+
     border-radius:10px;
+
     background:#12161e;
+
     color:white;
+
     resize:vertical;
+
 }
+
 
 .comment-btn{
+
     padding:13px;
+
     border:0;
+
     border-radius:10px;
+
     background:#4da3ff;
+
     color:white;
+
     font-weight:700;
+
+    cursor:pointer;
+
 }
+
 
 .comments-list{
+
     margin-top:20px;
+
     display:flex;
+
     flex-direction:column;
+
     gap:10px;
+
 }
+
 
 .commentaire{
+
     display:flex;
+
     gap:12px;
+
     padding:13px;
+
     background:#12161e;
+
     border-radius:12px;
+
 }
+
 
 .comment-avatar{
+
     width:38px;
+
     height:38px;
+
     flex-shrink:0;
+
     border-radius:50%;
+
     background:#252d39;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
 }
+
 
 .comment-body{
+
     flex:1;
+
 }
+
 
 .comment-header{
+
     display:flex;
+
     justify-content:space-between;
+
     gap:10px;
+
 }
+
 
 .comment-header small{
+
     color:#687383;
+
     font-size:10px;
+
 }
 
+
 .comment-body p{
+
     margin-top:7px;
+
     color:#bdc5d0;
+
 }
+
 
 .empty-gallery,
 .empty-comments{
+
     text-align:center;
+
     padding:30px;
+
     color:#778292;
+
 }
+
 
 .empty-comments span{
+
     font-size:35px;
+
     display:block;
+
 }
+
+
+/* ==================================================
+   TÉLÉCHARGEMENT
+================================================== */
 
 .download-card{
+
     margin-top:20px;
+
     padding:20px;
+
     background:#181d27;
+
     border:1px solid #293140;
+
     border-radius:18px;
+
     text-align:center;
+
 }
+
 
 .download-icon{
+
     font-size:35px;
+
 }
+
 
 .download-text p{
+
     color:#8d97a6;
+
     font-size:13px;
+
 }
+
 
 .download-main-btn{
+
     display:block;
+
     margin-top:18px;
+
     padding:15px;
+
     border-radius:12px;
+
     background:#2e9b5b;
+
     color:white;
+
     text-decoration:none;
+
     font-weight:700;
+
 }
+
 
 .download-note{
+
     display:flex;
+
     gap:8px;
+
     margin:12px 0 30px;
+
     color:#788393;
+
     font-size:11px;
+
 }
 
 
-/* MOBILE */
+/* ==================================================
+   MOBILE
+================================================== */
 
 @media(max-width:650px){
 
+
     .jeu-header{
+
         grid-template-columns:1fr;
+
         padding:14px;
+
     }
+
 
     .image-principale,
     .cover-placeholder{
+
         height:280px;
+
     }
+
 
     .infos h1{
+
         font-size:24px;
+
     }
+
 
     .galerie{
-        grid-template-columns:1fr 1fr;
+
+        grid-template-columns:
+            1fr 1fr;
+
     }
+
 
     .capture{
+
         height:115px;
+
     }
+
 
     .game-info-list{
+
         gap:8px;
+
     }
+
 
     .game-info-list div{
+
         padding:10px;
+
     }
 
+
     .download-main-btn{
+
         font-size:14px;
+
     }
+
+
+    .nova-ad{
+
+        border-radius:10px;
+
+        margin-bottom:15px;
+
+    }
+
+
+    .nova-ad img{
+
+        max-height:220px;
+
+        object-fit:contain;
+
+    }
+
+
+    .nova-ad video{
+
+        max-height:220px;
+
+    }
+
+
+}
+
+
+/* ==================================================
+   TRÈS PETITS ÉCRANS
+================================================== */
+
+@media(max-width:400px){
+
+
+    .galerie{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .capture{
+
+        height:180px;
+
+    }
+
+
+    .actions{
+
+        flex-direction:column;
+
+    }
+
+
+    .nova-ad img{
+
+        max-height:180px;
+
+    }
+
 
 }
 
 </style>
+
+
+
+<!-- ==================================================
+     FIN DU CONTENU
+================================================== -->
 
 {% endblock %}
