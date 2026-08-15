@@ -2632,6 +2632,496 @@ def enregistrer_token_fcm():
         return {
             "success": False
         }, 500
+        # ==========================
+# ANALYTICS / STATISTIQUES
+# ==========================
+
+from datetime import datetime, timezone
+
+
+def enregistrer_statistique(
+    type_evenement,
+    page=None,
+    jeu_id=None
+):
+    try:
+
+        ip = request.headers.get(
+            "X-Forwarded-For",
+            request.remote_addr
+        )
+
+        if ip and "," in ip:
+            ip = ip.split(",")[0].strip()
+
+        user_agent = request.headers.get(
+            "User-Agent",
+            ""
+        )
+
+        supabase.table(
+            "analytics"
+        ).insert({
+
+            "type_evenement":
+                type_evenement,
+
+            "page":
+                page,
+
+            "jeu_id":
+                jeu_id,
+
+            "ip":
+                ip,
+
+            "user_agent":
+                user_agent,
+
+            "date":
+                datetime.now(
+                    timezone.utc
+                ).isoformat()
+
+        }).execute()
+
+    except Exception as e:
+
+        print(
+            "ERREUR ANALYTICS :",
+            str(e)
+        )
+
+
+# ==========================
+# ENREGISTRER UNE VISITE
+# ==========================
+
+@app.route(
+    "/api/analytics/visite",
+    methods=["POST"]
+)
+def analytics_visite():
+
+    donnees = request.get_json(
+        silent=True
+    ) or {}
+
+    page = donnees.get(
+        "page",
+        "/"
+    )
+
+    enregistrer_statistique(
+        type_evenement="visite",
+        page=page
+    )
+
+    return {
+        "success": True
+    }
+
+
+# ==========================
+# ENREGISTRER LE TEMPS PASSE
+# ==========================
+
+@app.route(
+    "/api/analytics/temps",
+    methods=["POST"]
+)
+def analytics_temps():
+
+    donnees = request.get_json(
+        silent=True
+    ) or {}
+
+    page = donnees.get(
+        "page",
+        "/"
+    )
+
+    secondes = donnees.get(
+        "secondes",
+        0
+    )
+
+    try:
+        secondes = int(secondes)
+    except:
+        secondes = 0
+
+    secondes = max(
+        0,
+        min(secondes, 86400)
+    )
+
+    try:
+
+        enregistrer_statistique(
+            type_evenement="temps",
+            page=page
+        )
+
+        supabase.table(
+            "analytics"
+        ).update({
+
+            "secondes":
+                secondes
+
+        }).eq(
+            "id",
+            (
+                supabase
+                .table("analytics")
+                .select("id")
+                .eq(
+                    "type_evenement",
+                    "temps"
+                )
+                .eq(
+                    "page",
+                    page
+                )
+                .order(
+                    "id",
+                    desc=True
+                )
+                .limit(1)
+                .execute()
+                .data[0]["id"]
+            )
+            if (
+                supabase
+                .table("analytics")
+                .select("id")
+                .eq(
+                    "type_evenement",
+                    "temps"
+                )
+                .eq(
+                    "page",
+                    page
+                )
+                .order(
+                    "id",
+                    desc=True
+                )
+                .limit(1)
+                .execute()
+                .data
+            )
+            else -1
+        ).execute()
+
+    except Exception as e:
+
+        print(
+            "ERREUR TEMPS ANALYTICS :",
+            str(e)
+        )
+
+    return {
+        "success": True
+    }
+
+
+# ==========================
+# API STATISTIQUES ADMIN
+# ==========================
+
+@app.route(
+    "/api/admin/statistiques"
+)
+@admin_required
+def statistiques_admin():
+
+    try:
+
+        # ==========================
+        # TOUTES LES DONNÉES
+        # ==========================
+
+        resultat = (
+            supabase
+            .table("analytics")
+            .select("*")
+            .execute()
+        )
+
+        donnees = (
+            resultat.data or []
+        )
+
+
+        # ==========================
+        # VISITEURS
+        # ==========================
+
+        visites = [
+            x for x in donnees
+            if x.get(
+                "type_evenement"
+            ) == "visite"
+        ]
+
+        visiteurs_total = len(
+            visites
+        )
+
+
+        # ==========================
+        # VISITEURS UNIQUES
+        # ==========================
+
+        ips = set()
+
+        for visite in visites:
+
+            ip = visite.get("ip")
+
+            if ip:
+                ips.add(ip)
+
+        visiteurs_uniques = len(ips)
+
+
+        # ==========================
+        # PAGES VUES
+        # ==========================
+
+        pages_vues = {}
+
+        for visite in visites:
+
+            page = (
+                visite.get("page")
+                or "/"
+            )
+
+            pages_vues[page] = (
+                pages_vues.get(page, 0)
+                + 1
+            )
+
+
+        pages_populaires = sorted(
+            pages_vues.items(),
+            key=lambda x: x[1],
+            reverse=True
+        )[:10]
+
+
+        # ==========================
+        # TEMPS TOTAL
+        # ==========================
+
+        temps_total = 0
+
+        temps = [
+            x for x in donnees
+            if x.get(
+                "type_evenement"
+            ) == "temps"
+        ]
+
+        for element in temps:
+
+            temps_total += (
+                element.get(
+                    "secondes"
+                )
+                or 0
+            )
+
+
+        # ==========================
+        # TEMPS MOYEN
+        # ==========================
+
+        if temps:
+
+            temps_moyen = (
+                temps_total / len(temps)
+            )
+
+        else:
+
+            temps_moyen = 0
+
+
+        # ==========================
+        # UTILISATEURS ACTIFS
+        # ==========================
+
+        maintenant = datetime.now(
+            timezone.utc
+        )
+
+        utilisateurs_actifs = set()
+
+        for visite in visites:
+
+            date_visite = visite.get(
+                "date"
+            )
+
+            if not date_visite:
+                continue
+
+            try:
+
+                date_obj = datetime.fromisoformat(
+                    date_visite.replace(
+                        "Z",
+                        "+00:00"
+                    )
+                )
+
+                difference = (
+                    maintenant - date_obj
+                ).total_seconds()
+
+                if difference <= 300:
+
+                    ip = visite.get("ip")
+
+                    if ip:
+                        utilisateurs_actifs.add(ip)
+
+            except:
+
+                continue
+
+
+        # ==========================
+        # RÉPONSE
+        # ==========================
+
+        return {
+
+            "success": True,
+
+            "visiteurs_total":
+                visiteurs_total,
+
+            "visiteurs_uniques":
+                visiteurs_uniques,
+
+            "pages_vues":
+                sum(
+                    pages_vues.values()
+                ),
+
+            "pages_populaires":
+                [
+                    {
+                        "page": page,
+                        "visites": nombre
+                    }
+                    for page, nombre
+                    in pages_populaires
+                ],
+
+            "utilisateurs_actifs":
+                len(
+                    utilisateurs_actifs
+                ),
+
+            "temps_total_secondes":
+                temps_total,
+
+            "temps_moyen_secondes":
+                round(
+                    temps_moyen,
+                    1
+                )
+
+        }
+
+    except Exception as e:
+
+        print(
+            "ERREUR STATISTIQUES ADMIN :",
+            str(e)
+        )
+
+        return {
+
+            "success": False,
+
+            "message":
+                str(e)
+
+        }, 500
+
+
+# ==========================
+# STATISTIQUES TÉLÉCHARGEMENTS
+# ==========================
+
+@app.route(
+    "/api/admin/telechargements"
+)
+@admin_required
+def statistiques_telechargements():
+
+    try:
+
+        resultat = (
+            supabase
+            .table("jeux")
+            .select(
+                "id,nom,telechargements"
+            )
+            .order(
+                "telechargements",
+                desc=True
+            )
+            .execute()
+        )
+
+        jeux = resultat.data or []
+
+        total = 0
+
+        for jeu_data in jeux:
+
+            total += (
+                jeu_data.get(
+                    "telechargements"
+                )
+                or 0
+            )
+
+        return {
+
+            "success": True,
+
+            "total":
+                total,
+
+            "jeux":
+                jeux
+
+        }
+
+    except Exception as e:
+
+        print(
+            "ERREUR STATS TELECHARGEMENTS :",
+            str(e)
+        )
+
+        return {
+
+            "success": False,
+
+            "message":
+                str(e)
+
+        }, 500
 
 
 # ==========================
