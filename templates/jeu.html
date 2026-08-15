@@ -1,4 +1,4 @@
-<!-- templates/jeu.html - PARTIE 1/3 -->
+<!-- templates/jeu.html -->
 
 {% extends "base.html" %}
 
@@ -9,120 +9,6 @@
 {% block content %}
 
 <div class="page-jeu">
-
-
-    <!-- ==================================================
-         PUBLICITÉ NOVA ADS - HAUT
-         Emplacement : jeu_publicite_1
-    ================================================== -->
-
-    {% if nova_ads is defined
-          and nova_ads.get('jeu_publicite_1') %}
-
-        {% set pub = nova_ads.get('jeu_publicite_1') %}
-
-        {% if pub.actif %}
-
-        <div
-            class="nova-ad nova-ad-top"
-            data-publicite-id="{{ pub.id }}"
-            data-emplacement="jeu_publicite_1">
-
-            {% if pub.type == "image" %}
-
-                {% if pub.lien %}
-
-                <a
-                    href="{{ url_for(
-                        'ads_clic',
-                        publicite_id=pub.id
-                    ) }}"
-                    class="nova-ad-link"
-                    target="_blank"
-                    rel="noopener noreferrer">
-
-                    <img
-                        src="{{ pub.contenu_url }}"
-                        alt="{{ pub.nom }}"
-                        loading="eager">
-
-                </a>
-
-                {% else %}
-
-                <img
-                    src="{{ pub.contenu_url }}"
-                    alt="{{ pub.nom }}"
-                    loading="eager">
-
-                {% endif %}
-
-
-            {% elif pub.type == "video" %}
-
-                {% if pub.lien %}
-
-                <a
-                    href="{{ url_for(
-                        'ads_clic',
-                        publicite_id=pub.id
-                    ) }}"
-                    class="nova-ad-link"
-                    target="_blank"
-                    rel="noopener noreferrer">
-
-                    <video
-                        controls
-                        muted
-                        playsinline
-                        preload="metadata">
-
-                        <source
-                            src="{{ pub.contenu_url }}"
-                            type="video/mp4">
-
-                        Votre navigateur ne peut pas lire
-                        cette vidéo.
-
-                    </video>
-
-                </a>
-
-                {% else %}
-
-                <video
-                    controls
-                    muted
-                    playsinline
-                    preload="metadata">
-
-                    <source
-                        src="{{ pub.contenu_url }}"
-                        type="video/mp4">
-
-                    Votre navigateur ne peut pas lire
-                    cette vidéo.
-
-                </video>
-
-                {% endif %}
-
-
-            {% elif pub.type == "html" %}
-
-                <div class="nova-ad-html">
-                    {{ pub.contenu_url | safe }}
-                </div>
-
-            {% endif %}
-
-        </div>
-
-        {% endif %}
-
-    {% endif %}
-
-
 
     <!-- ==================================================
          EN-TÊTE DU JEU
@@ -166,34 +52,27 @@
 
                 <div>
                     <span>Console</span>
-
                     <strong>
                         {{ jeu.console or "Non précisée" }}
                     </strong>
                 </div>
 
-
                 <div>
                     <span>Taille</span>
-
                     <strong>
                         {{ jeu.taille or "Non précisée" }}
                     </strong>
                 </div>
 
-
                 <div>
                     <span>Version</span>
-
                     <strong>
                         {{ jeu.version or "Non précisée" }}
                     </strong>
                 </div>
 
-
                 <div>
                     <span>Langue</span>
-
                     <strong>
                         {{ jeu.langue or "Non précisée" }}
                     </strong>
@@ -290,119 +169,6 @@
 
 
     <!-- ==================================================
-         PUBLICITÉ NOVA ADS - MILIEU
-         Emplacement : jeu_publicite_2
-    ================================================== -->
-
-    {% if nova_ads is defined
-          and nova_ads.get('jeu_publicite_2') %}
-
-        {% set pub = nova_ads.get('jeu_publicite_2') %}
-
-        {% if pub.actif %}
-
-        <div
-            class="nova-ad nova-ad-middle"
-            data-publicite-id="{{ pub.id }}"
-            data-emplacement="jeu_publicite_2">
-
-            {% if pub.type == "image" %}
-
-                {% if pub.lien %}
-
-                <a
-                    href="{{ url_for(
-                        'ads_clic',
-                        publicite_id=pub.id
-                    ) }}"
-                    class="nova-ad-link"
-                    target="_blank"
-                    rel="noopener noreferrer">
-
-                    <img
-                        src="{{ pub.contenu_url }}"
-                        alt="{{ pub.nom }}"
-                        loading="lazy">
-
-                </a>
-
-                {% else %}
-
-                <img
-                    src="{{ pub.contenu_url }}"
-                    alt="{{ pub.nom }}"
-                    loading="lazy">
-
-                {% endif %}
-
-
-            {% elif pub.type == "video" %}
-
-                {% if pub.lien %}
-
-                <a
-                    href="{{ url_for(
-                        'ads_clic',
-                        publicite_id=pub.id
-                    ) }}"
-                    class="nova-ad-link"
-                    target="_blank"
-                    rel="noopener noreferrer">
-
-                    <video
-                        controls
-                        muted
-                        playsinline
-                        preload="metadata">
-
-                        <source
-                            src="{{ pub.contenu_url }}"
-                            type="video/mp4">
-
-                        Votre navigateur ne peut pas lire
-                        cette vidéo.
-
-                    </video>
-
-                </a>
-
-                {% else %}
-
-                <video
-                    controls
-                    muted
-                    playsinline
-                    preload="metadata">
-
-                    <source
-                        src="{{ pub.contenu_url }}"
-                        type="video/mp4">
-
-                    Votre navigateur ne peut pas lire
-                    cette vidéo.
-
-                </video>
-
-                {% endif %}
-
-
-            {% elif pub.type == "html" %}
-
-                <div class="nova-ad-html">
-                    {{ pub.contenu_url | safe }}
-                </div>
-
-            {% endif %}
-
-        </div>
-
-        {% endif %}
-
-    {% endif %}
-
-
-
-    <!-- ==================================================
          CAPTURES D'ÉCRAN
     ================================================== -->
 
@@ -424,7 +190,6 @@
         <div class="galerie">
 
             {% for image in [
-
                 jeu.image1,
                 jeu.image2,
                 jeu.image3,
@@ -435,7 +200,6 @@
                 jeu.image8,
                 jeu.image9,
                 jeu.image10
-
             ] %}
 
                 {% if image %}
@@ -478,8 +242,11 @@
 
         {% endif %}
 
-        </section>
-        <!-- ==================================================
+    </section>
+
+
+
+    <!-- ==================================================
          COMMENTAIRES
     ================================================== -->
 
@@ -530,6 +297,7 @@
             </button>
 
         </form>
+
 
 
         <!-- LISTE DES COMMENTAIRES -->
@@ -606,15 +374,6 @@
 
 
     <!-- ==================================================
-         PUBLICITÉ BAS DE PAGE
-
-         Aucun emplacement publicitaire automatique
-         n'est ajouté ici pour le moment.
-    ================================================== -->
-
-
-
-    <!-- ==================================================
          INFORMATIONS DE TÉLÉCHARGEMENT
     ================================================== -->
 
@@ -675,9 +434,6 @@
 </div>
 
 
-<!-- ==================================================
-     STYLE PAGE JEU + NOVA ADS
-================================================== -->
 
 <style>
 
@@ -688,108 +444,6 @@
 .page-jeu {
     max-width: 900px;
     margin: auto;
-}
-
-
-/* ==================================================
-   NOVA ADS
-================================================== */
-
-.nova-ad {
-    width: 100%;
-    margin-bottom: 20px;
-
-    background: #12161e;
-
-    border: 1px solid #293140;
-
-    border-radius: 12px;
-
-    overflow: hidden;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    min-height: 70px;
-
-    position: relative;
-}
-
-
-/* Image publicitaire */
-
-.nova-ad img {
-    display: block;
-
-    width: 100%;
-    height: auto;
-
-    max-height: 320px;
-
-    object-fit: cover;
-}
-
-
-/* Lien publicitaire */
-
-.nova-ad-link {
-    display: block;
-
-    width: 100%;
-
-    text-decoration: none;
-}
-
-
-/* Vidéo publicitaire */
-
-.nova-ad video {
-    display: block;
-
-    width: 100%;
-
-    max-height: 320px;
-
-    background: #000;
-}
-
-
-/* Publicité HTML */
-
-.nova-ad-html {
-    width: 100%;
-    min-height: 70px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-}
-
-
-/* Indication PUBLICITÉ */
-
-.nova-ad::before {
-    content: "PUBLICITÉ";
-
-    position: absolute;
-
-    top: 5px;
-    left: 8px;
-
-    font-size: 8px;
-
-    color: #697586;
-
-    letter-spacing: 1px;
-
-    pointer-events: none;
-
-    z-index: 2;
 }
 
 
@@ -812,7 +466,6 @@
     border-radius: 20px;
 
     padding: 20px;
-
 }
 
 
@@ -828,7 +481,6 @@
     object-fit: cover;
 
     border-radius: 15px;
-
 }
 
 
@@ -843,7 +495,6 @@
     background: #252d39;
 
     font-size: 60px;
-
 }
 
 
@@ -861,7 +512,6 @@
     font-weight: 700;
 
     letter-spacing: 1.5px;
-
 }
 
 
@@ -874,7 +524,6 @@
     font-size: 30px;
 
     margin: 8px 0 20px;
-
 }
 
 
@@ -885,7 +534,6 @@
     grid-template-columns: 1fr 1fr;
 
     gap: 12px;
-
 }
 
 
@@ -896,7 +544,6 @@
     padding: 12px;
 
     border-radius: 10px;
-
 }
 
 
@@ -907,7 +554,6 @@
     color: #758091;
 
     font-size: 11px;
-
 }
 
 
@@ -916,7 +562,6 @@
     display: block;
 
     margin-top: 4px;
-
 }
 
 
@@ -929,14 +574,11 @@
     margin: 18px 0;
 
     color: #aeb7c4;
-
 }
 
 
 .download-info strong {
-
     color: white;
-
 }
 
 
@@ -949,7 +591,6 @@
     display: flex;
 
     gap: 10px;
-
 }
 
 
@@ -966,7 +607,6 @@
     text-decoration: none;
 
     font-weight: 700;
-
 }
 
 
@@ -975,7 +615,6 @@
     background: #2e9b5b;
 
     color: white;
-
 }
 
 
@@ -984,7 +623,6 @@
     background: #28384c;
 
     color: #70b7ff;
-
 }
 
 
@@ -1003,21 +641,16 @@
     padding: 20px;
 
     margin-top: 20px;
-
 }
 
 
 .section-heading {
-
     margin-bottom: 15px;
-
 }
 
 
 .section-heading h2 {
-
     margin-top: 5px;
-
 }
 
 
@@ -1036,7 +669,6 @@
     color: #c0c8d3;
 
     line-height: 1.7;
-
 }
 
 
@@ -1052,14 +684,11 @@
         repeat(3, 1fr);
 
     gap: 10px;
-
 }
 
 
 .capture-link {
-
     display: block;
-
 }
 
 
@@ -1074,9 +703,10 @@
     border-radius: 10px;
 
     display: block;
-
 }
-    /* ==================================================
+
+
+/* ==================================================
    COMMENTAIRES
 ================================================== */
 
@@ -1087,7 +717,6 @@
     flex-direction: column;
 
     gap: 10px;
-
 }
 
 
@@ -1107,7 +736,6 @@
     color: white;
 
     resize: vertical;
-
 }
 
 
@@ -1117,7 +745,6 @@
     outline: none;
 
     border-color: #4da3ff;
-
 }
 
 
@@ -1138,14 +765,11 @@
     cursor: pointer;
 
     transition: opacity .2s ease;
-
 }
 
 
 .comment-btn:hover {
-
     opacity: .9;
-
 }
 
 
@@ -1158,7 +782,6 @@
     flex-direction: column;
 
     gap: 12px;
-
 }
 
 
@@ -1175,7 +798,6 @@
     border: 1px solid #293140;
 
     border-radius: 12px;
-
 }
 
 
@@ -1198,7 +820,6 @@
     border-radius: 50%;
 
     font-size: 20px;
-
 }
 
 
@@ -1207,7 +828,6 @@
     flex: 1;
 
     min-width: 0;
-
 }
 
 
@@ -1222,7 +842,6 @@
     gap: 10px;
 
     margin-bottom: 7px;
-
 }
 
 
@@ -1231,7 +850,6 @@
     color: white;
 
     font-size: 14px;
-
 }
 
 
@@ -1240,7 +858,6 @@
     color: #697586;
 
     font-size: 11px;
-
 }
 
 
@@ -1255,7 +872,6 @@
     white-space: pre-wrap;
 
     overflow-wrap: anywhere;
-
 }
 
 
@@ -1274,7 +890,6 @@
     border-radius: 12px;
 
     border: 1px dashed #303947;
-
 }
 
 
@@ -1285,7 +900,6 @@
     font-size: 35px;
 
     margin-bottom: 10px;
-
 }
 
 
@@ -1294,14 +908,11 @@
     margin: 0 0 5px;
 
     color: #c0c8d3;
-
 }
 
 
 .empty-comments small {
-
     color: #697586;
-
 }
 
 
@@ -1320,7 +931,6 @@
     background: #12161e;
 
     border-radius: 12px;
-
 }
 
 
@@ -1349,7 +959,6 @@
     align-items: center;
 
     gap: 18px;
-
 }
 
 
@@ -1372,14 +981,11 @@
     border-radius: 14px;
 
     font-size: 25px;
-
 }
 
 
 .download-text {
-
     flex: 1;
-
 }
 
 
@@ -1388,7 +994,6 @@
     margin: 0 0 5px;
 
     font-size: 20px;
-
 }
 
 
@@ -1401,7 +1006,6 @@
     font-size: 13px;
 
     line-height: 1.5;
-
 }
 
 
@@ -1426,7 +1030,6 @@
     transition:
         transform .2s ease,
         opacity .2s ease;
-
 }
 
 
@@ -1435,7 +1038,6 @@
     transform: translateY(-1px);
 
     opacity: .9;
-
 }
 
 
@@ -1466,21 +1068,16 @@
     font-size: 12px;
 
     line-height: 1.5;
-
 }
 
 
 .download-note span {
-
     flex-shrink: 0;
-
 }
 
 
 .download-note p {
-
     margin: 0;
-
 }
 
 
@@ -1491,9 +1088,7 @@
 @media (max-width: 760px) {
 
     .page-jeu {
-
         max-width: 100%;
-
     }
 
 
@@ -1502,22 +1097,17 @@
         grid-template-columns: 220px 1fr;
 
         gap: 18px;
-
     }
 
 
     .image-principale,
     .cover-placeholder {
-
         height: 300px;
-
     }
 
 
     .infos h1 {
-
         font-size: 25px;
-
     }
 
 
@@ -1525,21 +1115,16 @@
 
         grid-template-columns:
             repeat(2, 1fr);
-
     }
 
 
     .capture {
-
         height: 140px;
-
     }
 
 
     .download-card {
-
         flex-wrap: wrap;
-
     }
 
 
@@ -1548,14 +1133,11 @@
         min-width: calc(
             100% - 75px
         );
-
     }
 
 
     .download-main-btn {
-
         width: 100%;
-
     }
 
 }
@@ -1572,22 +1154,17 @@
         display: block;
 
         padding: 15px;
-
     }
 
 
     .cover-wrapper {
-
         margin-bottom: 18px;
-
     }
 
 
     .image-principale,
     .cover-placeholder {
-
         height: 330px;
-
     }
 
 
@@ -1596,7 +1173,6 @@
         font-size: 24px;
 
         margin-bottom: 15px;
-
     }
 
 
@@ -1605,21 +1181,16 @@
         grid-template-columns: 1fr;
 
         gap: 8px;
-
     }
 
 
     .actions {
-
         flex-direction: column;
-
     }
 
 
     .game-section {
-
         padding: 15px;
-
     }
 
 
@@ -1629,21 +1200,16 @@
             repeat(2, 1fr);
 
         gap: 8px;
-
     }
 
 
     .capture {
-
         height: 120px;
-
     }
 
 
     .commentaire {
-
         padding: 12px;
-
     }
 
 
@@ -1654,14 +1220,11 @@
         flex-direction: column;
 
         gap: 3px;
-
     }
 
 
     .download-card {
-
         padding: 18px;
-
     }
 
 
@@ -1670,7 +1233,6 @@
         width: 48px;
 
         height: 48px;
-
     }
 
 }
@@ -1683,28 +1245,21 @@
 @media (max-width: 380px) {
 
     .galerie {
-
         grid-template-columns: 1fr;
-
     }
 
 
     .capture {
-
         height: 180px;
-
     }
 
 
     .download-text {
-
         min-width: 100%;
-
     }
 
 }
 
 </style>
-
 
 {% endblock %}
