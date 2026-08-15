@@ -9,21 +9,27 @@
           content="width=device-width, initial-scale=1.0">
 
     <!-- ==================================================
-         NOVAGAMING
+         ICÔNE NOVAGAMING
     ================================================== -->
 
-    <link rel="icon"
-          type="image/png"
-          href="{{ url_for('static', filename='images/logo.png') }}">
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ url_for('static', filename='images/logo.png') }}">
 
-    <link rel="apple-touch-icon"
-          href="{{ url_for('static', filename='images/logo.png') }}">
+    <link
+        rel="apple-touch-icon"
+        href="{{ url_for('static', filename='images/logo.png') }}">
 
 
-    <!-- Google Analytics -->
+    <!-- ==================================================
+         GOOGLE ANALYTICS
+    ================================================== -->
 
-    <script async
-            src="https://www.googletagmanager.com/gtag/js?id=G-BPNC77TV9T"></script>
+    <script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-BPNC77TV9T">
+    </script>
 
     <script>
 
@@ -45,15 +51,17 @@
     </script>
 
 
+    <!-- ==================================================
+         META
+    ================================================== -->
+
     <meta
         name="description"
         content="NovaGaming - Découvrez les derniers jeux disponibles.">
 
-
     <meta
         name="theme-color"
         content="#10131a">
-
 
     <meta
         name="google-site-verification"
@@ -76,6 +84,10 @@
 
     </script>
 
+
+    <!-- ==================================================
+         TITRE
+    ================================================== -->
 
     <title>
         {% block title %}NovaGaming{% endblock %}
@@ -110,10 +122,12 @@
 
 
     <!-- ==================================================
-         STYLE NOVAGAMING
+         STYLE BASE
     ================================================== -->
 
     <style>
+
+        /* Logo */
 
         .logo-image {
 
@@ -207,122 +221,28 @@
         }
 
 
+        .notification-activate-icon {
+
+            font-size: 17px;
+
+        }
+
+
         /* ==================================================
-           NOVA ADS
+           MOBILE
         ================================================== */
-
-        .nova-ad {
-
-            width: 100%;
-
-            margin: 15px auto;
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            overflow: hidden;
-
-            border-radius: 12px;
-
-        }
-
-
-        .nova-ad img {
-
-            width: 100%;
-
-            height: auto;
-
-            max-height: 250px;
-
-            object-fit: cover;
-
-            display: block;
-
-        }
-
-
-        .nova-ad video {
-
-            width: 100%;
-
-            max-height: 250px;
-
-            object-fit: cover;
-
-            display: block;
-
-            border-radius: 12px;
-
-        }
-
-
-        .nova-ad iframe {
-
-            width: 100%;
-
-            min-height: 120px;
-
-            border: 0;
-
-            border-radius: 12px;
-
-        }
-
-
-        .nova-ad-link {
-
-            display: block;
-
-            width: 100%;
-
-            text-decoration: none;
-
-        }
-
 
         @media (max-width: 600px) {
 
-            .nova-ad {
+            .notification-activate-btn {
 
-                margin: 10px auto;
+                bottom: 75px;
 
-                border-radius: 10px;
+                right: 10px;
 
-            }
+                padding: 10px 12px;
 
-
-            .nova-ad img {
-
-                max-height: 180px;
-
-            }
-
-
-            .nova-ad video {
-
-                max-height: 180px;
-
-            }
-
-        }
-
-
-        @media (min-width: 768px) {
-
-            .nova-ad img {
-
-                max-height: 250px;
-
-            }
-
-
-            .nova-ad video {
-
-                max-height: 300px;
+                font-size: 12px;
 
             }
 
@@ -346,6 +266,8 @@
     <div class="topbar-inner">
 
 
+        <!-- LOGO -->
+
         <a
             href="{{ url_for('accueil') }}"
             class="logo">
@@ -358,15 +280,21 @@
 
 
             <span class="logo-text">
+
                 NovaGaming
+
             </span>
 
 
         </a>
 
 
+        <!-- ACTIONS -->
+
         <div class="header-actions">
 
+
+            <!-- Nouveautés -->
 
             <a
                 href="{{ url_for('nouveautes') }}"
@@ -381,6 +309,8 @@
             </a>
 
 
+            <!-- Populaires -->
+
             <a
                 href="{{ url_for('populaires') }}"
                 class="header-btn">
@@ -393,6 +323,8 @@
 
             </a>
 
+
+            <!-- Notifications -->
 
             <a
                 href="{{ url_for('notifications') }}"
@@ -416,7 +348,6 @@
 
         </div>
 
-
     </div>
 
 
@@ -431,7 +362,9 @@
 
 
         <div class="search-icon">
+
             🔍
+
         </div>
 
 
@@ -444,7 +377,9 @@
 
 
         <button type="submit">
+
             Rechercher
+
         </button>
 
 
@@ -455,7 +390,11 @@
 
 
 <!-- ==================================================
-     CONTENU
+     CONTENU DES PAGES
+     
+     IMPORTANT :
+     Le block content est fermé ici.
+     Cela évite l'erreur Jinja de admin.html.
 ================================================== -->
 
 <main class="conteneur">
@@ -463,229 +402,15 @@
     {% block content %}
     {% endblock %}
 
-        </main>
-        <!-- ==================================================
-     NOVA ADS
-     Affichage des publicités actives
-================================================== -->
-
-{% macro afficher_pub(pub) %}
-
-    {% if pub and pub.actif %}
-
-        <div
-            class="nova-ad"
-            data-publicite-id="{{ pub.id }}"
-            data-emplacement="{{ pub.emplacement }}">
-
-            {% if pub.type == "image" %}
-
-                {% if pub.lien %}
-
-                    <a
-                        href="{{ url_for('ads_clic', publicite_id=pub.id) }}"
-                        class="nova-ad-link"
-                        target="_blank"
-                        rel="noopener noreferrer">
-
-                        <img
-                            src="{{ pub.contenu_url }}"
-                            alt="{{ pub.nom }}"
-                            loading="lazy">
-
-                    </a>
-
-                {% else %}
-
-                    <img
-                        src="{{ pub.contenu_url }}"
-                        alt="{{ pub.nom }}"
-                        loading="lazy">
-
-                {% endif %}
-
-
-            {% elif pub.type == "video" %}
-
-                {% if pub.lien %}
-
-                    <a
-                        href="{{ url_for('ads_clic', publicite_id=pub.id) }}"
-                        class="nova-ad-link"
-                        target="_blank"
-                        rel="noopener noreferrer">
-
-                        <video
-                            controls
-                            muted
-                            playsinline
-                            preload="metadata">
-
-                            <source
-                                src="{{ pub.contenu_url }}"
-                                type="video/mp4">
-
-                            Votre navigateur ne peut pas lire cette vidéo.
-
-                        </video>
-
-                    </a>
-
-                {% else %}
-
-                    <video
-                        controls
-                        muted
-                        playsinline
-                        preload="metadata">
-
-                        <source
-                            src="{{ pub.contenu_url }}"
-                            type="video/mp4">
-
-                        Votre navigateur ne peut pas lire cette vidéo.
-
-                    </video>
-
-                {% endif %}
-
-
-            {% elif pub.type == "html" %}
-
-                <div class="nova-ad-html">
-
-                    {{ pub.contenu_url | safe }}
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    {% endif %}
-
-{% endmacro %}
-
-
-
-<!-- ==================================================
-     EMPLACEMENT :
-     ACCUEIL BANNIÈRE 1
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('accueil_banniere_1') %}
-
-    {{ afficher_pub(
-        nova_ads.get('accueil_banniere_1')
-    ) }}
-
-{% endif %}
-
-
-
-<!-- ==================================================
-     EMPLACEMENT :
-     ACCUEIL BANNIÈRE 2
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('accueil_banniere_2') %}
-
-    {{ afficher_pub(
-        nova_ads.get('accueil_banniere_2')
-    ) }}
-
-{% endif %}
-
-
-
-<!-- ==================================================
-     EMPLACEMENT :
-     ACCUEIL BANNIÈRE 3
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('accueil_banniere_3') %}
-
-    {{ afficher_pub(
-        nova_ads.get('accueil_banniere_3')
-    ) }}
-
-{% endif %}
-
-
-
-<!-- ==================================================
-     EMPLACEMENT :
-     ACCUEIL PUBLICITÉ 1
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('accueil_publicite_1') %}
-
-    {{ afficher_pub(
-        nova_ads.get('accueil_publicite_1')
-    ) }}
-
-{% endif %}
-
-
-
-<!-- ==================================================
-     EMPLACEMENT :
-     ACCUEIL PUBLICITÉ 2
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('accueil_publicite_2') %}
-
-    {{ afficher_pub(
-        nova_ads.get('accueil_publicite_2')
-    ) }}
-
-{% endif %}
-
-
-
-<!-- ==================================================
-     EMPLACEMENT :
-     PAGE JEU PUBLICITÉ 1
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('jeu_publicite_1') %}
-
-    {{ afficher_pub(
-        nova_ads.get('jeu_publicite_1')
-    ) }}
-
-{% endif %}
-
-
-
-<!-- ==================================================
-     EMPLACEMENT :
-     PAGE JEU PUBLICITÉ 2
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('jeu_publicite_2') %}
-
-    {{ afficher_pub(
-        nova_ads.get('jeu_publicite_2')
-    ) }}
-
-{% endif %}
-
-
-
-<!-- ==================================================
-     NAVIGATION BASSE
+    </main>
+    <!-- ==================================================
+     NAVIGATION MOBILE
 ================================================== -->
 
 <nav class="bottom-nav">
 
+
+    <!-- ACCUEIL -->
 
     <a
         href="{{ url_for('accueil') }}"
@@ -702,6 +427,8 @@
     </a>
 
 
+    <!-- NOUVEAUTÉS -->
+
     <a
         href="{{ url_for('nouveautes') }}"
         class="bottom-nav-item">
@@ -717,6 +444,8 @@
     </a>
 
 
+    <!-- POPULAIRES -->
+
     <a
         href="{{ url_for('populaires') }}"
         class="bottom-nav-item">
@@ -731,6 +460,8 @@
 
     </a>
 
+
+    <!-- NOTIFICATIONS -->
 
     <a
         href="{{ url_for('notifications') }}"
@@ -761,43 +492,60 @@
     <div class="footer-content">
 
 
+        <!-- MARQUE -->
+
         <div class="footer-brand">
 
 
             <div class="footer-logo">
+
                 🎮 NovaGaming
+
             </div>
 
 
             <p>
+
                 Ton espace pour découvrir
                 de nouveaux jeux.
+
             </p>
 
 
         </div>
 
 
+
+        <!-- LIENS -->
+
         <div class="footer-links">
 
 
             <a href="{{ url_for('accueil') }}">
+
                 Accueil
+
             </a>
 
 
             <a href="{{ url_for('nouveautes') }}">
+
                 Nouveautés
+
             </a>
 
 
             <a href="{{ url_for('populaires') }}">
+
                 Populaires
+
             </a>
 
 
             <a href="{{ url_for('notifications') }}">
+
                 Notifications
+
             </a>
 
 
@@ -807,34 +555,50 @@
     </div>
 
 
+
+    <!-- ==================================================
+         FOOTER BAS
+    ================================================== -->
+
     <div class="footer-bottom">
 
 
         <span>
+
             © 2026 NovaGaming
+
         </span>
 
 
         <span>
+
             Fait par Franck
+
         </span>
 
 
     </div>
 
 
-    </footer>
-    <!-- ==================================================
+</footer>
+
+
+
+<!-- ==================================================
      MESSAGES FLASH
 ================================================== -->
 
 {% with messages = get_flashed_messages() %}
 
+
     {% if messages %}
+
 
         <div class="flash-container">
 
+
             {% for message in messages %}
+
 
                 <div class="flash-message">
 
@@ -842,11 +606,15 @@
 
                 </div>
 
+
             {% endfor %}
+
 
         </div>
 
+
     {% endif %}
+
 
 {% endwith %}
 
@@ -862,31 +630,44 @@
     class="notification-activate-btn"
     onclick="activerNotifications()">
 
+
     <span class="notification-activate-icon">
+
         🔔
+
     </span>
+
 
     <span>
+
         Activer les notifications
+
     </span>
 
-</button>
 
-
+            </button>
+            <!-- ==================================================
+     JAVASCRIPT NOVAGAMING
+================================================== -->
 
 <script>
 
+
 /* ==================================================
-   DISPARITION DES MESSAGES
+   DISPARITION DES MESSAGES FLASH
 ================================================== */
 
 setTimeout(function(){
 
+
     const messages =
-        document.querySelectorAll(".flash-message");
+        document.querySelectorAll(
+            ".flash-message"
+        );
 
 
     messages.forEach(function(message){
+
 
         message.style.opacity = "0";
 
@@ -897,7 +678,9 @@ setTimeout(function(){
 
         }, 400);
 
+
     });
+
 
 }, 4000);
 
@@ -911,30 +694,37 @@ document
     .querySelectorAll(".action-delete")
     .forEach(function(button){
 
+
         button.addEventListener(
             "click",
             function(event){
 
-                if(!confirm(
-                    "Voulez-vous vraiment supprimer cet élément ?"
-                )){
+
+                if(
+                    !confirm(
+                        "Voulez-vous vraiment supprimer cet élément ?"
+                    )
+                ){
 
                     event.preventDefault();
 
                 }
 
+
             }
         );
+
 
     });
 
 
 
 /* ==================================================
-   NOTIFICATIONS
+   VÉRIFICATION NOTIFICATIONS
 ================================================== */
 
 function verifierNotifications(){
+
 
     const bouton =
         document.getElementById(
@@ -953,22 +743,13 @@ function verifierNotifications(){
      * Navigateur incompatible
      */
 
-    if(!("Notification" in window)){
+    if(
+        !("Notification" in window)
+    ){
 
-        bouton.classList.add("hidden");
-
-        return;
-
-    }
-
-
-    /*
-     * Notifications déjà autorisées
-     */
-
-    if(Notification.permission === "granted"){
-
-        bouton.classList.add("hidden");
+        bouton.classList.add(
+            "hidden"
+        );
 
         return;
 
@@ -976,28 +757,54 @@ function verifierNotifications(){
 
 
     /*
-     * Notifications refusées
+     * Déjà autorisées
      */
 
-    if(Notification.permission === "denied"){
+    if(
+        Notification.permission === "granted"
+    ){
 
-        bouton.classList.remove("loading");
+        bouton.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Bloquées
+     */
+
+    if(
+        Notification.permission === "denied"
+    ){
+
+        bouton.classList.remove(
+            "loading"
+        );
+
 
         bouton.querySelector(
             "span:last-child"
         ).textContent =
             "Notifications bloquées";
 
+
         return;
 
     }
 
 
     /*
-     * Autorisation encore inconnue
+     * Autorisation encore disponible
      */
 
-    bouton.classList.remove("hidden");
+    bouton.classList.remove(
+        "hidden"
+    );
+
 
 }
 
@@ -1009,21 +816,16 @@ function verifierNotifications(){
 
 async function activerNotifications(){
 
+
     const bouton =
         document.getElementById(
             "notificationActivateBtn"
         );
 
 
-    if(bouton){
+    if(!("Notification" in window)){
 
-        bouton.classList.add("loading");
-
-
-        bouton.querySelector(
-            "span:last-child"
-        ).textContent =
-            "Activation...";
+        return;
 
     }
 
@@ -1031,26 +833,36 @@ async function activerNotifications(){
     try {
 
 
-        /*
-         * Demande d'autorisation navigateur.
-         */
+        if(bouton){
 
-        if(
-            !("Notification" in window)
-        ){
-
-            throw new Error(
-                "Les notifications ne sont pas supportées."
+            bouton.classList.add(
+                "loading"
             );
+
+
+            bouton.querySelector(
+                "span:last-child"
+            ).textContent =
+                "Activation...";
 
         }
 
+
+        /*
+         * Demande d'autorisation
+         */
 
         const permission =
             await Notification.requestPermission();
 
 
-        if(permission !== "granted"){
+        /*
+         * Autorisation refusée
+         */
+
+        if(
+            permission !== "granted"
+        ){
 
             verifierNotifications();
 
@@ -1062,16 +874,29 @@ async function activerNotifications(){
         /*
          * Firebase Messaging
          *
-         * Si firebase-messaging.js expose
-         * une fonction globale, elle sera utilisée.
+         * firebase-messaging.js peut utiliser
+         * cette autorisation pour récupérer
+         * le token FCM.
+         */
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "novagaming-notifications-authorized"
+            )
+        );
+
+
+        /*
+         * Si Firebase expose une fonction
+         * d'activation, on l'utilise.
          */
 
         if(
-            typeof window.activerNotifications
+            typeof window.initialiserFirebaseMessaging
             === "function"
         ){
 
-            await window.activerNotifications();
+            await window.initialiserFirebaseMessaging();
 
         }
 
@@ -1080,6 +905,7 @@ async function activerNotifications(){
 
 
     } catch(erreur){
+
 
         console.error(
             "Erreur notifications :",
@@ -1101,6 +927,7 @@ async function activerNotifications(){
 
         }
 
+
     }
 
 }
@@ -1119,6 +946,7 @@ document.addEventListener(
 
     }
 );
+
 
 </script>
 
@@ -1144,4 +972,4 @@ document.addEventListener(
 
 </body>
 
-    </html>
+</html>
