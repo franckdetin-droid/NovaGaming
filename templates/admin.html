@@ -1,712 +1,357 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends "base.html" %}
+
+{% block title %}
+Administration - NovaGaming
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* ============================== */
+/* ADMINISTRATION NOVAGAMING */
+/* ============================== */
+
+.admin-page {
+    padding-bottom: 100px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding: 25px;
+    border-radius: 18px;
+    background: #151a23;
+    border: 1px solid #29313d;
+}
+
+.admin-header h1 {
+    margin: 5px 0 0;
+    font-size: 28px;
+}
+
+.admin-header p {
+    margin: 7px 0 0;
+    color: #8e98a8;
+}
+
+.admin-badge {
+    padding: 9px 14px;
+    border-radius: 20px;
+    background: #202735;
+    color: #4da3ff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ============================== */
+/* STATISTIQUES */
+/* ============================== */
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-stat-card {
+    padding: 20px;
+    border-radius: 16px;
+    background: #151a23;
+    border: 1px solid #29313d;
+}
+
+.admin-stat-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #202735;
+    font-size: 21px;
+    margin-bottom: 12px;
+}
+
+.admin-stat-card small {
+    display: block;
+    color: #8e98a8;
+    margin-bottom: 5px;
+}
+
+.admin-stat-card strong {
+    font-size: 25px;
+}
+
+/* ============================== */
+/* SECTIONS */
+/* ============================== */
+
+.admin-section {
+    margin-top: 25px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.section-title h2 {
+    margin: 4px 0 0;
+}
+
+.small-label {
+    color: #4da3ff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.count-badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #202735;
+    color: #9da7b7;
+    font-size: 12px;
+}
+
+/* ============================== */
+/* FORMULAIRE AJOUT */
+/* ============================== */
+
+.add-game-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: #151a23;
+    border: 1px solid #29313d;
+}
+
+.add-game-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    color: #cbd3df;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #303947;
+    background: #10151d;
+    color: white;
+    outline: none;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #4da3ff;
+}
+
+.form-group textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.form-help {
+    color: #788496;
+    font-size: 11px;
+}
+
+/* ============================== */
+/* UPLOAD */
+/* ============================== */
+
+.upload-box {
+    padding: 18px;
+    border-radius: 12px;
+    background: #10151d;
+    border: 1px dashed #3a4555;
+}
+
+.upload-box input[type="file"] {
+    width: 100%;
+    color: #aab4c3;
+}
+
+.image-preview {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-cover {
+    width: 90px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #303947;
+}
+
+.gallery-preview {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.preview-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #12161e;
+    border: 1px solid #303947;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    display: block;
+}
+
+.preview-item span {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #4da3ff;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* ============================== */
+/* BOUTON */
+/* ============================== */
+
+.add-game-button {
+    border: none;
+    padding: 14px 20px;
+    border-radius: 11px;
+    background: #4da3ff;
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.add-game-button:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+/* ============================== */
+/* MOBILE */
+/* ============================== */
+
+@media (max-width: 900px) {
+
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gallery-preview {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    .gallery-preview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+</style>
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>
-        Administration - NovaGaming
-    </title>
-
-    <meta name="theme-color"
-          content="#10131a">
-
-    <link rel="icon"
-          type="image/png"
-          href="{{ url_for('static', filename='images/logo.png') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-
-    <style>
-
-        /* ============================== */
-        /* BASE ADMIN */
-        /* ============================== */
-
-        * {
-            box-sizing: border-box;
-        }
-
-
-        body {
-            margin: 0;
-            background: #0d1117;
-            color: #ffffff;
-            font-family: "Poppins", sans-serif;
-        }
-
-
-        a {
-            text-decoration: none;
-        }
-
-
-        .admin-page {
-            width: 100%;
-            max-width: 1250px;
-            margin: 0 auto;
-            padding: 25px 20px 50px;
-        }
-
-
-        /* ============================== */
-        /* HEADER ADMIN */
-        /* ============================== */
-
-        .admin-header {
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-
-            padding: 25px;
-
-            margin-bottom: 25px;
-
-            border-radius: 18px;
-
-            background: #151a23;
-
-            border: 1px solid #29313d;
-
-        }
-
-
-        .admin-header h1 {
-
-            margin: 5px 0 8px;
-
-            font-size: 30px;
-
-            font-weight: 700;
-
-        }
-
-
-        .admin-header p {
-
-            margin: 0;
-
-            color: #8f99a9;
-
-            font-size: 14px;
-
-        }
-
-
-        .small-label {
-
-            color: #4da3ff;
-
-            font-size: 11px;
-
-            font-weight: 700;
-
-            letter-spacing: 1.5px;
-
-        }
-
-
-        .admin-home-btn {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 11px 16px;
-
-            border-radius: 10px;
-
-            background: #202735;
-
-            color: #ffffff;
-
-            font-size: 13px;
-
-            font-weight: 600;
-
-            border: 1px solid #303947;
-
-        }
-
-
-        .admin-home-btn:hover {
-
-            background: #29313d;
-
-        }
-
-
-        /* ============================== */
-        /* STATISTIQUES */
-        /* ============================== */
-
-        .admin-stats {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            gap: 15px;
-
-            margin-bottom: 25px;
-
-        }
-
-
-        .admin-stat-card {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 14px;
-
-            min-width: 0;
-
-            padding: 18px;
-
-            border-radius: 15px;
-
-            background: #151a23;
-
-            border: 1px solid #29313d;
-
-        }
-
-
-        .admin-stat-icon {
-
-            width: 45px;
-
-            height: 45px;
-
-            flex: 0 0 45px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            border-radius: 12px;
-
-            background: #202735;
-
-            font-size: 21px;
-
-        }
-
-
-        .admin-stat-card span {
-
-            display: block;
-
-            margin-bottom: 3px;
-
-            color: #8f99a9;
-
-            font-size: 12px;
-
-        }
-
-
-        .admin-stat-card strong {
-
-            display: block;
-
-            font-size: 23px;
-
-            line-height: 1.2;
-
-        }
-
-
-        /* ============================== */
-        /* SECTIONS */
-        /* ============================== */
-
-        .admin-section {
-
-            margin-bottom: 25px;
-
-            padding: 22px;
-
-            border-radius: 18px;
-
-            background: #151a23;
-
-            border: 1px solid #29313d;
-
-        }
-
-
-        .section-title {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 15px;
-
-            margin-bottom: 20px;
-
-        }
-
-
-        .section-title h2 {
-
-            margin: 5px 0 0;
-
-            font-size: 21px;
-
-        }
-
-
-        .count-badge {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 7px 11px;
-
-            border-radius: 20px;
-
-            background: #202735;
-
-            color: #b8c1cf;
-
-            font-size: 12px;
-
-            white-space: nowrap;
-
-        }
-
-
-        /* ============================== */
-        /* JEUX */
-        /* ============================== */
-
-        .games-admin-list {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 15px;
-
-        }
-
-
-        .admin-game-card {
-
-            display: flex;
-
-            gap: 15px;
-
-            min-width: 0;
-
-            padding: 14px;
-
-            border-radius: 14px;
-
-            background: #10151d;
-
-            border: 1px solid #29313d;
-
-            overflow: hidden;
-
-        }
-
-
-        /* ============================== */
-        /* COUVERTURE DES JEUX */
-        /* ============================== */
-
-        .game-cover {
-
-            width: 100px;
-
-            height: 135px;
-
-            flex: 0 0 100px;
-
-            overflow: hidden;
-
-            border-radius: 10px;
-
-            background: #202631;
-
-            border: 1px solid #303947;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-        }
-
-
-        .game-cover img {
-
-            display: block;
-
-            width: 100%;
-
-            height: 100%;
-
-            max-width: 100%;
-
-            max-height: 100%;
-
-            object-fit: cover;
-
-        }
-
-
-        .no-cover {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            width: 100%;
-
-            height: 100%;
-
-            font-size: 30px;
-
-        }
-
-
-        .game-details {
-
-            flex: 1;
-
-            min-width: 0;
-
-            display: flex;
-
-            flex-direction: column;
-
-        }
-
-
-        .game-top h3 {
-
-            margin: 0 0 7px;
-
-            font-size: 17px;
-
-            line-height: 1.3;
-
-            overflow-wrap: anywhere;
-
-        }
-
-
-        .console-tag {
-
-            display: inline-block;
-
-            max-width: 100%;
-
-            padding: 5px 8px;
-
-            border-radius: 7px;
-
-            background: #202735;
-
-            color: #aeb8c7;
-
-            font-size: 11px;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-            white-space: nowrap;
-
-        }
-
-
-        .game-meta {
-
-            display: flex;
-
-            flex-wrap: wrap;
-
-            gap: 8px 14px;
-
-            margin-top: auto;
-
-            padding-top: 12px;
-
-            color: #8f99a9;
-
-            font-size: 11px;
-
-        }
-
-
-        .game-actions {
-
-            display: flex;
-
-            flex-wrap: wrap;
-
-            gap: 7px;
-
-            margin-top: 12px;
-
-        }
-
-
-        .game-actions a {
-
-            padding: 7px 9px;
-
-            border-radius: 7px;
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-        }
-
-
-        .action-view {
-
-            background: #202735;
-
-            color: #ffffff;
-
-        }
-
-
-        .action-edit {
-
-            background: #263b50;
-
-            color: #7ec3ff;
-
-        }
-
-
-        .action-delete {
-
-            background: #3b2227;
-
-            color: #ff8d98;
-
-        }
-
-
-        /* ============================== */
-        /* MOBILE */
-        /* ============================== */
-
-        @media (max-width: 900px) {
-
-            .admin-stats {
-
-                grid-template-columns:
-                    repeat(2, 1fr);
-
-            }
-
-
-            .games-admin-list {
-
-                grid-template-columns:
-                    1fr;
-
-            }
-
-        }
-
-
-        @media (max-width: 600px) {
-
-            .admin-page {
-
-                padding: 15px 12px 40px;
-
-            }
-
-
-            .admin-header {
-
-                flex-direction: column;
-
-                align-items: stretch;
-
-                padding: 18px;
-
-            }
-
-
-            .admin-header h1 {
-
-                font-size: 24px;
-
-            }
-
-
-            .admin-stats {
-
-                grid-template-columns:
-                    1fr 1fr;
-
-                gap: 10px;
-
-            }
-
-
-            .admin-stat-card {
-
-                padding: 13px;
-
-            }
-
-
-            .admin-stat-icon {
-
-                width: 38px;
-
-                height: 38px;
-
-                flex-basis: 38px;
-
-            }
-
-
-            .admin-stat-card strong {
-
-                font-size: 19px;
-
-            }
-
-
-            .admin-section {
-
-                padding: 15px;
-
-            }
-
-
-            .admin-game-card {
-
-                padding: 11px;
-
-            }
-
-
-            .game-cover {
-
-                width: 80px;
-
-                height: 110px;
-
-                flex-basis: 80px;
-
-            }
-
-        }
-
-
-        @media (max-width: 400px) {
-
-            .admin-stats {
-
-                grid-template-columns:
-                    1fr;
-
-            }
-
-
-            .game-cover {
-
-                width: 75px;
-
-                height: 105px;
-
-                flex-basis: 75px;
-
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
 
 <div class="admin-page">
 
-
     <!-- ============================== -->
-    <!-- EN-TÊTE ADMIN -->
+    <!-- EN-TÊTE -->
     <!-- ============================== -->
 
     <section class="admin-header">
 
         <div>
-
             <span class="small-label">
                 NOVAGAMING
             </span>
 
             <h1>
-                🎮 Administration
+                ⚙️ Administration
             </h1>
 
             <p>
-                Gestion de ton espace administrateur.
+                Gère ton catalogue, tes statistiques
+                et l'activité du site.
             </p>
-
         </div>
 
-
-        <a
-            href="{{ url_for('accueil') }}"
-            class="admin-home-btn">
-
-            🏠 Retour au site
-
-        </a>
+        <span class="admin-badge">
+            🔐 Administrateur
+        </span>
 
     </section>
 
@@ -723,38 +368,13 @@
                 🎮
             </div>
 
-            <div>
+            <small>
+                Jeux publiés
+            </small>
 
-                <span>
-                    Jeux
-                </span>
-
-                <strong>
-                    {{ total_jeux }}
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-stat-card">
-
-            <div class="admin-stat-icon">
-                💬
-            </div>
-
-            <div>
-
-                <span>
-                    Commentaires
-                </span>
-
-                <strong>
-                    {{ total_commentaires }}
-                </strong>
-
-            </div>
+            <strong>
+                {{ total_jeux or 0 }}
+            </strong>
 
         </div>
 
@@ -765,17 +385,30 @@
                 ⬇️
             </div>
 
-            <div>
+            <small>
+                Téléchargements
+            </small>
 
-                <span>
-                    Téléchargements
-                </span>
+            <strong>
+                {{ total_telechargements or 0 }}
+            </strong>
 
-                <strong>
-                    {{ total_telechargements|default(0) }}
-                </strong>
+        </div>
 
+
+        <div class="admin-stat-card">
+
+            <div class="admin-stat-icon">
+                💬
             </div>
+
+            <small>
+                Commentaires
+            </small>
+
+            <strong>
+                {{ total_commentaires or 0 }}
+            </strong>
 
         </div>
 
@@ -786,15 +419,458 @@
                 🔔
             </div>
 
+            <small>
+                Notifications
+            </small>
+
+            <strong>
+                {{ notifications_non_lues or 0 }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- ============================== -->
+    <!-- AJOUTER UN JEU -->
+    <!-- ============================== -->
+
+    <section class="admin-section">
+
+        <div class="section-title">
+
             <div>
 
-                <span>
-                    Notifications
+                <span class="small-label">
+                    CATALOGUE
                 </span>
 
-                <strong>
-                    {{ notifications_admin|length if notifications_admin else 0 }}
-                </strong>
+                <h2>
+                    ➕ Ajouter un jeu
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="add-game-card">
+
+            <form
+                action="{{ url_for('ajouter') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="add-game-form"
+            >
+
+                <div class="form-grid">
+
+
+                    <!-- NOM -->
+
+                    <div class="form-group">
+
+                        <label for="nom">
+                            Nom du jeu *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nom"
+                            name="nom"
+                            placeholder="Ex : GTA V"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- CONSOLE -->
+
+                    <div class="form-group">
+
+                        <label for="console">
+                            Console / Plateforme
+                        </label>
+
+                        <input
+                            type="text"
+                            id="console"
+                            name="console"
+                            placeholder="Ex : PS4, PS5, Xbox..."
+                        >
+
+                    </div>
+
+
+                    <!-- VERSION -->
+
+                    <div class="form-group">
+
+                        <label for="version">
+                            Version
+                        </label>
+
+                        <input
+                            type="text"
+                            id="version"
+                            name="version"
+                            placeholder="Ex : v1.0.5"
+                        >
+
+                    </div>
+
+
+                    <!-- LANGUE -->
+
+                    <div class="form-group">
+
+                        <label for="langue">
+                            Langue
+                        </label>
+
+                        <input
+                            type="text"
+                            id="langue"
+                            name="langue"
+                            placeholder="Ex : Français"
+                        >
+
+                    </div>
+
+
+                    <!-- TAILLE -->
+
+                    <div class="form-group">
+
+                        <label for="taille">
+                            Taille
+                        </label>
+
+                        <input
+                            type="text"
+                            id="taille"
+                            name="taille"
+                            placeholder="Ex : 25 Go"
+                        >
+
+                    </div>
+
+
+                    <!-- LIEN -->
+
+                    <div class="form-group">
+
+                        <label for="lien">
+                            🔗 Lien de téléchargement *
+                        </label>
+
+                        <input
+                            type="url"
+                            id="lien"
+                            name="lien"
+                            placeholder="https://..."
+                            required
+                        >
+
+                        <span class="form-help">
+                            Colle ici ton lien Mega ou ton autre lien de téléchargement.
+                        </span>
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="form-group full">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            placeholder="Présente le jeu..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- COUVERTURE -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            🖼️ Image de couverture
+                        </label>
+
+                        <div class="upload-box">
+
+                            <input
+                                type="file"
+                                id="couverture_file"
+                                name="couverture_file"
+                                accept="image/*"
+                            >
+
+                            <span class="form-help">
+                                JPG, PNG, WEBP ou GIF.
+                            </span>
+
+                            <div
+                                id="couverture-preview"
+                                class="image-preview"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GALERIE -->
+
+                    <div class="form-group full">
+
+                        <label>
+                            🖼️ Images d'aperçu
+                        </label>
+
+                        <div class="upload-box">
+
+                            <input
+                                type="file"
+                                id="images"
+                                name="images"
+                                accept="image/*"
+                                multiple
+                            >
+
+                            <span class="form-help">
+                                Maximum 10 images.
+                            </span>
+
+                            <p
+                                id="images-info"
+                                class="form-help"
+                            >
+                                Aucune image sélectionnée.
+                            </p>
+
+                            <div
+                                id="gallery-preview"
+                                class="gallery-preview"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="add-game-button"
+                >
+                    🚀 Publier le jeu
+                </button>
+
+            </form>
+
+        </div>
+
+                </section>
+                    <!-- ============================== -->
+    <!-- ANALYTICS -->
+    <!-- ============================== -->
+
+    <section class="admin-section analytics-section">
+
+        <div class="section-title">
+
+            <div>
+
+                <span class="small-label">
+                    ANALYTICS
+                </span>
+
+                <h2>
+                    📊 Statistiques
+                </h2>
+
+            </div>
+
+            <span class="count-badge">
+                7 derniers jours
+            </span>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- PETITES CARTES -->
+        <!-- ============================== -->
+
+        <div class="analytics-mini-grid">
+
+            <div class="analytics-mini-card">
+
+                <div class="analytics-mini-icon">
+                    👥
+                </div>
+
+                <div>
+
+                    <small>
+                        Visiteurs aujourd'hui
+                    </small>
+
+                    <strong>
+                        {{ visiteurs_aujourd_hui|default(0) }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="analytics-mini-card">
+
+                <div class="analytics-mini-icon">
+                    👁️
+                </div>
+
+                <div>
+
+                    <small>
+                        Pages vues aujourd'hui
+                    </small>
+
+                    <strong>
+                        {{ pages_vues_aujourd_hui|default(0) }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="analytics-mini-card">
+
+                <div class="analytics-mini-icon">
+                    ⬇️
+                </div>
+
+                <div>
+
+                    <small>
+                        Téléchargements aujourd'hui
+                    </small>
+
+                    <strong>
+                        {{ telechargements_aujourd_hui|default(0) }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="analytics-mini-card">
+
+                <div class="analytics-mini-icon">
+                    👀
+                </div>
+
+                <div>
+
+                    <small>
+                        Vues aujourd'hui
+                    </small>
+
+                    <strong>
+                        {{ vues_aujourd_hui|default(0) }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- GRAPHIQUE VISITEURS -->
+        <!-- ============================== -->
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <span class="small-label">
+                        TRAFIC
+                    </span>
+
+                    <h3>
+                        👥 Visiteurs et pages vues
+                    </h3>
+
+                </div>
+
+                <span class="chart-period">
+                    7 jours
+                </span>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas
+                    id="visiteursChart"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- GRAPHIQUE TÉLÉCHARGEMENTS -->
+        <!-- ============================== -->
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <span class="small-label">
+                        TÉLÉCHARGEMENTS
+                    </span>
+
+                    <h3>
+                        ⬇️ Téléchargements par jour
+                    </h3>
+
+                </div>
+
+                <span class="chart-period">
+                    7 jours
+                </span>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas
+                    id="telechargementsChart"
+                ></canvas>
 
             </div>
 
@@ -804,7 +880,368 @@
 
 
     <!-- ============================== -->
-    <!-- LISTE DES JEUX -->
+    <!-- CHART.JS -->
+    <!-- ============================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+    const visiteursData =
+        {{ visiteurs_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+    const pagesData =
+        {{ pages_vues_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+    const telechargementsData =
+        {{ telechargements_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+    const labels =
+        {{ labels_7_jours|default([
+            "J-6",
+            "J-5",
+            "J-4",
+            "J-3",
+            "J-2",
+            "Hier",
+            "Aujourd'hui"
+        ])|tojson }};
+
+
+    /* ============================== */
+    /* VISITEURS */
+    /* ============================== */
+
+    const visiteursCanvas =
+        document.getElementById(
+            "visiteursChart"
+        );
+
+    if (visiteursCanvas) {
+
+        new Chart(
+            visiteursCanvas,
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [
+
+                        {
+                            label: "Visiteurs",
+
+                            data: visiteursData,
+
+                            borderWidth: 3,
+
+                            tension: 0.4,
+
+                            fill: true
+                        },
+
+                        {
+                            label: "Pages vues",
+
+                            data: pagesData,
+
+                            borderWidth: 3,
+
+                            tension: 0.4,
+
+                            fill: true
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    interaction: {
+                        intersect: false,
+                        mode: "index"
+                    },
+
+                    plugins: {
+
+                        legend: {
+                            display: true
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ============================== */
+    /* TÉLÉCHARGEMENTS */
+    /* ============================== */
+
+    const downloadsCanvas =
+        document.getElementById(
+            "telechargementsChart"
+        );
+
+    if (downloadsCanvas) {
+
+        new Chart(
+            downloadsCanvas,
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Téléchargements",
+
+                            data:
+                                telechargementsData,
+
+                            borderWidth: 1
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+                            display: true
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+    </script>
+        <!-- ============================== -->
+    <!-- APERÇU COUVERTURE / GALERIE -->
+    <!-- ============================== -->
+
+    <script>
+
+    const couvertureInput =
+        document.getElementById(
+            "couverture_file"
+        );
+
+    const couverturePreview =
+        document.getElementById(
+            "couverture-preview"
+        );
+
+
+    if (couvertureInput) {
+
+        couvertureInput.addEventListener(
+            "change",
+            function () {
+
+                couverturePreview.innerHTML = "";
+
+                const fichier =
+                    this.files[0];
+
+                if (!fichier) {
+                    return;
+                }
+
+                if (
+                    !fichier.type.startsWith("image/")
+                ) {
+
+                    couverturePreview.innerHTML =
+                        "<p>⚠️ Ce fichier n'est pas une image.</p>";
+
+                    this.value = "";
+
+                    return;
+                }
+
+
+                const image =
+                    document.createElement("img");
+
+                image.src =
+                    URL.createObjectURL(fichier);
+
+                image.className =
+                    "preview-cover";
+
+                couverturePreview.appendChild(
+                    image
+                );
+
+            }
+        );
+
+    }
+
+
+    const imagesInput =
+        document.getElementById("images");
+
+    const imagesInfo =
+        document.getElementById("images-info");
+
+    const galleryPreview =
+        document.getElementById("gallery-preview");
+
+
+    if (imagesInput) {
+
+        imagesInput.addEventListener(
+            "change",
+            function () {
+
+                galleryPreview.innerHTML = "";
+
+                const fichiers =
+                    Array.from(this.files);
+
+
+                if (fichiers.length === 0) {
+
+                    imagesInfo.textContent =
+                        "Aucune image sélectionnée.";
+
+                    return;
+
+                }
+
+
+                if (fichiers.length > 10) {
+
+                    imagesInfo.textContent =
+                        "⚠️ Maximum 10 images.";
+
+                    this.value = "";
+
+                    return;
+
+                }
+
+
+                imagesInfo.textContent =
+                    "✅ " +
+                    fichiers.length +
+                    " image(s) sélectionnée(s).";
+
+
+                fichiers.forEach(
+                    function (fichier, index) {
+
+                        if (
+                            !fichier.type.startsWith("image/")
+                        ) {
+                            return;
+                        }
+
+
+                        const bloc =
+                            document.createElement("div");
+
+                        bloc.className =
+                            "preview-item";
+
+
+                        const image =
+                            document.createElement("img");
+
+                        image.src =
+                            URL.createObjectURL(fichier);
+
+                        image.alt =
+                            "Capture " + (index + 1);
+
+
+                        const numero =
+                            document.createElement("span");
+
+                        numero.textContent =
+                            index + 1;
+
+
+                        bloc.appendChild(image);
+
+                        bloc.appendChild(numero);
+
+                        galleryPreview.appendChild(bloc);
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+    </script>
+
+
+    <!-- ============================== -->
+    <!-- JEUX PUBLIÉS -->
     <!-- ============================== -->
 
     <section class="admin-section">
@@ -845,7 +1282,8 @@
                     <img
                         src="{{ jeu.couverture }}"
                         alt="{{ jeu.nom }}"
-                        loading="lazy">
+                        loading="lazy"
+                    >
 
                     {% else %}
 
@@ -862,23 +1300,37 @@
 
                     <div class="game-top">
 
-                        <h3>
-                            {{ jeu.nom }}
-                        </h3>
+                        <div>
 
-                        <span class="console-tag">
-                            🎮 {{ jeu.console or "Console inconnue" }}
-                        </span>
+                            <h3>
+                                {{ jeu.nom }}
+                            </h3>
 
-    </div>
-                        <div class="game-meta">
+                            <span class="console-tag">
+                                🎮
+                                {{ jeu.console or "Console inconnue" }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="game-meta">
 
                         <span>
-                            📦 {{ jeu.taille or "Taille inconnue" }}
+                            📦
+                            {{ jeu.taille or "Taille inconnue" }}
                         </span>
 
                         <span>
-                            ⬇️ {{ jeu.telechargements or 0 }}
+                            ⬇️
+                            {{ jeu.telechargements or 0 }}
+                        </span>
+
+                        <span>
+                            ⭐
+                            {{ nombre_favoris(jeu.id) }}
                         </span>
 
                     </div>
@@ -888,29 +1340,24 @@
 
                         <a
                             href="{{ url_for('jeu', jeu_id=jeu.id) }}"
-                            class="action-view">
-
+                            class="action-view"
+                        >
                             👁️ Voir
-
                         </a>
-
 
                         <a
                             href="{{ url_for('modifier', jeu_id=jeu.id) }}"
-                            class="action-edit">
-
+                            class="action-edit"
+                        >
                             ✏️ Modifier
-
                         </a>
-
 
                         <a
                             href="{{ url_for('supprimer', jeu_id=jeu.id) }}"
                             class="action-delete"
-                            onclick="return confirm('Supprimer ce jeu ?');">
-
+                            onclick="return confirm('Supprimer ce jeu ?');"
+                        >
                             🗑️ Supprimer
-
                         </a>
 
                     </div>
@@ -922,7 +1369,6 @@
             {% endfor %}
 
         </div>
-
 
         {% else %}
 
@@ -986,7 +1432,6 @@
                         👤
                     </div>
 
-
                     <div class="comment-content">
 
                         <strong>
@@ -1003,17 +1448,15 @@
 
                     </div>
 
-
                     <a
                         href="{{ url_for(
                             'supprimer_commentaire',
                             commentaire_id=commentaire.id
                         ) }}"
                         class="comment-delete"
-                        onclick="return confirm('Supprimer ce commentaire ?');">
-
+                        onclick="return confirm('Supprimer ce commentaire ?');"
+                    >
                         🗑️
-
                     </a>
 
                 </div>
@@ -1039,9 +1482,7 @@
         </div>
 
     </section>
-
-
-    <!-- ============================== -->
+            <!-- ============================== -->
     <!-- NOTIFICATIONS -->
     <!-- ============================== -->
 
@@ -1061,13 +1502,11 @@
 
             </div>
 
-
             <a
                 href="{{ url_for('notifications') }}"
-                class="see-all">
-
+                class="see-all"
+            >
                 Voir toutes
-
             </a>
 
         </div>
@@ -1084,7 +1523,6 @@
                     <div class="notification-icon">
                         🔔
                     </div>
-
 
                     <div>
 
@@ -1154,83 +1592,49 @@
 
             <a
                 href="{{ url_for('accueil') }}"
-                class="quick-card">
-
-                <span>
-                    🏠
-                </span>
-
-                <strong>
-                    Accueil
-                </strong>
-
-                <small>
-                    Voir le site
-                </small>
-
+                class="quick-card"
+            >
+                <span>🏠</span>
+                <strong>Accueil</strong>
+                <small>Voir le site</small>
             </a>
 
 
             <a
                 href="{{ url_for('nouveautes') }}"
-                class="quick-card">
-
-                <span>
-                    🆕
-                </span>
-
-                <strong>
-                    Nouveautés
-                </strong>
-
-                <small>
-                    Derniers jeux
-                </small>
-
+                class="quick-card"
+            >
+                <span>🆕</span>
+                <strong>Nouveautés</strong>
+                <small>Derniers jeux</small>
             </a>
 
 
             <a
                 href="{{ url_for('populaires') }}"
-                class="quick-card">
-
-                <span>
-                    🔥
-                </span>
-
-                <strong>
-                    Populaires
-                </strong>
-
-                <small>
-                    Jeux les plus téléchargés
-                </small>
-
+                class="quick-card"
+            >
+                <span>🔥</span>
+                <strong>Populaires</strong>
+                <small>Jeux les plus téléchargés</small>
             </a>
 
 
             <a
                 href="{{ url_for('notifications') }}"
-                class="quick-card">
-
-                <span>
-                    🔔
-                </span>
-
-                <strong>
-                    Notifications
-                </strong>
-
-                <small>
-                    Activité récente
-                </small>
-
+                class="quick-card"
+            >
+                <span>🔔</span>
+                <strong>Notifications</strong>
+                <small>Activité récente</small>
             </a>
 
         </div>
 
     </section>
-        <!-- ============================== -->
+
+
+    <!-- ============================== -->
     <!-- PUBLICITÉ -->
     <!-- ============================== -->
 
@@ -1281,649 +1685,27 @@
 
 
     <!-- ============================== -->
-    <!-- INFORMATIONS ADMIN -->
-    <!-- ============================== -->
-
-    <section class="admin-section">
-
-        <div class="section-title">
-
-            <div>
-
-                <span class="small-label">
-                    SYSTÈME
-                </span>
-
-                <h2>
-                    ⚙️ Informations
-                </h2>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-info-grid">
-
-            <div class="admin-info-card">
-
-                <span class="info-icon">
-                    🌐
-                </span>
-
-                <div>
-
-                    <strong>
-                        Site
-                    </strong>
-
-                    <small>
-                        NovaGaming
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="admin-info-card">
-
-                <span class="info-icon">
-                    🔐
-                </span>
-
-                <div>
-
-                    <strong>
-                        Sécurité
-                    </strong>
-
-                    <small>
-                        Administration protégée
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="admin-info-card">
-
-                <span class="info-icon">
-                    📱
-                </span>
-
-                <div>
-
-                    <strong>
-                        Interface
-                    </strong>
-
-                    <small>
-                        Compatible mobile
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="admin-info-card">
-
-                <span class="info-icon">
-                    🎮
-                </span>
-
-                <div>
-
-                    <strong>
-                        Catalogue
-                    </strong>
-
-                    <small>
-                        {{ total_jeux }} jeux disponibles
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ============================== -->
     <!-- FOOTER ADMIN -->
     <!-- ============================== -->
 
-    <footer class="admin-footer">
+    <div class="admin-footer">
 
-        <div>
+        <span>
+            🎮 NovaGaming
+        </span>
 
-            <strong>
-                🎮 NovaGaming
-            </strong>
-
-            <span>
-                Administration sécurisée
-            </span>
-
-        </div>
-
+        <span>
+            Administration sécurisée
+        </span>
 
         <a
             href="{{ url_for('logout') }}"
-            class="admin-logout">
-
-            🚪 Déconnexion
-
+        >
+            Déconnexion
         </a>
 
-    </footer>
-
+    </div>
 
 </div>
-<style>
 
-/* ============================== */
-/* COMMENTAIRES */
-/* ============================== */
-
-.comments-admin {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-
-.admin-comment {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px;
-    border-radius: 12px;
-    background: #10151d;
-    border: 1px solid #29313d;
-}
-
-
-.comment-avatar {
-    width: 40px;
-    height: 40px;
-    flex: 0 0 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-    background: #202735;
-}
-
-
-.comment-content {
-    flex: 1;
-    min-width: 0;
-}
-
-
-.comment-content strong {
-    display: block;
-    font-size: 14px;
-}
-
-
-.comment-content span {
-    display: block;
-    margin-top: 2px;
-    color: #6f7a8b;
-    font-size: 11px;
-}
-
-
-.comment-content p {
-    margin: 7px 0 0;
-    color: #c0c7d2;
-    font-size: 13px;
-    overflow-wrap: anywhere;
-}
-
-
-.comment-delete {
-    padding: 7px 9px;
-    border-radius: 8px;
-    background: #3b2227;
-    color: #ff8d98;
-}
-
-
-/* ============================== */
-/* NOTIFICATIONS */
-/* ============================== */
-
-.notifications-admin {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-
-.notification-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-
-    padding: 14px;
-
-    border-radius: 12px;
-
-    background: #10151d;
-    border: 1px solid #29313d;
-}
-
-
-.notification-icon {
-    width: 40px;
-    height: 40px;
-    flex: 0 0 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 10px;
-    background: #202735;
-}
-
-
-.notification-item strong {
-    display: block;
-    font-size: 13px;
-}
-
-
-.notification-item p {
-    margin: 5px 0;
-    color: #b5becb;
-    font-size: 12px;
-    overflow-wrap: anywhere;
-}
-
-
-.notification-item small {
-    color: #6f7a8b;
-    font-size: 10px;
-}
-
-
-/* ============================== */
-/* VOIR TOUTES */
-/* ============================== */
-
-.see-all {
-    padding: 8px 12px;
-
-    border-radius: 9px;
-
-    background: #202735;
-
-    color: #8ecbff;
-
-    font-size: 12px;
-    font-weight: 600;
-}
-
-
-/* ============================== */
-/* RACCOURCIS */
-/* ============================== */
-
-.quick-actions {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 12px;
-}
-
-
-.quick-card {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
-    padding: 18px;
-
-    border-radius: 13px;
-
-    background: #10151d;
-
-    border: 1px solid #29313d;
-
-    transition:
-        transform .2s ease,
-        border-color .2s ease;
-}
-
-
-.quick-card:hover {
-    transform: translateY(-2px);
-    border-color: #465365;
-}
-
-
-.quick-card > span {
-    font-size: 25px;
-    margin-bottom: 4px;
-}
-
-
-.quick-card strong {
-    color: #ffffff;
-    font-size: 14px;
-}
-
-
-.quick-card small {
-    color: #7f8999;
-    font-size: 11px;
-}
-
-
-/* ============================== */
-/* PUBLICITÉ */
-/* ============================== */
-
-.ad-preview {
-    padding: 15px;
-
-    border-radius: 14px;
-
-    background: #10151d;
-
-    border: 1px solid #29313d;
-}
-
-
-.ad-label {
-    margin-bottom: 10px;
-
-    color: #6f7a8b;
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    letter-spacing: 1.5px;
-
-    text-align: center;
-}
-
-
-.ad-placeholder {
-    min-height: 180px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-
-    border-radius: 10px;
-
-    background: #151a23;
-
-    border: 1px dashed #394453;
-}
-
-
-.ad-placeholder span {
-    font-size: 32px;
-    margin-bottom: 8px;
-}
-
-
-.ad-placeholder p {
-    margin: 0 0 5px;
-
-    color: #c4ccd7;
-
-    font-size: 14px;
-}
-
-
-.ad-placeholder small {
-    max-width: 400px;
-
-    color: #6f7a8b;
-
-    font-size: 11px;
-}
-
-
-/* ============================== */
-/* INFORMATIONS */
-/* ============================== */
-
-.admin-info-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 12px;
-}
-
-
-.admin-info-card {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-
-    padding: 15px;
-
-    border-radius: 12px;
-
-    background: #10151d;
-
-    border: 1px solid #29313d;
-}
-
-
-.info-icon {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 9px;
-
-    background: #202735;
-
-    font-size: 18px;
-}
-
-
-.admin-info-card strong {
-    display: block;
-    color: #ffffff;
-    font-size: 12px;
-}
-
-
-.admin-info-card small {
-    display: block;
-    margin-top: 3px;
-    color: #737e8e;
-    font-size: 10px;
-}
-
-
-/* ============================== */
-/* EMPTY STATE */
-/* ============================== */
-
-.empty-state {
-    padding: 40px 20px;
-
-    text-align: center;
-
-    border-radius: 13px;
-
-    background: #10151d;
-
-    border: 1px dashed #303947;
-}
-
-
-.empty-state.small {
-    padding: 25px 15px;
-}
-
-
-.empty-icon {
-    margin-bottom: 8px;
-    font-size: 32px;
-}
-
-
-.empty-state h3 {
-    margin: 0 0 5px;
-    font-size: 16px;
-}
-
-
-.empty-state p {
-    margin: 0;
-    color: #7f8999;
-    font-size: 12px;
-}
-
-
-/* ============================== */
-/* FOOTER ADMIN */
-/* ============================== */
-
-.admin-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-
-    margin-top: 10px;
-    padding: 18px 5px;
-
-    color: #6f7a8b;
-
-    font-size: 11px;
-}
-
-
-.admin-footer div {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-
-.admin-footer strong {
-    color: #b8c1cd;
-    font-size: 12px;
-}
-
-
-.admin-logout {
-    padding: 8px 12px;
-
-    border-radius: 8px;
-
-    background: #3b2227;
-
-    color: #ff8d98;
-
-    font-weight: 600;
-}
-
-
-/* ============================== */
-/* RESPONSIVE */
-/* ============================== */
-
-@media (max-width: 900px) {
-
-    .quick-actions {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-
-    .admin-info-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-}
-
-
-@media (max-width: 600px) {
-
-    .quick-actions {
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-
-    .admin-info-grid {
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .section-title {
-        align-items: flex-start;
-    }
-
-
-    .section-title h2 {
-        font-size: 18px;
-    }
-
-
-    .admin-footer {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-
-    .notification-item {
-        padding: 11px;
-    }
-
-
-    .admin-comment {
-        padding: 11px;
-    }
-
-}
-
-
-@media (max-width: 400px) {
-
-    .quick-actions {
-        grid-template-columns:
-            1fr;
-    }
-
-}
-
-</style>
-
-
-</body>
-    </html>
+{% endblock %}
