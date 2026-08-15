@@ -1,4 +1,4 @@
-<!-- templates/jeu.html - PARTIE 1/4 -->
+<!-- templates/jeu.html - PARTIE 1/3 -->
 
 {% extends "base.html" %}
 
@@ -14,9 +14,6 @@
     <!-- ==================================================
          PUBLICITÉ NOVA ADS - HAUT
          Emplacement : jeu_publicite_1
-
-         Si aucune publicité active n'est disponible,
-         l'emplacement reste vide.
     ================================================== -->
 
     {% if nova_ads is defined
@@ -31,9 +28,7 @@
             data-publicite-id="{{ pub.id }}"
             data-emplacement="jeu_publicite_1">
 
-
             {% if pub.type == "image" %}
-
 
                 {% if pub.lien %}
 
@@ -64,7 +59,6 @@
 
 
             {% elif pub.type == "video" %}
-
 
                 {% if pub.lien %}
 
@@ -117,13 +111,10 @@
             {% elif pub.type == "html" %}
 
                 <div class="nova-ad-html">
-
                     {{ pub.contenu_url | safe }}
-
                 </div>
 
             {% endif %}
-
 
         </div>
 
@@ -139,9 +130,7 @@
 
     <section class="jeu-header">
 
-
         <div class="cover-wrapper">
-
 
             {% if jeu.couverture %}
 
@@ -154,115 +143,79 @@
             {% else %}
 
             <div class="cover-placeholder">
-
                 🎮
-
             </div>
 
             {% endif %}
 
-
         </div>
-
 
 
         <div class="infos">
 
-
             <span class="game-label">
-
                 🎮 JEU
-
             </span>
 
-
             <h1>
-
                 {{ jeu.nom }}
-
             </h1>
 
 
             <div class="game-info-list">
 
-
                 <div>
-
-                    <span>
-                        Console
-                    </span>
+                    <span>Console</span>
 
                     <strong>
                         {{ jeu.console or "Non précisée" }}
                     </strong>
-
                 </div>
 
 
                 <div>
-
-                    <span>
-                        Taille
-                    </span>
+                    <span>Taille</span>
 
                     <strong>
                         {{ jeu.taille or "Non précisée" }}
                     </strong>
-
                 </div>
 
 
                 <div>
-
-                    <span>
-                        Version
-                    </span>
+                    <span>Version</span>
 
                     <strong>
                         {{ jeu.version or "Non précisée" }}
                     </strong>
-
                 </div>
 
 
                 <div>
-
-                    <span>
-                        Langue
-                    </span>
+                    <span>Langue</span>
 
                     <strong>
                         {{ jeu.langue or "Non précisée" }}
                     </strong>
-
                 </div>
-
 
             </div>
 
 
             <div class="download-info">
 
-
                 <span>
-
                     ⬇️ Téléchargements
-
                 </span>
 
-
                 <strong>
-
                     {{ jeu.telechargements or 0 }}
-
                 </strong>
-
 
             </div>
 
 
             <div class="actions">
-
 
                 <a
                     href="{{ url_for(
@@ -287,15 +240,15 @@
 
                 </a>
 
-
             </div>
-
 
         </div>
 
-
     </section>
-        <!-- ==================================================
+
+
+
+    <!-- ==================================================
          DESCRIPTION
     ================================================== -->
 
@@ -353,9 +306,7 @@
             data-publicite-id="{{ pub.id }}"
             data-emplacement="jeu_publicite_2">
 
-
             {% if pub.type == "image" %}
-
 
                 {% if pub.lien %}
 
@@ -386,7 +337,6 @@
 
 
             {% elif pub.type == "video" %}
-
 
                 {% if pub.lien %}
 
@@ -439,13 +389,10 @@
             {% elif pub.type == "html" %}
 
                 <div class="nova-ad-html">
-
                     {{ pub.contenu_url | safe }}
-
                 </div>
 
             {% endif %}
-
 
         </div>
 
@@ -476,7 +423,6 @@
 
         <div class="galerie">
 
-
             {% for image in [
 
                 jeu.image1,
@@ -492,15 +438,13 @@
 
             ] %}
 
-
                 {% if image %}
-
 
                 <a
                     href="{{ image }}"
                     target="_blank"
+                    rel="noopener noreferrer"
                     class="capture-link">
-
 
                     <img
                         src="{{ image }}"
@@ -508,18 +452,13 @@
                         class="capture"
                         loading="lazy">
 
-
                 </a>
-
 
                 {% endif %}
 
-
             {% endfor %}
 
-
         </div>
-
 
 
         {% if not jeu.image1
@@ -533,19 +472,14 @@
             and not jeu.image9
             and not jeu.image10 %}
 
-
             <div class="empty-gallery">
-
                 📷 Aucune capture disponible.
-
             </div>
-
 
         {% endif %}
 
-
-            </section>
-                <!-- ==================================================
+        </section>
+        <!-- ==================================================
          COMMENTAIRES
     ================================================== -->
 
@@ -572,7 +506,6 @@
             method="POST"
             class="form-commentaire">
 
-
             <input
                 type="text"
                 name="pseudo"
@@ -596,112 +529,77 @@
 
             </button>
 
-
         </form>
-
 
 
         <!-- LISTE DES COMMENTAIRES -->
 
         <div class="comments-list">
 
-
             {% if commentaires %}
-
 
                 {% for commentaire in commentaires %}
 
-
                 <article class="commentaire">
 
-
                     <div class="comment-avatar">
-
                         👤
-
                     </div>
 
 
                     <div class="comment-body">
 
-
                         <div class="comment-header">
 
-
                             <strong>
-
                                 {{ commentaire.pseudo
                                    or "Utilisateur" }}
-
                             </strong>
 
 
                             {% if commentaire.date_commentaire %}
 
                             <small>
-
                                 {{ commentaire.date_commentaire }}
-
                             </small>
 
                             {% endif %}
-
 
                         </div>
 
 
                         <p>
-
                             {{ commentaire.commentaire }}
-
                         </p>
-
 
                     </div>
 
-
                 </article>
-
 
                 {% endfor %}
 
-
             {% else %}
-
 
                 <div class="empty-comments">
 
-
                     <span>
-
                         💬
-
                     </span>
 
-
                     <p>
-
                         Aucun commentaire pour le moment.
-
                     </p>
 
-
                     <small>
-
                         Sois le premier à laisser
                         un commentaire.
-
                     </small>
-
 
                 </div>
 
-
             {% endif %}
 
-
         </div>
-
 
     </section>
 
@@ -709,13 +607,9 @@
 
     <!-- ==================================================
          PUBLICITÉ BAS DE PAGE
-         
-         IMPORTANT :
+
          Aucun emplacement publicitaire automatique
          n'est ajouté ici pour le moment.
-
-         Cela permet de ne pas toucher aux bannières
-         déjà occupées.
     ================================================== -->
 
 
@@ -726,31 +620,21 @@
 
     <section class="download-card">
 
-
         <div class="download-icon">
-
             ⬇️
-
         </div>
 
 
         <div class="download-text">
 
-
             <h2>
-
                 Prêt à télécharger ?
-
             </h2>
 
-
             <p>
-
                 Appuie sur le bouton ci-dessous
                 pour commencer le téléchargement.
-
             </p>
-
 
         </div>
 
@@ -766,7 +650,6 @@
 
         </a>
 
-
     </section>
 
 
@@ -777,27 +660,22 @@
 
     <div class="download-note">
 
-
         <span>
-
             ℹ️
-
         </span>
 
-
         <p>
-
             Le téléchargement est effectué depuis
             le lien configuré par l'administrateur.
-
         </p>
-
 
     </div>
 
 
-                                </div>
-                                <!-- ==================================================
+</div>
+
+
+<!-- ==================================================
      STYLE PAGE JEU + NOVA ADS
 ================================================== -->
 
@@ -807,9 +685,9 @@
    PAGE
 ================================================== */
 
-.page-jeu{
-    max-width:900px;
-    margin:auto;
+.page-jeu {
+    max-width: 900px;
+    margin: auto;
 }
 
 
@@ -817,97 +695,101 @@
    NOVA ADS
 ================================================== */
 
-.nova-ad{
-    width:100%;
-    margin-bottom:20px;
+.nova-ad {
+    width: 100%;
+    margin-bottom: 20px;
 
-    background:#12161e;
+    background: #12161e;
 
-    border:1px solid #293140;
+    border: 1px solid #293140;
 
-    border-radius:12px;
+    border-radius: 12px;
 
-    overflow:hidden;
+    overflow: hidden;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display: flex;
 
-    min-height:70px;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 70px;
+
+    position: relative;
 }
 
 
 /* Image publicitaire */
 
-.nova-ad img{
-    display:block;
+.nova-ad img {
+    display: block;
 
-    width:100%;
-    height:auto;
+    width: 100%;
+    height: auto;
 
-    max-height:320px;
+    max-height: 320px;
 
-    object-fit:cover;
+    object-fit: cover;
 }
 
 
-/* Lien */
+/* Lien publicitaire */
 
-.nova-ad-link{
-    display:block;
+.nova-ad-link {
+    display: block;
 
-    width:100%;
+    width: 100%;
 
-    text-decoration:none;
+    text-decoration: none;
 }
 
 
 /* Vidéo publicitaire */
 
-.nova-ad video{
-    display:block;
+.nova-ad video {
+    display: block;
 
-    width:100%;
+    width: 100%;
 
-    max-height:320px;
+    max-height: 320px;
 
-    background:#000;
+    background: #000;
 }
 
 
 /* Publicité HTML */
 
-.nova-ad-html{
-    width:100%;
-    min-height:70px;
+.nova-ad-html {
+    width: 100%;
+    min-height: 70px;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display: flex;
 
-    overflow:hidden;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
 }
 
 
-/* Petite indication uniquement
-   si une publicité est réellement affichée */
+/* Indication PUBLICITÉ */
 
-.nova-ad::before{
-    content:"PUBLICITÉ";
+.nova-ad::before {
+    content: "PUBLICITÉ";
 
-    position:absolute;
+    position: absolute;
 
-    margin-top:-1px;
+    top: 5px;
+    left: 8px;
 
-    margin-left:8px;
+    font-size: 8px;
 
-    font-size:8px;
+    color: #697586;
 
-    color:#697586;
+    letter-spacing: 1px;
 
-    letter-spacing:1px;
+    pointer-events: none;
 
-    pointer-events:none;
+    z-index: 2;
 }
 
 
@@ -915,179 +797,193 @@
    EN-TÊTE DU JEU
 ================================================== */
 
-.jeu-header{
+.jeu-header {
 
-    display:grid;
+    display: grid;
 
-    grid-template-columns:280px 1fr;
+    grid-template-columns: 280px 1fr;
 
-    gap:25px;
+    gap: 25px;
 
-    background:#181d27;
+    background: #181d27;
 
-    border:1px solid #293140;
+    border: 1px solid #293140;
 
-    border-radius:20px;
+    border-radius: 20px;
 
-    padding:20px;
+    padding: 20px;
 
 }
 
+
+/* Image de couverture */
 
 .image-principale,
-.cover-placeholder{
+.cover-placeholder {
 
-    width:100%;
+    width: 100%;
 
-    height:360px;
+    height: 360px;
 
-    object-fit:cover;
+    object-fit: cover;
 
-    border-radius:15px;
+    border-radius: 15px;
+
+}
+
+
+.cover-placeholder {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #252d39;
+
+    font-size: 60px;
 
 }
 
 
-.cover-placeholder{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:#252d39;
-
-    font-size:60px;
-
-}
-
+/* ==================================================
+   LABEL
+================================================== */
 
 .game-label,
-.section-heading span{
+.section-heading span {
 
-    color:#4da3ff;
+    color: #4da3ff;
 
-    font-size:10px;
+    font-size: 10px;
 
-    font-weight:700;
+    font-weight: 700;
 
-    letter-spacing:1.5px;
-
-}
-
-
-.infos h1{
-
-    font-size:30px;
-
-    margin:8px 0 20px;
+    letter-spacing: 1.5px;
 
 }
 
 
-.game-info-list{
+/* ==================================================
+   INFORMATIONS
+================================================== */
 
-    display:grid;
+.infos h1 {
 
-    grid-template-columns:1fr 1fr;
+    font-size: 30px;
 
-    gap:12px;
-
-}
-
-
-.game-info-list div{
-
-    background:#12161e;
-
-    padding:12px;
-
-    border-radius:10px;
+    margin: 8px 0 20px;
 
 }
 
 
-.game-info-list span{
+.game-info-list {
 
-    display:block;
+    display: grid;
 
-    color:#758091;
+    grid-template-columns: 1fr 1fr;
 
-    font-size:11px;
-
-}
-
-
-.game-info-list strong{
-
-    display:block;
-
-    margin-top:4px;
+    gap: 12px;
 
 }
 
 
-.download-info{
+.game-info-list div {
 
-    display:flex;
+    background: #12161e;
 
-    justify-content:space-between;
+    padding: 12px;
 
-    margin:18px 0;
-
-    color:#aeb7c4;
+    border-radius: 10px;
 
 }
 
 
-.download-info strong{
+.game-info-list span {
 
-    color:white;
+    display: block;
 
-}
+    color: #758091;
 
-
-.actions{
-
-    display:flex;
-
-    gap:10px;
+    font-size: 11px;
 
 }
 
 
-.btn{
+.game-info-list strong {
 
-    flex:1;
+    display: block;
 
-    text-align:center;
-
-    padding:13px;
-
-    border-radius:11px;
-
-    text-decoration:none;
-
-    font-weight:700;
+    margin-top: 4px;
 
 }
 
 
-.telecharger{
+.download-info {
 
-    background:#2e9b5b;
+    display: flex;
 
-    color:white;
+    justify-content: space-between;
+
+    margin: 18px 0;
+
+    color: #aeb7c4;
 
 }
 
 
-.voir{
+.download-info strong {
 
-    background:#28384c;
+    color: white;
 
-    color:#70b7ff;
+}
+
+
+/* ==================================================
+   BOUTONS
+================================================== */
+
+.actions {
+
+    display: flex;
+
+    gap: 10px;
+
+}
+
+
+.btn {
+
+    flex: 1;
+
+    text-align: center;
+
+    padding: 13px;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+}
+
+
+.telecharger {
+
+    background: #2e9b5b;
+
+    color: white;
+
+}
+
+
+.voir {
+
+    background: #28384c;
+
+    color: #70b7ff;
 
 }
 
@@ -1096,31 +992,31 @@
    SECTIONS
 ================================================== */
 
-.game-section{
+.game-section {
 
-    background:#181d27;
+    background: #181d27;
 
-    border:1px solid #293140;
+    border: 1px solid #293140;
 
-    border-radius:18px;
+    border-radius: 18px;
 
-    padding:20px;
+    padding: 20px;
 
-    margin-top:20px;
-
-}
-
-
-.section-heading{
-
-    margin-bottom:15px;
+    margin-top: 20px;
 
 }
 
 
-.section-heading h2{
+.section-heading {
 
-    margin-top:5px;
+    margin-bottom: 15px;
+
+}
+
+
+.section-heading h2 {
+
+    margin-top: 5px;
 
 }
 
@@ -1129,17 +1025,17 @@
    DESCRIPTION
 ================================================== */
 
-.description-box{
+.description-box {
 
-    background:#12161e;
+    background: #12161e;
 
-    border-radius:12px;
+    border-radius: 12px;
 
-    padding:15px;
+    padding: 15px;
 
-    color:#c0c8d3;
+    color: #c0c8d3;
 
-    line-height:1.7;
+    line-height: 1.7;
 
 }
 
@@ -1148,411 +1044,667 @@
    GALERIE
 ================================================== */
 
-.galerie{
+.galerie {
 
-    display:grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(3, 1fr);
 
-    gap:10px;
-
-}
-
-
-.capture-link{
-
-    display:block;
+    gap: 10px;
 
 }
 
 
-.capture{
+.capture-link {
 
-    width:100%;
-
-    height:150px;
-
-    object-fit:cover;
-
-    border-radius:10px;
-
-    display:block;
+    display: block;
 
 }
 
 
-/* ==================================================
+.capture {
+
+    width: 100%;
+
+    height: 150px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    display: block;
+
+}
+    /* ==================================================
    COMMENTAIRES
 ================================================== */
 
-.form-commentaire{
+.form-commentaire {
 
-    display:flex;
+    display: flex;
 
-    flex-direction:column;
+    flex-direction: column;
 
-    gap:10px;
+    gap: 10px;
 
 }
 
 
 .form-commentaire input,
-.form-commentaire textarea{
+.form-commentaire textarea {
 
-    width:100%;
+    width: 100%;
 
-    padding:13px;
+    padding: 13px;
 
-    border:1px solid #303947;
+    border: 1px solid #303947;
 
-    border-radius:10px;
+    border-radius: 10px;
 
-    background:#12161e;
+    background: #12161e;
 
-    color:white;
+    color: white;
 
-    resize:vertical;
-
-}
-
-
-.comment-btn{
-
-    padding:13px;
-
-    border:0;
-
-    border-radius:10px;
-
-    background:#4da3ff;
-
-    color:white;
-
-    font-weight:700;
-
-    cursor:pointer;
+    resize: vertical;
 
 }
 
 
-.comments-list{
+.form-commentaire input:focus,
+.form-commentaire textarea:focus {
 
-    margin-top:20px;
+    outline: none;
 
-    display:flex;
-
-    flex-direction:column;
-
-    gap:10px;
+    border-color: #4da3ff;
 
 }
 
 
-.commentaire{
+.comment-btn {
 
-    display:flex;
+    padding: 13px;
 
-    gap:12px;
+    border: 0;
 
-    padding:13px;
+    border-radius: 10px;
 
-    background:#12161e;
+    background: #4da3ff;
 
-    border-radius:12px;
+    color: white;
 
-}
+    font-weight: 700;
 
+    cursor: pointer;
 
-.comment-avatar{
-
-    width:38px;
-
-    height:38px;
-
-    flex-shrink:0;
-
-    border-radius:50%;
-
-    background:#252d39;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
+    transition: opacity .2s ease;
 
 }
 
 
-.comment-body{
+.comment-btn:hover {
 
-    flex:1;
-
-}
-
-
-.comment-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    gap:10px;
+    opacity: .9;
 
 }
 
 
-.comment-header small{
+.comments-list {
 
-    color:#687383;
+    margin-top: 20px;
 
-    font-size:10px;
+    display: flex;
 
-}
+    flex-direction: column;
 
-
-.comment-body p{
-
-    margin-top:7px;
-
-    color:#bdc5d0;
+    gap: 12px;
 
 }
 
 
-.empty-gallery,
-.empty-comments{
+.commentaire {
 
-    text-align:center;
+    display: flex;
 
-    padding:30px;
+    gap: 12px;
 
-    color:#778292;
+    padding: 15px;
 
-}
+    background: #12161e;
 
+    border: 1px solid #293140;
 
-.empty-comments span{
-
-    font-size:35px;
-
-    display:block;
+    border-radius: 12px;
 
 }
 
 
-/* ==================================================
-   TÉLÉCHARGEMENT
-================================================== */
+.comment-avatar {
 
-.download-card{
+    width: 42px;
 
-    margin-top:20px;
+    height: 42px;
 
-    padding:20px;
+    flex-shrink: 0;
 
-    background:#181d27;
+    display: flex;
 
-    border:1px solid #293140;
+    align-items: center;
 
-    border-radius:18px;
+    justify-content: center;
 
-    text-align:center;
+    background: #252d39;
 
-}
+    border-radius: 50%;
 
-
-.download-icon{
-
-    font-size:35px;
+    font-size: 20px;
 
 }
 
 
-.download-text p{
+.comment-body {
 
-    color:#8d97a6;
+    flex: 1;
 
-    font-size:13px;
-
-}
-
-
-.download-main-btn{
-
-    display:block;
-
-    margin-top:18px;
-
-    padding:15px;
-
-    border-radius:12px;
-
-    background:#2e9b5b;
-
-    color:white;
-
-    text-decoration:none;
-
-    font-weight:700;
+    min-width: 0;
 
 }
 
 
-.download-note{
+.comment-header {
 
-    display:flex;
+    display: flex;
 
-    gap:8px;
+    align-items: center;
 
-    margin:12px 0 30px;
+    justify-content: space-between;
 
-    color:#788393;
+    gap: 10px;
 
-    font-size:11px;
+    margin-bottom: 7px;
+
+}
+
+
+.comment-header strong {
+
+    color: white;
+
+    font-size: 14px;
+
+}
+
+
+.comment-header small {
+
+    color: #697586;
+
+    font-size: 11px;
+
+}
+
+
+.comment-body p {
+
+    margin: 0;
+
+    color: #c0c8d3;
+
+    line-height: 1.6;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
 
 }
 
 
 /* ==================================================
-   MOBILE
+   COMMENTAIRES VIDES
 ================================================== */
 
-@media(max-width:650px){
+.empty-comments {
+
+    text-align: center;
+
+    padding: 30px 15px;
+
+    background: #12161e;
+
+    border-radius: 12px;
+
+    border: 1px dashed #303947;
+
+}
 
 
-    .jeu-header{
+.empty-comments span {
 
-        grid-template-columns:1fr;
+    display: block;
 
-        padding:14px;
+    font-size: 35px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.empty-comments p {
+
+    margin: 0 0 5px;
+
+    color: #c0c8d3;
+
+}
+
+
+.empty-comments small {
+
+    color: #697586;
+
+}
+
+
+/* ==================================================
+   GALERIE VIDE
+================================================== */
+
+.empty-gallery {
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: #697586;
+
+    background: #12161e;
+
+    border-radius: 12px;
+
+}
+
+
+/* ==================================================
+   CARTE TÉLÉCHARGEMENT
+================================================== */
+
+.download-card {
+
+    margin-top: 20px;
+
+    padding: 25px;
+
+    background: linear-gradient(
+        135deg,
+        #181d27,
+        #202938
+    );
+
+    border: 1px solid #293140;
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+}
+
+
+.download-icon {
+
+    width: 55px;
+
+    height: 55px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #2e9b5b;
+
+    border-radius: 14px;
+
+    font-size: 25px;
+
+}
+
+
+.download-text {
+
+    flex: 1;
+
+}
+
+
+.download-text h2 {
+
+    margin: 0 0 5px;
+
+    font-size: 20px;
+
+}
+
+
+.download-text p {
+
+    margin: 0;
+
+    color: #8994a5;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+}
+
+
+.download-main-btn {
+
+    display: inline-block;
+
+    padding: 14px 20px;
+
+    border-radius: 11px;
+
+    background: #2e9b5b;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    text-align: center;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+}
+
+
+.download-main-btn:hover {
+
+    transform: translateY(-1px);
+
+    opacity: .9;
+
+}
+
+
+/* ==================================================
+   NOTE DE TÉLÉCHARGEMENT
+================================================== */
+
+.download-note {
+
+    margin-top: 12px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 14px;
+
+    background: #12161e;
+
+    border: 1px solid #293140;
+
+    border-radius: 12px;
+
+    color: #8b96a7;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+}
+
+
+.download-note span {
+
+    flex-shrink: 0;
+
+}
+
+
+.download-note p {
+
+    margin: 0;
+
+}
+
+
+/* ==================================================
+   RESPONSIVE TABLETTE
+================================================== */
+
+@media (max-width: 760px) {
+
+    .page-jeu {
+
+        max-width: 100%;
+
+    }
+
+
+    .jeu-header {
+
+        grid-template-columns: 220px 1fr;
+
+        gap: 18px;
 
     }
 
 
     .image-principale,
-    .cover-placeholder{
+    .cover-placeholder {
 
-        height:280px;
-
-    }
-
-
-    .infos h1{
-
-        font-size:24px;
+        height: 300px;
 
     }
 
 
-    .galerie{
+    .infos h1 {
+
+        font-size: 25px;
+
+    }
+
+
+    .galerie {
 
         grid-template-columns:
-            1fr 1fr;
+            repeat(2, 1fr);
 
     }
 
 
-    .capture{
+    .capture {
 
-        height:115px;
-
-    }
-
-
-    .game-info-list{
-
-        gap:8px;
+        height: 140px;
 
     }
 
 
-    .game-info-list div{
+    .download-card {
 
-        padding:10px;
-
-    }
-
-
-    .download-main-btn{
-
-        font-size:14px;
+        flex-wrap: wrap;
 
     }
 
 
-    .nova-ad{
+    .download-text {
 
-        border-radius:10px;
-
-        margin-bottom:15px;
-
-    }
-
-
-    .nova-ad img{
-
-        max-height:220px;
-
-        object-fit:contain;
+        min-width: calc(
+            100% - 75px
+        );
 
     }
 
 
-    .nova-ad video{
+    .download-main-btn {
 
-        max-height:220px;
+        width: 100%;
 
     }
-
 
 }
 
 
 /* ==================================================
-   TRÈS PETITS ÉCRANS
+   RESPONSIVE MOBILE
 ================================================== */
 
-@media(max-width:400px){
+@media (max-width: 560px) {
 
+    .jeu-header {
 
-    .galerie{
+        display: block;
 
-        grid-template-columns:1fr;
-
-    }
-
-
-    .capture{
-
-        height:180px;
+        padding: 15px;
 
     }
 
 
-    .actions{
+    .cover-wrapper {
 
-        flex-direction:column;
+        margin-bottom: 18px;
+
+    }
+
+
+    .image-principale,
+    .cover-placeholder {
+
+        height: 330px;
 
     }
 
 
-    .nova-ad img{
+    .infos h1 {
 
-        max-height:180px;
+        font-size: 24px;
+
+        margin-bottom: 15px;
 
     }
 
+
+    .game-info-list {
+
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+
+    }
+
+
+    .actions {
+
+        flex-direction: column;
+
+    }
+
+
+    .game-section {
+
+        padding: 15px;
+
+    }
+
+
+    .galerie {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 8px;
+
+    }
+
+
+    .capture {
+
+        height: 120px;
+
+    }
+
+
+    .commentaire {
+
+        padding: 12px;
+
+    }
+
+
+    .comment-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 3px;
+
+    }
+
+
+    .download-card {
+
+        padding: 18px;
+
+    }
+
+
+    .download-icon {
+
+        width: 48px;
+
+        height: 48px;
+
+    }
+
+}
+
+
+/* ==================================================
+   PETITS ÉCRANS
+================================================== */
+
+@media (max-width: 380px) {
+
+    .galerie {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .capture {
+
+        height: 180px;
+
+    }
+
+
+    .download-text {
+
+        min-width: 100%;
+
+    }
 
 }
 
 </style>
 
-
-
-<!-- ==================================================
-     FIN DU CONTENU
-================================================== -->
 
 {% endblock %}
