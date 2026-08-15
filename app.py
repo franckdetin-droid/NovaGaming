@@ -88,7 +88,8 @@ if not firebase_admin._apps:
 def envoyer_notification_push(
     token,
     titre,
-    message
+    message,
+    image_url=None
 ):
 
     if not token:
@@ -102,9 +103,26 @@ def envoyer_notification_push(
             body=message
         )
 
+        # ==========================
+        # NOTIFICATION WEB
+        # ==========================
+
+        webpush_notification = (
+            messaging.WebpushNotification(
+                title=titre,
+                body=message,
+                image=image_url
+            )
+        )
+
+        webpush = messaging.WebpushConfig(
+            notification=webpush_notification
+        )
+
         message_firebase = messaging.Message(
             notification=notification,
-            token=token
+            token=token,
+            webpush=webpush
         )
 
         resultat = messaging.send(
@@ -126,7 +144,6 @@ def envoyer_notification_push(
         )
 
         return False
-    
 # ==========================
 # CONFIGURATION FLASK
 # ==========================
@@ -1015,7 +1032,6 @@ def ajouter():
             .execute()
         )
 
-
         # ==========================
         # NOTIFICATION
         # ==========================
@@ -1036,6 +1052,42 @@ def ajouter():
         }).execute()
 
 
+        # ==========================
+        # NOTIFICATION PUSH FIREBASE
+        # ==========================
+
+        try:
+
+            resultat_tokens = (
+                supabase
+                .table("tokens_fcm")
+                .select("token")
+                .execute()
+            )
+
+            for element in (
+                resultat_tokens.data or []
+            ):
+
+                token = element.get("token")
+
+                if token:
+
+                    envoyer_notification_push(
+                        token,
+                        "Nouveau jeu disponible 🎮",
+                        f"{nom} vient d'être ajouté au catalogue.",
+                        couverture
+                    )
+
+        except Exception as e:
+
+            print(
+                "ERREUR PUSH FIREBASE :",
+                str(e)
+            )
+
+
     except Exception as e:
 
         print(
@@ -1052,7 +1104,6 @@ def ajouter():
     return redirect(
         url_for("admin")
     )
-
 
 # ==========================
 # MODIFIER UN JEU
@@ -1358,7 +1409,7 @@ def modifier(jeu_id):
         ).execute()
 
 
-        # ==========================
+                # ==========================
         # NOTIFICATION
         # ==========================
 
@@ -1378,6 +1429,42 @@ def modifier(jeu_id):
         }).execute()
 
 
+        # ==========================
+        # NOTIFICATION PUSH FIREBASE
+        # ==========================
+
+        try:
+
+            resultat_tokens = (
+                supabase
+                .table("tokens_fcm")
+                .select("token")
+                .execute()
+            )
+
+            for element in (
+                resultat_tokens.data or []
+            ):
+
+                token = element.get("token")
+
+                if token:
+
+                    envoyer_notification_push(
+                        token,
+                        "Jeu modifié ✏️",
+                        f"{nom} a été modifié.",
+                        couverture
+                    )
+
+        except Exception as e:
+
+            print(
+                "ERREUR PUSH MODIFICATION :",
+                str(e)
+            )
+
+
     except Exception as e:
 
         print(
@@ -1393,7 +1480,7 @@ def modifier(jeu_id):
 
     return redirect(
         url_for("admin")
-)
+    )
     # ==========================
 # GAME STORE - APP.PY
 # PARTIE 3/4
@@ -1481,10 +1568,18 @@ def supprimer(jeu_id):
             jeu_id
         ).execute()
 
-
         # ==========================
         # NOTIFICATION
         # ==========================
+
+        nom_jeu = jeu_data.get(
+            "nom",
+            "Le jeu"
+        )
+
+        couverture_jeu = jeu_data.get(
+            "couverture"
+        )
 
         supabase.table(
             "notifications"
@@ -1494,13 +1589,48 @@ def supprimer(jeu_id):
                 "Jeu supprimé 🗑️",
 
             "message":
-                f"{jeu_data.get('nom', 'Le jeu')} "
-                "a été supprimé du catalogue.",
+                f"{nom_jeu} a été supprimé du catalogue.",
 
             "lu":
                 0
 
         }).execute()
+
+
+        # ==========================
+        # NOTIFICATION PUSH FIREBASE
+        # ==========================
+
+        try:
+
+            resultat_tokens = (
+                supabase
+                .table("tokens_fcm")
+                .select("token")
+                .execute()
+            )
+
+            for element in (
+                resultat_tokens.data or []
+            ):
+
+                token = element.get("token")
+
+                if token:
+
+                    envoyer_notification_push(
+                        token,
+                        "Jeu supprimé 🗑️",
+                        f"{nom_jeu} a été supprimé du catalogue.",
+                        couverture_jeu
+                    )
+
+        except Exception as e:
+
+            print(
+                "ERREUR PUSH SUPPRESSION :",
+                str(e)
+            )
 
 
     except Exception as e:
@@ -1518,8 +1648,7 @@ def supprimer(jeu_id):
 
     return redirect(
         url_for("admin")
-    )
-
+            )
 
 # ==========================
 # SUPPRIMER UN COMMENTAIRE
