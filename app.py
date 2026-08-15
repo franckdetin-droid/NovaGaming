@@ -369,7 +369,6 @@ def recherche():
         recherche=q
     )
 
-
 # ==========================
 # PAGE D'UN JEU
 # ==========================
@@ -378,6 +377,10 @@ def recherche():
 def jeu(jeu_id):
 
     try:
+
+        # ==========================
+        # RÉCUPÉRER LE JEU
+        # ==========================
 
         resultat_jeu = (
             supabase
@@ -391,11 +394,14 @@ def jeu(jeu_id):
         jeux = resultat_jeu.data or []
 
         if not jeux:
-
             abort(404)
 
         jeu_data = jeux[0]
 
+
+        # ==========================
+        # RÉCUPÉRER LES COMMENTAIRES
+        # ==========================
 
         resultat_commentaires = (
             supabase
@@ -410,6 +416,37 @@ def jeu(jeu_id):
             resultat_commentaires.data or []
         )
 
+
+        # ==========================
+        # RÉCUPÉRER LES PUBLICITÉS NOVA ADS
+        # ==========================
+
+        resultat_ads = (
+            supabase
+            .table("publicites")
+            .select("*")
+            .eq("actif", True)
+            .execute()
+        )
+
+        publicites = resultat_ads.data or []
+
+
+        # ==========================
+        # ORGANISER LES PUBLICITÉS
+        # PAR EMPLACEMENT
+        # ==========================
+
+        nova_ads = {}
+
+        for pub in publicites:
+
+            emplacement = pub.get("emplacement")
+
+            if emplacement:
+                nova_ads[emplacement] = pub
+
+
     except Exception as e:
 
         print(
@@ -419,11 +456,17 @@ def jeu(jeu_id):
 
         abort(500)
 
+
+    # ==========================
+    # AFFICHER LA PAGE
+    # ==========================
+
     return render_template(
         "jeu.html",
         jeu=jeu_data,
-        commentaires=commentaires
-    )
+        commentaires=commentaires,
+        nova_ads=nova_ads
+            )
 
 
 # ==========================
