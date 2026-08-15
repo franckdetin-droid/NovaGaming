@@ -2,10 +2,11 @@
 # ==========================
 
 import os
-import sqlite3
 
 import cloudinary
 import cloudinary.uploader
+
+from supabase import create_client, Client
 
 from flask import (
     Flask,
@@ -14,19 +15,15 @@ from flask import (
     redirect,
     url_for,
     session,
-    abort
+    abort,
+    send_from_directory
 )
 
 from functools import wraps
 
-from database import (
-    connexion,
-    creer_base
-)
-
 
 # ==========================
-# CONFIGURATION
+# CONFIGURATION FLASK
 # ==========================
 
 app = Flask(__name__)
@@ -37,7 +34,22 @@ CODE_ADMIN = "3004"
 
 
 # ==========================
-# CONFIGURATION CLOUDINARY
+# SUPABASE
+# ==========================
+
+SUPABASE_URL = "https://uavklduzgwzdwzngtpgg.supabase.co"
+
+# Mets ici ta clé anon / publishable Supabase
+SUPABASE_KEY = "TA_CLE_SUPABASE"
+
+supabase: Client = create_client(
+    SUPABASE_URL,
+    SUPABASE_KEY
+)
+
+
+# ==========================
+# CLOUDINARY
 # ==========================
 
 cloudinary.config(
@@ -48,77 +60,40 @@ cloudinary.config(
 
 
 # ==========================
-# INITIALISATION
+# FONCTIONS SUPABASE
 # ==========================
 
-creer_base()
+def get_jeux():
+    resultat = (
+        supabase
+        .table("jeux")
+        .select("*")
+        .order("id", desc=True)
+        .execute()
+    )
+
+    return resultat.data or []
+
+
+def get_jeu(jeu_id):
+
+    resultat = (
+        supabase
+        .table("jeux")
+        .select("*")
+        .eq("id", jeu_id)
+        .limit(1)
+        .execute()
+    )
+
+    if not resultat.data:
+        return None
+
+    return resultat.data[0]
 
 
 # ==========================
-# CREATION DES TABLES
-# SUPPLEMENTAIRES
-# ==========================
-
-def creer_tables_supplementaires():
-
-    conn = connexion()
-
-    # Favoris
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS favoris(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            jeu_id INTEGER NOT NULL,
-            ip TEXT NOT NULL
-        )
-    """)
-
-    # Vues
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS vues(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            jeu_id INTEGER NOT NULL,
-            ip TEXT,
-            date TIMESTAMP
-                DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # Notifications
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS notifications(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titre TEXT NOT NULL,
-            message TEXT NOT NULL,
-            lu INTEGER DEFAULT 0,
-            date TIMESTAMP
-                DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # Vérification de la colonne "lu"
-    colonnes = [
-        ligne[1]
-        for ligne in conn.execute(
-            "PRAGMA table_info(notifications)"
-        ).fetchall()
-    ]
-
-    if "lu" not in colonnes:
-
-        conn.execute("""
-            ALTER TABLE notifications
-            ADD COLUMN lu INTEGER DEFAULT 0
-        """)
-
-    conn.commit()
-    conn.close()
-
-
-creer_tables_supplementaires()
-
-# ==========================
-# FONCTION UPLOAD IMAGE
-# CLOUDINARY
+# UPLOAD IMAGE CLOUDINARY
 # ==========================
 
 def enregistrer_image(fichier, nom_base):
@@ -148,7 +123,10 @@ def enregistrer_image(fichier, nom_base):
     )[1].lower()
 
     if extension not in extensions_autorisees:
-        print("Extension non autorisée :", extension)
+        print(
+            "Extension non autorisée :",
+            extension
+        )
         return None
 
     try:
@@ -159,9 +137,7 @@ def enregistrer_image(fichier, nom_base):
             resource_type="image"
         )
 
-        image_url = resultat.get(
-            "secure_url"
-        )
+        image_url = resultat.get("secure_url")
 
         if not image_url:
             print(
@@ -184,6 +160,7 @@ def enregistrer_image(fichier, nom_base):
         )
 
         return None
+
 
 # ==========================
 # PROTECTION ADMIN
@@ -212,15 +189,7 @@ def admin_required(f):
 @app.route("/")
 def accueil():
 
-    conn = connexion()
-
-    jeux = conn.execute("""
-        SELECT *
-        FROM jeux
-        ORDER BY id DESC
-    """).fetchall()
-
-    conn.close()
+    jeux = get_jeux()
 
     return render_template(
         "index.html",
@@ -240,32 +209,26 @@ def recherche():
         ""
     ).strip()
 
-    conn = connexion()
-
     if q:
 
-        jeux = conn.execute("""
-            SELECT *
-            FROM jeux
-            WHERE nom LIKE ?
-               OR console LIKE ?
-               OR description LIKE ?
-            ORDER BY id DESC
-        """, (
-            f"%{q}%",
-            f"%{q}%",
-            f"%{q}%"
-        )).fetchall()
+        resultat = (
+            supabase
+            .table("jeux")
+            .select("*")
+            .or_(
+                f"nom.ilike.%{q}%,"
+                f"console.ilike.%{q}%,"
+                f"description.ilike.%{q}%"
+            )
+            .order("id", desc=True)
+            .execute()
+        )
+
+        jeux = resultat.data or []
 
     else:
 
-        jeux = conn.execute("""
-            SELECT *
-            FROM jeux
-            ORDER BY id DESC
-        """).fetchall()
-
-    conn.close()
+        jeux = get_jeux()
 
     return render_template(
         "index.html",
@@ -281,36 +244,25 @@ def recherche():
 @app.route("/jeu/<int:jeu_id>")
 def jeu(jeu_id):
 
-    conn = connexion()
+    jeu_data = get_jeu(jeu_id)
 
-    jeu = conn.execute("""
-        SELECT *
-        FROM jeux
-        WHERE id=?
-    """, (
-        jeu_id,
-    )).fetchone()
-
-    if not jeu:
-
-        conn.close()
-
+    if not jeu_data:
         abort(404)
 
-    commentaires = conn.execute("""
-        SELECT *
-        FROM commentaires
-        WHERE jeu_id=?
-        ORDER BY id DESC
-    """, (
-        jeu_id,
-    )).fetchall()
+    commentaires_resultat = (
+        supabase
+        .table("commentaires")
+        .select("*")
+        .eq("jeu_id", jeu_id)
+        .order("id", desc=True)
+        .execute()
+    )
 
-    conn.close()
+    commentaires = commentaires_resultat.data or []
 
     return render_template(
         "jeu.html",
-        jeu=jeu,
+        jeu=jeu_data,
         commentaires=commentaires
     )
 
@@ -319,55 +271,44 @@ def jeu(jeu_id):
 # TELECHARGEMENT
 # ==========================
 
-@app.route(
-    "/telecharger/<int:jeu_id>"
-)
+@app.route("/telecharger/<int:jeu_id>")
 def telecharger(jeu_id):
 
-    conn = connexion()
+    jeu_data = get_jeu(jeu_id)
 
-    jeu = conn.execute("""
-        SELECT *
-        FROM jeux
-        WHERE id=?
-    """, (
-        jeu_id,
-    )).fetchone()
-
-    if not jeu:
-
-        conn.close()
-
+    if not jeu_data:
         abort(404)
 
-    lien = jeu["lien"]
+    lien = jeu_data.get("lien")
 
     if not lien:
-
-        conn.close()
 
         return (
             "Lien de téléchargement indisponible.",
             404
         )
 
-    conn.execute("""
-        UPDATE jeux
-        SET telechargements =
-            telechargements + 1
-        WHERE id=?
-    """, (
-        jeu_id,
-    ))
+    ancien_nombre = (
+        jeu_data.get("telechargements")
+        or 0
+    )
 
-    conn.commit()
-    conn.close()
+    (
+        supabase
+        .table("jeux")
+        .update({
+            "telechargements":
+                ancien_nombre + 1
+        })
+        .eq("id", jeu_id)
+        .execute()
+    )
 
     return redirect(lien)
 
 
 # ==========================
-# COMMENTAIRES
+# COMMENTAIRE
 # ==========================
 
 @app.route(
@@ -399,49 +340,34 @@ def commentaire(jeu_id):
     texte = texte[:1000]
 
     if not pseudo:
-
         pseudo = "Anonyme"
 
-    conn = connexion()
-
-    jeu_existe = conn.execute("""
-        SELECT id
-        FROM jeux
-        WHERE id=?
-    """, (
-        jeu_id,
-    )).fetchone()
+    jeu_existe = get_jeu(jeu_id)
 
     if jeu_existe:
 
-        conn.execute("""
-            INSERT INTO commentaires(
-                jeu_id,
-                pseudo,
-                commentaire
-            )
-            VALUES(?, ?, ?)
-        """, (
-            jeu_id,
-            pseudo,
-            texte
-        ))
+        (
+            supabase
+            .table("commentaires")
+            .insert({
+                "jeu_id": jeu_id,
+                "pseudo": pseudo,
+                "commentaire": texte
+            })
+            .execute()
+        )
 
-        conn.execute("""
-            INSERT INTO notifications(
-                titre,
-                message,
-                lu
-            )
-            VALUES(?, ?, 0)
-        """, (
-            "Nouveau commentaire 💬",
-            f"{pseudo} a commenté un jeu."
-        ))
-
-        conn.commit()
-
-    conn.close()
+        (
+            supabase
+            .table("notifications")
+            .insert({
+                "titre": "Nouveau commentaire 💬",
+                "message":
+                    f"{pseudo} a commenté un jeu.",
+                "lu": 0
+            })
+            .execute()
+        )
 
     return redirect(
         url_for(
@@ -512,8 +438,7 @@ def logout():
 
     return redirect(
         url_for("accueil")
-    )
-    # app.py - PARTIE 2/4
+        # app.py - PARTIE 2/4
 # ==========================
 
 
@@ -525,58 +450,64 @@ def logout():
 @admin_required
 def admin():
 
-    conn = connexion()
+    jeux = get_jeux()
 
-    jeux = conn.execute("""
-        SELECT *
-        FROM jeux
-        ORDER BY id DESC
-    """).fetchall()
+    total_jeux = len(jeux)
 
-    total_jeux = conn.execute("""
-        SELECT COUNT(*)
-        FROM jeux
-    """).fetchone()[0]
+    total_telechargements = sum(
+        (jeu.get("telechargements") or 0)
+        for jeu in jeux
+    )
 
-    total_telechargements = conn.execute("""
-        SELECT COALESCE(
-            SUM(telechargements),
-            0
-        )
-        FROM jeux
-    """).fetchone()[0]
+    commentaires_resultat = (
+        supabase
+        .table("commentaires")
+        .select("*")
+        .order("id", desc=True)
+        .limit(30)
+        .execute()
+    )
 
-    total_commentaires = conn.execute("""
-        SELECT COUNT(*)
-        FROM commentaires
-    """).fetchone()[0]
+    commentaires_admin = (
+        commentaires_resultat.data or []
+    )
 
-    # Derniers commentaires
-    commentaires_admin = conn.execute("""
-        SELECT *
-        FROM commentaires
-        ORDER BY id DESC
-        LIMIT 30
-    """).fetchall()
+    total_commentaires_resultat = (
+        supabase
+        .table("commentaires")
+        .select("id", count="exact")
+        .execute()
+    )
 
-    # Dernières notifications
-    notifications_admin = conn.execute("""
-        SELECT *
-        FROM notifications
-        ORDER BY id DESC
-        LIMIT 10
-    """).fetchall()
+    total_commentaires = (
+        total_commentaires_resultat.count or 0
+    )
 
-    conn.close()
+    notifications_resultat = (
+        supabase
+        .table("notifications")
+        .select("*")
+        .order("id", desc=True)
+        .limit(10)
+        .execute()
+    )
+
+    notifications_admin = (
+        notifications_resultat.data or []
+    )
 
     return render_template(
         "admin.html",
         jeux=jeux,
         total_jeux=total_jeux,
-        total_telechargements=total_telechargements,
-        total_commentaires=total_commentaires,
-        commentaires_admin=commentaires_admin,
-        notifications_admin=notifications_admin
+        total_telechargements=
+            total_telechargements,
+        total_commentaires=
+            total_commentaires,
+        commentaires_admin=
+            commentaires_admin,
+        notifications_admin=
+            notifications_admin
     )
 
 
@@ -590,10 +521,6 @@ def admin():
 )
 @admin_required
 def ajouter():
-
-    # ==========================
-    # INFORMATIONS
-    # ==========================
 
     nom = request.form.get(
         "nom",
@@ -635,11 +562,6 @@ def ajouter():
         ""
     ).strip()
 
-
-    # ==========================
-    # VERIFICATIONS
-    # ==========================
-
     if not nom:
 
         return (
@@ -663,15 +585,19 @@ def ajouter():
         "couverture_file"
     )
 
-    if couverture_file and couverture_file.filename:
+    if (
+        couverture_file
+        and couverture_file.filename
+    ):
 
-        image_couverture = enregistrer_image(
-            couverture_file,
-            "couverture"
+        image_couverture = (
+            enregistrer_image(
+                couverture_file,
+                "couverture"
+            )
         )
 
         if image_couverture:
-
             couverture = image_couverture
 
 
@@ -679,10 +605,9 @@ def ajouter():
     # GALERIE
     # ==========================
 
-    fichiers_images = request.files.getlist(
-        "images"
+    fichiers_images = (
+        request.files.getlist("images")
     )
-
 
     images = []
 
@@ -700,105 +625,65 @@ def ajouter():
         )
 
         if image_url:
+            images.append(image_url)
 
-            images.append(
-                image_url
-            )
-
-
-    # Compléter jusqu'à 10 images
     while len(images) < 10:
-
         images.append("")
 
 
-    image1 = images[0]
-    image2 = images[1]
-    image3 = images[2]
-    image4 = images[3]
-    image5 = images[4]
-    image6 = images[5]
-    image7 = images[6]
-    image8 = images[7]
-    image9 = images[8]
-    image10 = images[9]
-
-
     # ==========================
-    # INSERTION SQLITE
+    # INSERTION SUPABASE
     # ==========================
 
-    conn = connexion()
+    donnees = {
+        "nom": nom,
+        "console": console,
+        "description": description,
+        "taille": taille,
+        "version": version,
+        "langue": langue,
+        "couverture": couverture,
 
-    curseur = conn.execute("""
-        INSERT INTO jeux(
-            nom,
-            console,
-            description,
-            taille,
-            version,
-            langue,
-            couverture,
-            image1,
-            image2,
-            image3,
-            image4,
-            image5,
-            image6,
-            image7,
-            image8,
-            image9,
-            image10,
-            lien
-        )
-        VALUES(
-            ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?, ?, ?, ?, ?, ?, ?
-        )
-    """, (
-        nom,
-        console,
-        description,
-        taille,
-        version,
-        langue,
-        couverture,
-        image1,
-        image2,
-        image3,
-        image4,
-        image5,
-        image6,
-        image7,
-        image8,
-        image9,
-        image10,
-        lien
-    ))
+        "image1": images[0],
+        "image2": images[1],
+        "image3": images[2],
+        "image4": images[3],
+        "image5": images[4],
+        "image6": images[5],
+        "image7": images[6],
+        "image8": images[7],
+        "image9": images[8],
+        "image10": images[9],
 
-    jeu_id = curseur.lastrowid
+        "lien": lien,
+        "telechargements": 0
+    }
+
+    (
+        supabase
+        .table("jeux")
+        .insert(donnees)
+        .execute()
+    )
 
 
     # ==========================
     # NOTIFICATION
     # ==========================
 
-    conn.execute("""
-        INSERT INTO notifications(
-            titre,
-            message,
-            lu
-        )
-        VALUES(?, ?, 0)
-    """, (
-        "Nouveau jeu disponible 🎮",
-        f"{nom} vient d'être ajouté au catalogue."
-    ))
-
-
-    conn.commit()
-    conn.close()
-
+    (
+        supabase
+        .table("notifications")
+        .insert({
+            "titre":
+                "Nouveau jeu disponible 🎮",
+            "message":
+                f"{nom} vient d'être ajouté "
+                "au catalogue.",
+            "lu": 0
+        })
+        .execute()
+    )
 
     return redirect(
         url_for("admin")
@@ -816,20 +701,9 @@ def ajouter():
 @admin_required
 def modifier(jeu_id):
 
-    conn = connexion()
+    jeu_data = get_jeu(jeu_id)
 
-    jeu = conn.execute("""
-        SELECT *
-        FROM jeux
-        WHERE id=?
-    """, (
-        jeu_id,
-    )).fetchone()
-
-    if not jeu:
-
-        conn.close()
-
+    if not jeu_data:
         abort(404)
 
 
@@ -839,11 +713,9 @@ def modifier(jeu_id):
 
     if request.method == "GET":
 
-        conn.close()
-
         return render_template(
             "modifier.html",
-            jeu=jeu
+            jeu=jeu_data
         )
 
 
@@ -894,16 +766,12 @@ def modifier(jeu_id):
 
     if not nom:
 
-        conn.close()
-
         return (
             "Le nom du jeu est obligatoire.",
             400
         )
 
     if not lien:
-
-        conn.close()
 
         return (
             "Le lien de téléchargement est obligatoire.",
@@ -919,50 +787,53 @@ def modifier(jeu_id):
         "couverture_file"
     )
 
-    if couverture_file and couverture_file.filename:
+    if (
+        couverture_file
+        and couverture_file.filename
+    ):
 
-        nouvelle_couverture = enregistrer_image(
-            couverture_file,
-            "couverture"
+        nouvelle_couverture = (
+            enregistrer_image(
+                couverture_file,
+                "couverture"
+            )
         )
 
         if nouvelle_couverture:
-
             couverture = nouvelle_couverture
 
-    else:
+    elif not couverture:
 
-        # Garder l'ancienne image
-        if not couverture:
-
-            couverture = jeu["couverture"] or ""
+        couverture = (
+            jeu_data.get("couverture")
+            or ""
+        )
 
 
     # ==========================
-    # GALERIE
+    # ANCIENNES IMAGES
     # ==========================
 
-    fichiers_images = request.files.getlist(
-        "images"
+    anciennes_images = []
+
+    for numero in range(1, 11):
+
+        anciennes_images.append(
+            jeu_data.get(
+                f"image{numero}"
+            ) or ""
+        )
+
+
+    # ==========================
+    # NOUVELLES IMAGES
+    # ==========================
+
+    fichiers_images = (
+        request.files.getlist("images")
     )
 
-
-    anciennes_images = [
-        jeu["image1"] or "",
-        jeu["image2"] or "",
-        jeu["image3"] or "",
-        jeu["image4"] or "",
-        jeu["image5"] or "",
-        jeu["image6"] or "",
-        jeu["image7"] or "",
-        jeu["image8"] or "",
-        jeu["image9"] or "",
-        jeu["image10"] or ""
-    ]
-
-
     nouvelles_images = []
-
 
     for fichier in fichiers_images[:10]:
 
@@ -978,21 +849,16 @@ def modifier(jeu_id):
         )
 
         if image_url:
-
             nouvelles_images.append(
                 image_url
             )
 
-
-    # Si aucune nouvelle image n'est envoyée,
-    # on conserve les anciennes.
 
     if nouvelles_images:
 
         images = nouvelles_images
 
         while len(images) < 10:
-
             images.append("")
 
     else:
@@ -1001,78 +867,62 @@ def modifier(jeu_id):
 
 
     # ==========================
-    # UPDATE
+    # UPDATE SUPABASE
     # ==========================
 
-    conn.execute("""
-        UPDATE jeux
-        SET
-            nom=?,
-            console=?,
-            description=?,
-            taille=?,
-            version=?,
-            langue=?,
-            couverture=?,
-            image1=?,
-            image2=?,
-            image3=?,
-            image4=?,
-            image5=?,
-            image6=?,
-            image7=?,
-            image8=?,
-            image9=?,
-            image10=?,
-            lien=?
-        WHERE id=?
-    """, (
-        nom,
-        console,
-        description,
-        taille,
-        version,
-        langue,
-        couverture,
-        images[0],
-        images[1],
-        images[2],
-        images[3],
-        images[4],
-        images[5],
-        images[6],
-        images[7],
-        images[8],
-        images[9],
-        lien,
-        jeu_id
-    ))
+    donnees = {
+        "nom": nom,
+        "console": console,
+        "description": description,
+        "taille": taille,
+        "version": version,
+        "langue": langue,
+        "couverture": couverture,
+
+        "image1": images[0],
+        "image2": images[1],
+        "image3": images[2],
+        "image4": images[3],
+        "image5": images[4],
+        "image6": images[5],
+        "image7": images[6],
+        "image8": images[7],
+        "image9": images[8],
+        "image10": images[9],
+
+        "lien": lien
+    }
+
+    (
+        supabase
+        .table("jeux")
+        .update(donnees)
+        .eq("id", jeu_id)
+        .execute()
+    )
 
 
     # ==========================
     # NOTIFICATION
     # ==========================
 
-    conn.execute("""
-        INSERT INTO notifications(
-            titre,
-            message,
-            lu
-        )
-        VALUES(?, ?, 0)
-    """, (
-        "Jeu modifié ✏️",
-        f"{nom} a été modifié."
-    ))
-
-
-    conn.commit()
-    conn.close()
-
+    (
+        supabase
+        .table("notifications")
+        .insert({
+            "titre": "Jeu modifié ✏️",
+            "message":
+                f"{nom} a été modifié.",
+            "lu": 0
+        })
+        .execute()
+    )
 
     return redirect(
         url_for("admin")
-    )
+        )
+    # app.py - PARTIE 3/4
+# ==========================
 
 
 # ==========================
@@ -1085,76 +935,81 @@ def modifier(jeu_id):
 @admin_required
 def supprimer(jeu_id):
 
-    conn = connexion()
+    jeu_data = get_jeu(jeu_id)
 
-    jeu = conn.execute("""
-        SELECT *
-        FROM jeux
-        WHERE id=?
-    """, (
-        jeu_id,
-    )).fetchone()
-
-    if not jeu:
-
-        conn.close()
-
+    if not jeu_data:
         abort(404)
 
 
     # ==========================
-    # SUPPRIMER LES DONNEES
+    # SUPPRIMER COMMENTAIRES
     # ==========================
 
-    conn.execute("""
-        DELETE FROM commentaires
-        WHERE jeu_id=?
-    """, (
-        jeu_id,
-    ))
+    (
+        supabase
+        .table("commentaires")
+        .delete()
+        .eq("jeu_id", jeu_id)
+        .execute()
+    )
 
-    conn.execute("""
-        DELETE FROM favoris
-        WHERE jeu_id=?
-    """, (
-        jeu_id,
-    ))
 
-    conn.execute("""
-        DELETE FROM vues
-        WHERE jeu_id=?
-    """, (
-        jeu_id,
-    ))
+    # ==========================
+    # SUPPRIMER FAVORIS
+    # ==========================
 
-    conn.execute("""
-        DELETE FROM jeux
-        WHERE id=?
-    """, (
-        jeu_id,
-    ))
+    (
+        supabase
+        .table("favoris")
+        .delete()
+        .eq("jeu_id", jeu_id)
+        .execute()
+    )
+
+
+    # ==========================
+    # SUPPRIMER VUES
+    # ==========================
+
+    (
+        supabase
+        .table("vues")
+        .delete()
+        .eq("jeu_id", jeu_id)
+        .execute()
+    )
+
+
+    # ==========================
+    # SUPPRIMER LE JEU
+    # ==========================
+
+    (
+        supabase
+        .table("jeux")
+        .delete()
+        .eq("id", jeu_id)
+        .execute()
+    )
 
 
     # ==========================
     # NOTIFICATION
     # ==========================
 
-    conn.execute("""
-        INSERT INTO notifications(
-            titre,
-            message,
-            lu
-        )
-        VALUES(?, ?, 0)
-    """, (
-        "Jeu supprimé 🗑️",
-        f"{jeu['nom']} a été supprimé du catalogue."
-    ))
-
-
-    conn.commit()
-    conn.close()
-
+    (
+        supabase
+        .table("notifications")
+        .insert({
+            "titre":
+                "Jeu supprimé 🗑️",
+            "message":
+                f"{jeu_data.get('nom', 'Jeu')} "
+                "a été supprimé du catalogue.",
+            "lu": 0
+        })
+        .execute()
+    )
 
     return redirect(
         url_for("admin")
@@ -1162,95 +1017,83 @@ def supprimer(jeu_id):
 
 
 # ==========================
-# SUPPRIMER UN COMMENTAIRE
+# SUPPRIMER COMMENTAIRE
 # ==========================
 
 @app.route(
-    "/admin/commentaire/supprimer/<int:commentaire_id>"
+    "/admin/commentaire/supprimer/"
+    "<int:commentaire_id>"
 )
 @admin_required
-def supprimer_commentaire(commentaire_id):
+def supprimer_commentaire(
+    commentaire_id
+):
 
-    conn = connexion()
-
-    conn.execute("""
-        DELETE FROM commentaires
-        WHERE id=?
-    """, (
-        commentaire_id,
-    ))
-
-    conn.commit()
-    conn.close()
+    (
+        supabase
+        .table("commentaires")
+        .delete()
+        .eq("id", commentaire_id)
+        .execute()
+    )
 
     return redirect(
         url_for("admin")
     )
-    # app.py - PARTIE 3/4
-# ==========================
 
 
 # ==========================
 # FAVORIS
 # ==========================
 
-@app.route("/favori/<int:jeu_id>")
+@app.route(
+    "/favori/<int:jeu_id>"
+)
 def favori(jeu_id):
 
     ip = request.remote_addr
 
-    conn = connexion()
+    jeu_data = get_jeu(jeu_id)
 
-    jeu = conn.execute("""
-        SELECT id
-        FROM jeux
-        WHERE id=?
-    """, (
-        jeu_id,
-    )).fetchone()
-
-    if not jeu:
-
-        conn.close()
-
+    if not jeu_data:
         abort(404)
 
-    existe = conn.execute("""
-        SELECT id
-        FROM favoris
-        WHERE jeu_id=?
-        AND ip=?
-    """, (
-        jeu_id,
-        ip
-    )).fetchone()
+
+    resultat = (
+        supabase
+        .table("favoris")
+        .select("id")
+        .eq("jeu_id", jeu_id)
+        .eq("ip", ip)
+        .limit(1)
+        .execute()
+    )
+
+    existe = resultat.data or []
+
 
     if existe:
 
-        conn.execute("""
-            DELETE FROM favoris
-            WHERE jeu_id=?
-            AND ip=?
-        """, (
-            jeu_id,
-            ip
-        ))
+        (
+            supabase
+            .table("favoris")
+            .delete()
+            .eq("jeu_id", jeu_id)
+            .eq("ip", ip)
+            .execute()
+        )
 
     else:
 
-        conn.execute("""
-            INSERT INTO favoris(
-                jeu_id,
-                ip
-            )
-            VALUES(?, ?)
-        """, (
-            jeu_id,
-            ip
-        ))
-
-    conn.commit()
-    conn.close()
+        (
+            supabase
+            .table("favoris")
+            .insert({
+                "jeu_id": jeu_id,
+                "ip": ip
+            })
+            .execute()
+        )
 
     return redirect(
         url_for(
@@ -1267,15 +1110,15 @@ def favori(jeu_id):
 @app.route("/notifications")
 def notifications():
 
-    conn = connexion()
+    resultat = (
+        supabase
+        .table("notifications")
+        .select("*")
+        .order("id", desc=True)
+        .execute()
+    )
 
-    liste = conn.execute("""
-        SELECT *
-        FROM notifications
-        ORDER BY id DESC
-    """).fetchall()
-
-    conn.close()
+    liste = resultat.data or []
 
     return render_template(
         "notifications.html",
@@ -1284,8 +1127,7 @@ def notifications():
 
 
 # ==========================
-# MARQUER LES NOTIFICATIONS
-# COMME LUES
+# MARQUER NOTIFICATIONS
 # ==========================
 
 @app.route(
@@ -1294,33 +1136,15 @@ def notifications():
 )
 def notifications_lues():
 
-    conn = connexion()
-
-    # Vérifier que la colonne existe
-    colonnes = [
-        ligne[1]
-        for ligne in conn.execute(
-            "PRAGMA table_info(notifications)"
-        ).fetchall()
-    ]
-
-    if "lu" not in colonnes:
-
-        conn.execute("""
-            ALTER TABLE notifications
-            ADD COLUMN lu INTEGER DEFAULT 0
-        """)
-
-        conn.commit()
-
-    conn.execute("""
-        UPDATE notifications
-        SET lu=1
-        WHERE lu=0
-    """)
-
-    conn.commit()
-    conn.close()
+    (
+        supabase
+        .table("notifications")
+        .update({
+            "lu": 1
+        })
+        .eq("lu", 0)
+        .execute()
+    )
 
     return redirect(
         url_for("notifications")
@@ -1334,16 +1158,19 @@ def notifications_lues():
 @app.route("/populaires")
 def populaires():
 
-    conn = connexion()
+    resultat = (
+        supabase
+        .table("jeux")
+        .select("*")
+        .order(
+            "telechargements",
+            desc=True
+        )
+        .limit(20)
+        .execute()
+    )
 
-    jeux = conn.execute("""
-        SELECT *
-        FROM jeux
-        ORDER BY telechargements DESC
-        LIMIT 20
-    """).fetchall()
-
-    conn.close()
+    jeux = resultat.data or []
 
     return render_template(
         "index.html",
@@ -1353,22 +1180,25 @@ def populaires():
 
 
 # ==========================
-# NOUVEAUTÉS
+# NOUVEAUTES
 # ==========================
 
 @app.route("/nouveautes")
 def nouveautes():
 
-    conn = connexion()
+    resultat = (
+        supabase
+        .table("jeux")
+        .select("*")
+        .order(
+            "date_ajout",
+            desc=True
+        )
+        .limit(20)
+        .execute()
+    )
 
-    jeux = conn.execute("""
-        SELECT *
-        FROM jeux
-        ORDER BY date_ajout DESC
-        LIMIT 20
-    """).fetchall()
-
-    conn.close()
+    jeux = resultat.data or []
 
     return render_template(
         "index.html",
@@ -1384,7 +1214,6 @@ def nouveautes():
 @app.before_request
 def compteur_vues():
 
-    # Seulement sur une page de jeu
     if request.endpoint != "jeu":
         return
 
@@ -1400,46 +1229,43 @@ def compteur_vues():
 
     ip = request.remote_addr
 
-    conn = connexion()
 
-    # Vérifier si cette IP a déjà
-    # consulté ce jeu récemment.
+    # ==========================
+    # VUE RECENTE
+    # ==========================
 
-    existe = conn.execute("""
-        SELECT id
-        FROM vues
-        WHERE jeu_id=?
-        AND ip=?
-        AND date > datetime(
-            'now',
-            '-30 minutes'
+    resultat = (
+        supabase
+        .table("vues")
+        .select("id")
+        .eq("jeu_id", jeu_id)
+        .eq("ip", ip)
+        .gte(
+            "date",
+            "now() - interval '30 minutes'"
         )
-        LIMIT 1
-    """, (
-        jeu_id,
-        ip
-    )).fetchone()
+        .limit(1)
+        .execute()
+    )
 
-    if not existe:
+    # Si Supabase ne retourne rien,
+    # enregistrer la vue.
 
-        conn.execute("""
-            INSERT INTO vues(
-                jeu_id,
-                ip
-            )
-            VALUES(?, ?)
-        """, (
-            jeu_id,
-            ip
-        ))
+    if not resultat.data:
 
-        conn.commit()
-
-    conn.close()
+        (
+            supabase
+            .table("vues")
+            .insert({
+                "jeu_id": jeu_id,
+                "ip": ip
+            })
+            .execute()
+        )
 
 
 # ==========================
-# NOMBRE DE FAVORIS
+# FONCTIONS GLOBALES
 # ==========================
 
 @app.context_processor
@@ -1447,22 +1273,22 @@ def fonctions_globales():
 
     def nombre_favoris(jeu_id):
 
-        conn = connexion()
+        resultat = (
+            supabase
+            .table("favoris")
+            .select(
+                "id",
+                count="exact"
+            )
+            .eq("jeu_id", jeu_id)
+            .execute()
+        )
 
-        resultat = conn.execute("""
-            SELECT COUNT(*)
-            FROM favoris
-            WHERE jeu_id=?
-        """, (
-            jeu_id,
-        )).fetchone()[0]
-
-        conn.close()
-
-        return resultat
+        return resultat.count or 0
 
     return {
-        "nombre_favoris": nombre_favoris
+        "nombre_favoris":
+            nombre_favoris
     }
 
 
@@ -1473,85 +1299,73 @@ def fonctions_globales():
 @app.context_processor
 def statistiques_globales():
 
-    conn = connexion()
-
-    # ==========================
-    # COMMENTAIRES
-    # ==========================
-
-    commentaires = conn.execute("""
-        SELECT COUNT(*)
-        FROM commentaires
-    """).fetchone()[0]
-
-
-    # ==========================
-    # JEUX
-    # ==========================
-
-    jeux = conn.execute("""
-        SELECT COUNT(*)
-        FROM jeux
-    """).fetchone()[0]
-
-
-    # ==========================
-    # TELECHARGEMENTS
-    # ==========================
-
-    telechargements = conn.execute("""
-        SELECT COALESCE(
-            SUM(telechargements),
-            0
+    jeux_resultat = (
+        supabase
+        .table("jeux")
+        .select(
+            "id,telechargements"
         )
-        FROM jeux
-    """).fetchone()[0]
+        .execute()
+    )
+
+    jeux = jeux_resultat.data or []
 
 
-    # ==========================
-    # NOTIFICATIONS NON LUES
-    # ==========================
+    total_jeux = len(jeux)
 
-    colonnes = [
-        ligne[1]
-        for ligne in conn.execute(
-            "PRAGMA table_info(notifications)"
-        ).fetchall()
-    ]
+    total_telechargements = sum(
+        (jeu.get("telechargements") or 0)
+        for jeu in jeux
+    )
 
 
-    if "lu" in colonnes:
+    commentaires_resultat = (
+        supabase
+        .table("commentaires")
+        .select(
+            "id",
+            count="exact"
+        )
+        .execute()
+    )
 
-        notifications_non_lues = conn.execute("""
-            SELECT COUNT(*)
-            FROM notifications
-            WHERE lu=0
-        """).fetchone()[0]
-
-    else:
-
-        notifications_non_lues = 0
+    total_commentaires = (
+        commentaires_resultat.count or 0
+    )
 
 
-    conn.close()
+    notifications_resultat = (
+        supabase
+        .table("notifications")
+        .select(
+            "id",
+            count="exact"
+        )
+        .eq("lu", 0)
+        .execute()
+    )
+
+    notifications_non_lues = (
+        notifications_resultat.count or 0
+    )
 
 
     return {
 
         "total_commentaires":
-            commentaires,
+            total_commentaires,
 
         "total_jeux":
-            jeux,
+            total_jeux,
 
         "total_telechargements":
-            telechargements,
+            total_telechargements,
 
         "notifications_non_lues":
             notifications_non_lues
-
     }
-    # app.py - PARTIE 4/4
+)
+# app.py - PARTIE 4/4
 # ==========================
 
 
@@ -1565,10 +1379,14 @@ def page_introuvable(error):
     return """
     <!DOCTYPE html>
     <html lang="fr">
+
     <head>
+
         <meta charset="UTF-8">
+
         <meta name="viewport"
-              content="width=device-width, initial-scale=1.0">
+              content="width=device-width,
+              initial-scale=1.0">
 
         <title>404 - Page introuvable</title>
 
@@ -1577,16 +1395,12 @@ def page_introuvable(error):
             body {
                 margin: 0;
                 min-height: 100vh;
-
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
                 font-family: Arial, sans-serif;
-
                 background: #0f141c;
                 color: white;
-
                 text-align: center;
             }
 
@@ -1610,20 +1424,17 @@ def page_introuvable(error):
 
             a {
                 display: inline-block;
-
                 margin-top: 20px;
                 padding: 12px 20px;
-
                 border-radius: 10px;
-
                 background: #4da3ff;
                 color: white;
-
                 text-decoration: none;
                 font-weight: bold;
             }
 
         </style>
+
     </head>
 
     <body>
@@ -1646,6 +1457,7 @@ def page_introuvable(error):
         </div>
 
     </body>
+
     </html>
     """, 404
 
@@ -1657,13 +1469,22 @@ def page_introuvable(error):
 @app.errorhandler(500)
 def erreur_serveur(error):
 
+    print(
+        "ERREUR 500 :",
+        error
+    )
+
     return """
     <!DOCTYPE html>
     <html lang="fr">
+
     <head>
+
         <meta charset="UTF-8">
+
         <meta name="viewport"
-              content="width=device-width, initial-scale=1.0">
+              content="width=device-width,
+              initial-scale=1.0">
 
         <title>Erreur serveur</title>
 
@@ -1672,16 +1493,12 @@ def erreur_serveur(error):
             body {
                 margin: 0;
                 min-height: 100vh;
-
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
                 font-family: Arial, sans-serif;
-
                 background: #0f141c;
                 color: white;
-
                 text-align: center;
             }
 
@@ -1701,20 +1518,17 @@ def erreur_serveur(error):
 
             a {
                 display: inline-block;
-
                 margin-top: 20px;
                 padding: 12px 20px;
-
                 border-radius: 10px;
-
                 background: #4da3ff;
                 color: white;
-
                 text-decoration: none;
                 font-weight: bold;
             }
 
         </style>
+
     </head>
 
     <body>
@@ -1737,98 +1551,37 @@ def erreur_serveur(error):
         </div>
 
     </body>
+
     </html>
     """, 500
 
 
 # ==========================
-# VERIFICATION DE LA BASE
+# ROBOTS.TXT
 # ==========================
-
-def verifier_base():
-
-    conn = connexion()
-
-    # ==========================
-    # TABLE NOTIFICATIONS
-    # ==========================
-
-    colonnes_notifications = [
-        ligne[1]
-        for ligne in conn.execute(
-            "PRAGMA table_info(notifications)"
-        ).fetchall()
-    ]
-
-    if "lu" not in colonnes_notifications:
-
-        conn.execute("""
-            ALTER TABLE notifications
-            ADD COLUMN lu INTEGER DEFAULT 0
-        """)
-
-
-    # ==========================
-    # TABLE FAVORIS
-    # ==========================
-
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS favoris(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            jeu_id INTEGER NOT NULL,
-            ip TEXT NOT NULL
-        )
-    """)
-
-
-    # ==========================
-    # TABLE VUES
-    # ==========================
-
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS vues(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            jeu_id INTEGER NOT NULL,
-            ip TEXT,
-            date TIMESTAMP
-                DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-
-    # ==========================
-    # TABLE NOTIFICATIONS
-    # ==========================
-
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS notifications(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titre TEXT NOT NULL,
-            message TEXT NOT NULL,
-            lu INTEGER DEFAULT 0,
-            date TIMESTAMP
-                DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-
-    conn.commit()
-    conn.close()
-
-
-# ==========================
-# VERIFICATION AU DEMARRAGE
-# ==========================
-
-verifier_base()
 
 @app.route("/robots.txt")
 def robots():
-    return send_from_directory(".", "robots.txt")
+
+    return send_from_directory(
+        ".",
+        "robots.txt"
+    )
+
+
+# ==========================
+# SITEMAP.XML
+# ==========================
 
 @app.route("/sitemap.xml")
 def sitemap():
-    return send_from_directory(".", "sitemap.xml")
+
+    return send_from_directory(
+        ".",
+        "sitemap.xml"
+    )
+
+
 # ==========================
 # LANCEMENT
 # ==========================
@@ -1837,11 +1590,14 @@ if __name__ == "__main__":
 
     print("")
     print("==============================")
-    print("🎮 GAME STORE")
+    print("🎮 NOVAGAMING")
     print("==============================")
     print("")
-    print("📁 Images :")
-    print(DOSSIER_UPLOADS)
+    print("☁️ Base de données :")
+    print("Supabase")
+    print("")
+    print("🖼️ Images :")
+    print("Cloudinary")
     print("")
     print("🔐 Administration :")
     print("/login")
