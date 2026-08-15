@@ -283,12 +283,214 @@ Administration - NovaGaming
 }
 
 /* ============================== */
+/* ANALYTICS */
+/* ============================== */
+
+.analytics-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.analytics-mini-card {
+    padding: 18px;
+    border-radius: 16px;
+    background: #151a23;
+    border: 1px solid #29313d;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.analytics-mini-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #202735;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.analytics-mini-card small {
+    display: block;
+    color: #8e98a8;
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+.analytics-mini-card strong {
+    font-size: 22px;
+}
+
+.chart-card {
+    padding: 20px;
+    border-radius: 18px;
+    background: #151a23;
+    border: 1px solid #29313d;
+    margin-bottom: 20px;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.chart-header h3 {
+    margin: 5px 0 0;
+}
+
+.chart-period {
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #202735;
+    color: #9da7b7;
+    font-size: 12px;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* ============================== */
+/* LISTE JEUX */
+/* ============================== */
+
+.games-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.admin-game-card {
+    display: flex;
+    gap: 18px;
+    padding: 18px;
+    border-radius: 16px;
+    background: #151a23;
+    border: 1px solid #29313d;
+}
+
+.game-cover {
+    width: 90px;
+    height: 120px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #10151d;
+}
+
+.game-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-cover {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.game-details {
+    flex: 1;
+}
+
+.game-top h3 {
+    margin: 0 0 7px;
+}
+
+.console-tag {
+    color: #8e98a8;
+    font-size: 12px;
+}
+
+.game-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+    color: #9da7b7;
+    font-size: 13px;
+}
+
+.game-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.game-actions a {
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.action-view {
+    background: #202735;
+    color: #4da3ff;
+}
+
+.action-edit {
+    background: #202735;
+    color: #ffd166;
+}
+
+.action-delete {
+    background: #2b1b20;
+    color: #ff6b6b;
+}
+
+/* ============================== */
+/* ÉTATS VIDES */
+/* ============================== */
+
+.empty-state {
+    text-align: center;
+    padding: 45px 20px;
+    border-radius: 16px;
+    background: #151a23;
+    border: 1px solid #29313d;
+}
+
+.empty-state.small {
+    padding: 30px 20px;
+}
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.empty-state h3 {
+    margin: 5px 0;
+}
+
+.empty-state p {
+    color: #8e98a8;
+}
+
+/* ============================== */
 /* MOBILE */
 /* ============================== */
 
 @media (max-width: 900px) {
 
-    .admin-stats {
+    .admin-stats,
+    .analytics-mini-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -305,7 +507,8 @@ Administration - NovaGaming
         align-items: flex-start;
     }
 
-    .admin-stats {
+    .admin-stats,
+    .analytics-mini-grid {
         grid-template-columns: 1fr 1fr;
     }
 
@@ -321,10 +524,21 @@ Administration - NovaGaming
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .admin-game-card {
+        flex-direction: column;
+    }
+
+    .game-cover {
+        width: 100px;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
 }
 
 </style>
-
 
 <div class="admin-page">
 
@@ -335,6 +549,7 @@ Administration - NovaGaming
     <section class="admin-header">
 
         <div>
+
             <span class="small-label">
                 NOVAGAMING
             </span>
@@ -347,6 +562,7 @@ Administration - NovaGaming
                 Gère ton catalogue, tes statistiques
                 et l'activité du site.
             </p>
+
         </div>
 
         <span class="admin-badge">
@@ -357,7 +573,7 @@ Administration - NovaGaming
 
 
     <!-- ============================== -->
-    <!-- STATISTIQUES -->
+    <!-- STATISTIQUES PRINCIPALES -->
     <!-- ============================== -->
 
     <section class="admin-stats">
@@ -466,9 +682,6 @@ Administration - NovaGaming
 
                 <div class="form-grid">
 
-
-                    <!-- NOM -->
-
                     <div class="form-group">
 
                         <label for="nom">
@@ -486,8 +699,6 @@ Administration - NovaGaming
                     </div>
 
 
-                    <!-- CONSOLE -->
-
                     <div class="form-group">
 
                         <label for="console">
@@ -503,8 +714,6 @@ Administration - NovaGaming
 
                     </div>
 
-
-                    <!-- VERSION -->
 
                     <div class="form-group">
 
@@ -522,8 +731,6 @@ Administration - NovaGaming
                     </div>
 
 
-                    <!-- LANGUE -->
-
                     <div class="form-group">
 
                         <label for="langue">
@@ -539,8 +746,6 @@ Administration - NovaGaming
 
                     </div>
 
-
-                    <!-- TAILLE -->
 
                     <div class="form-group">
 
@@ -558,8 +763,6 @@ Administration - NovaGaming
                     </div>
 
 
-                    <!-- LIEN -->
-
                     <div class="form-group">
 
                         <label for="lien">
@@ -575,13 +778,11 @@ Administration - NovaGaming
                         >
 
                         <span class="form-help">
-                            Colle ici ton lien Mega ou ton autre lien de téléchargement.
+                            Colle ici ton lien de téléchargement.
                         </span>
 
                     </div>
 
-
-                    <!-- DESCRIPTION -->
 
                     <div class="form-group full">
 
@@ -597,8 +798,6 @@ Administration - NovaGaming
 
                     </div>
 
-
-                    <!-- COUVERTURE -->
 
                     <div class="form-group full">
 
@@ -628,8 +827,6 @@ Administration - NovaGaming
 
                     </div>
 
-
-                    <!-- GALERIE -->
 
                     <div class="form-group full">
 
@@ -681,8 +878,8 @@ Administration - NovaGaming
 
         </div>
 
-                </section>
-                    <!-- ============================== -->
+    </section>
+        <!-- ============================== -->
     <!-- ANALYTICS -->
     <!-- ============================== -->
 
@@ -691,7 +888,6 @@ Administration - NovaGaming
         <div class="section-title">
 
             <div>
-
                 <span class="small-label">
                     ANALYTICS
                 </span>
@@ -699,18 +895,20 @@ Administration - NovaGaming
                 <h2>
                     📊 Statistiques
                 </h2>
-
             </div>
 
-            <span class="count-badge">
-                7 derniers jours
+            <span
+                class="count-badge"
+                id="analytics-status"
+            >
+                Chargement...
             </span>
 
         </div>
 
 
         <!-- ============================== -->
-        <!-- PETITES CARTES -->
+        <!-- CARTES ANALYTICS -->
         <!-- ============================== -->
 
         <div class="analytics-mini-grid">
@@ -722,15 +920,13 @@ Administration - NovaGaming
                 </div>
 
                 <div>
-
                     <small>
-                        Visiteurs aujourd'hui
+                        Visiteurs
                     </small>
 
-                    <strong>
-                        {{ visiteurs_aujourd_hui|default(0) }}
+                    <strong id="stat-visiteurs">
+                        0
                     </strong>
-
                 </div>
 
             </div>
@@ -743,15 +939,13 @@ Administration - NovaGaming
                 </div>
 
                 <div>
-
                     <small>
-                        Pages vues aujourd'hui
+                        Pages vues
                     </small>
 
-                    <strong>
-                        {{ pages_vues_aujourd_hui|default(0) }}
+                    <strong id="stat-pages">
+                        0
                     </strong>
-
                 </div>
 
             </div>
@@ -760,19 +954,17 @@ Administration - NovaGaming
             <div class="analytics-mini-card">
 
                 <div class="analytics-mini-icon">
-                    ⬇️
+                    🟢
                 </div>
 
                 <div>
-
                     <small>
-                        Téléchargements aujourd'hui
+                        Utilisateurs actifs
                     </small>
 
-                    <strong>
-                        {{ telechargements_aujourd_hui|default(0) }}
+                    <strong id="stat-actifs">
+                        0
                     </strong>
-
                 </div>
 
             </div>
@@ -781,19 +973,17 @@ Administration - NovaGaming
             <div class="analytics-mini-card">
 
                 <div class="analytics-mini-icon">
-                    👀
+                    ⏱️
                 </div>
 
                 <div>
-
                     <small>
-                        Vues aujourd'hui
+                        Temps moyen
                     </small>
 
-                    <strong>
-                        {{ vues_aujourd_hui|default(0) }}
+                    <strong id="stat-temps">
+                        0 s
                     </strong>
-
                 </div>
 
             </div>
@@ -802,7 +992,7 @@ Administration - NovaGaming
 
 
         <!-- ============================== -->
-        <!-- GRAPHIQUE VISITEURS -->
+        <!-- GRAPHIQUE -->
         <!-- ============================== -->
 
         <div class="chart-card">
@@ -822,7 +1012,7 @@ Administration - NovaGaming
                 </div>
 
                 <span class="chart-period">
-                    7 jours
+                    Données réelles
                 </span>
 
             </div>
@@ -840,7 +1030,7 @@ Administration - NovaGaming
 
 
         <!-- ============================== -->
-        <!-- GRAPHIQUE TÉLÉCHARGEMENTS -->
+        <!-- PAGES POPULAIRES -->
         <!-- ============================== -->
 
         <div class="chart-card">
@@ -850,27 +1040,87 @@ Administration - NovaGaming
                 <div>
 
                     <span class="small-label">
-                        TÉLÉCHARGEMENTS
+                        PAGES
                     </span>
 
                     <h3>
-                        ⬇️ Téléchargements par jour
+                        📄 Pages les plus visitées
                     </h3>
 
                 </div>
 
-                <span class="chart-period">
-                    7 jours
-                </span>
+            </div>
+
+
+            <div
+                id="pages-populaires"
+                style="
+                    display:flex;
+                    flex-direction:column;
+                    gap:10px;
+                "
+            >
+
+                <div
+                    style="
+                        padding:15px;
+                        border-radius:10px;
+                        background:#10151d;
+                        color:#8e98a8;
+                    "
+                >
+                    Chargement...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- TEMPS -->
+        <!-- ============================== -->
+
+        <div class="analytics-mini-grid">
+
+            <div class="analytics-mini-card">
+
+                <div class="analytics-mini-icon">
+                    ⏱️
+                </div>
+
+                <div>
+
+                    <small>
+                        Temps total
+                    </small>
+
+                    <strong id="stat-temps-total">
+                        0 s
+                    </strong>
+
+                </div>
 
             </div>
 
 
-            <div class="chart-container">
+            <div class="analytics-mini-card">
 
-                <canvas
-                    id="telechargementsChart"
-                ></canvas>
+                <div class="analytics-mini-icon">
+                    👤
+                </div>
+
+                <div>
+
+                    <small>
+                        Visiteurs uniques
+                    </small>
+
+                    <strong id="stat-uniques">
+                        0
+                    </strong>
+
+                </div>
 
             </div>
 
@@ -887,105 +1137,514 @@ Administration - NovaGaming
 
     <script>
 
-    const visiteursData =
-        {{ visiteurs_7_jours|default([0,0,0,0,0,0,0])|tojson }};
-
-    const pagesData =
-        {{ pages_vues_7_jours|default([0,0,0,0,0,0,0])|tojson }};
-
-    const telechargementsData =
-        {{ telechargements_7_jours|default([0,0,0,0,0,0,0])|tojson }};
-
-    const labels =
-        {{ labels_7_jours|default([
-            "J-6",
-            "J-5",
-            "J-4",
-            "J-3",
-            "J-2",
-            "Hier",
-            "Aujourd'hui"
-        ])|tojson }};
+    let visiteursChart = null;
 
 
     /* ============================== */
-    /* VISITEURS */
+    /* FORMAT NOMBRE */
     /* ============================== */
 
-    const visiteursCanvas =
-        document.getElementById(
-            "visiteursChart"
+    function formaterNombre(nombre) {
+
+        nombre = Number(nombre || 0);
+
+        return nombre.toLocaleString("fr-FR");
+
+    }
+
+
+    /* ============================== */
+    /* FORMAT TEMPS */
+    /* ============================== */
+
+    function formaterTemps(secondes) {
+
+        secondes = Number(secondes || 0);
+
+
+        if (secondes < 60) {
+
+            return Math.round(secondes) + " s";
+
+        }
+
+
+        const minutes =
+            Math.floor(secondes / 60);
+
+        const secondesRestantes =
+            Math.round(secondes % 60);
+
+
+        if (minutes < 60) {
+
+            return (
+                minutes +
+                " min " +
+                secondesRestantes +
+                " s"
+            );
+
+        }
+
+
+        const heures =
+            Math.floor(minutes / 60);
+
+        const minutesRestantes =
+            minutes % 60;
+
+
+        return (
+            heures +
+            " h " +
+            minutesRestantes +
+            " min"
         );
 
-    if (visiteursCanvas) {
+    }
 
-        new Chart(
-            visiteursCanvas,
-            {
 
-                type: "line",
+    /* ============================== */
+    /* CHARGER LES STATISTIQUES */
+    /* ============================== */
 
-                data: {
+    async function chargerStatistiques() {
 
-                    labels: labels,
+        const status =
+            document.getElementById(
+                "analytics-status"
+            );
 
-                    datasets: [
 
-                        {
-                            label: "Visiteurs",
+        try {
 
-                            data: visiteursData,
+            status.textContent =
+                "Chargement...";
 
-                            borderWidth: 3,
 
-                            tension: 0.4,
+            const reponse =
+                await fetch(
+                    "{{ url_for('statistiques_admin') }}",
+                    {
+                        method: "GET",
 
-                            fill: true
+                        credentials:
+                            "same-origin",
+
+                        headers: {
+                            "Accept":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            if (!reponse.ok) {
+
+                throw new Error(
+                    "Erreur HTTP " +
+                    reponse.status
+                );
+
+            }
+
+
+            const data =
+                await reponse.json();
+
+
+            console.log(
+                "ANALYTICS NOVAGAMING :",
+                data
+            );
+
+
+            if (!data.success) {
+
+                throw new Error(
+                    data.message ||
+                    "Erreur statistiques"
+                );
+
+            }
+
+
+            /* ============================== */
+            /* CARTES */
+            /* ============================== */
+
+            document.getElementById(
+                "stat-visiteurs"
+            ).textContent =
+                formaterNombre(
+                    data.visiteurs_total
+                );
+
+
+            document.getElementById(
+                "stat-uniques"
+            ).textContent =
+                formaterNombre(
+                    data.visiteurs_uniques
+                );
+
+
+            document.getElementById(
+                "stat-pages"
+            ).textContent =
+                formaterNombre(
+                    data.pages_vues
+                );
+
+
+            document.getElementById(
+                "stat-actifs"
+            ).textContent =
+                formaterNombre(
+                    data.utilisateurs_actifs
+                );
+
+
+            document.getElementById(
+                "stat-temps"
+            ).textContent =
+                formaterTemps(
+                    data.temps_moyen_secondes
+                );
+
+
+            document.getElementById(
+                "stat-temps-total"
+            ).textContent =
+                formaterTemps(
+                    data.temps_total_secondes
+                );
+
+
+            status.textContent =
+                "✓ Données actualisées";
+
+
+            /* ============================== */
+            /* PAGES */
+            /* ============================== */
+
+            afficherPagesPopulaires(
+                data.pages_populaires || []
+            );
+
+
+            /* ============================== */
+            /* GRAPHIQUE */
+            /* ============================== */
+
+            creerGraphique(
+                data
+            );
+
+
+        } catch (erreur) {
+
+            console.error(
+                "ERREUR ANALYTICS :",
+                erreur
+            );
+
+
+            status.textContent =
+                "⚠️ Erreur";
+
+
+            document.getElementById(
+                "pages-populaires"
+            ).innerHTML = `
+
+                <div
+                    style="
+                        padding:15px;
+                        border-radius:10px;
+                        background:#2b1b20;
+                        color:#ff6b6b;
+                    "
+                >
+                    Impossible de charger
+                    les statistiques.
+                </div>
+
+            `;
+
+        }
+
+    }
+            /* ============================== */
+    /* PAGES POPULAIRES */
+    /* ============================== */
+
+    function afficherPagesPopulaires(
+        pages
+    ) {
+
+        const conteneur =
+            document.getElementById(
+                "pages-populaires"
+            );
+
+
+        conteneur.innerHTML = "";
+
+
+        if (!pages.length) {
+
+            conteneur.innerHTML = `
+
+                <div
+                    style="
+                        padding:15px;
+                        border-radius:10px;
+                        background:#10151d;
+                        color:#8e98a8;
+                    "
+                >
+                    Aucune visite enregistrée.
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        pages.forEach(
+            function(element) {
+
+                const page =
+                    element.page || "/";
+
+                const visites =
+                    Number(
+                        element.visites || 0
+                    );
+
+
+                const ligne =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                ligne.style.cssText = `
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                    padding:13px 15px;
+                    border-radius:10px;
+                    background:#10151d;
+                    border:1px solid #29313d;
+                `;
+
+
+                ligne.innerHTML = `
+
+                    <span
+                        style="
+                            color:#cbd3df;
+                            overflow:hidden;
+                            text-overflow:ellipsis;
+                            white-space:nowrap;
+                        "
+                    >
+                        ${echapperHTML(page)}
+                    </span>
+
+                    <strong
+                        style="
+                            color:#4da3ff;
+                            white-space:nowrap;
+                        "
+                    >
+                        ${formaterNombre(visites)}
+                        visite(s)
+                    </strong>
+
+                `;
+
+
+                conteneur.appendChild(
+                    ligne
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ============================== */
+    /* PROTECTION HTML */
+    /* ============================== */
+
+    function echapperHTML(texte) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent =
+            texte;
+
+        return div.innerHTML;
+
+    }
+
+
+    /* ============================== */
+    /* CRÉER LE GRAPHIQUE */
+    /* ============================== */
+
+    function creerGraphique(
+        data
+    ) {
+
+        const canvas =
+            document.getElementById(
+                "visiteursChart"
+            );
+
+
+        if (!canvas) {
+            return;
+        }
+
+
+        const pages =
+            data.pages_populaires || [];
+
+
+        const labels =
+            pages.map(
+                function(element) {
+
+                    return (
+                        element.page || "/"
+                    );
+
+                }
+            );
+
+
+        const valeurs =
+            pages.map(
+                function(element) {
+
+                    return Number(
+                        element.visites || 0
+                    );
+
+                }
+            );
+
+
+        if (!labels.length) {
+
+            labels.push(
+                "Aucune donnée"
+            );
+
+            valeurs.push(0);
+
+        }
+
+
+        if (visiteursChart) {
+
+            visiteursChart.destroy();
+
+        }
+
+
+        visiteursChart =
+            new Chart(
+                canvas,
+                {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: labels,
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "Visites",
+
+                                data:
+                                    valeurs,
+
+                                borderWidth:
+                                    2,
+
+                                borderRadius:
+                                    6,
+
+                                maxBarThickness:
+                                    45
+
+                            }
+
+                        ]
+
+                    },
+
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio:
+                            false,
+
+                        interaction: {
+
+                            intersect:
+                                false,
+
+                            mode:
+                                "index"
+
                         },
 
-                        {
-                            label: "Pages vues",
 
-                            data: pagesData,
+                        plugins: {
 
-                            borderWidth: 3,
+                            legend: {
 
-                            tension: 0.4,
+                                display:
+                                    true
 
-                            fill: true
-                        }
+                            }
 
-                    ]
+                        },
 
-                },
 
-                options: {
+                        scales: {
 
-                    responsive: true,
+                            y: {
 
-                    maintainAspectRatio: false,
+                                beginAtZero:
+                                    true,
 
-                    interaction: {
-                        intersect: false,
-                        mode: "index"
-                    },
+                                ticks: {
 
-                    plugins: {
+                                    precision:
+                                        0
 
-                        legend: {
-                            display: true
-                        }
+                                }
 
-                    },
-
-                    scales: {
-
-                        y: {
-
-                            beginAtZero: true,
-
-                            ticks: {
-                                precision: 0
                             }
 
                         }
@@ -993,89 +1652,38 @@ Administration - NovaGaming
                     }
 
                 }
-
-            }
-        );
+            );
 
     }
 
 
     /* ============================== */
-    /* TÉLÉCHARGEMENTS */
+    /* CHARGEMENT INITIAL */
     /* ============================== */
 
-    const downloadsCanvas =
-        document.getElementById(
-            "telechargementsChart"
-        );
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
 
-    if (downloadsCanvas) {
+            chargerStatistiques();
 
-        new Chart(
-            downloadsCanvas,
-            {
+        }
+    );
 
-                type: "bar",
 
-                data: {
+    /* ============================== */
+    /* ACTUALISATION AUTOMATIQUE */
+    /* ============================== */
 
-                    labels: labels,
-
-                    datasets: [
-
-                        {
-
-                            label:
-                                "Téléchargements",
-
-                            data:
-                                telechargementsData,
-
-                            borderWidth: 1
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    plugins: {
-
-                        legend: {
-                            display: true
-                        }
-
-                    },
-
-                    scales: {
-
-                        y: {
-
-                            beginAtZero: true,
-
-                            ticks: {
-                                precision: 0
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-        );
-
-    }
+    setInterval(
+        chargerStatistiques,
+        30000
+    );
 
     </script>
-        <!-- ============================== -->
+
+
+    <!-- ============================== -->
     <!-- APERÇU COUVERTURE / GALERIE -->
     <!-- ============================== -->
 
@@ -1085,6 +1693,7 @@ Administration - NovaGaming
         document.getElementById(
             "couverture_file"
         );
+
 
     const couverturePreview =
         document.getElementById(
@@ -1096,19 +1705,25 @@ Administration - NovaGaming
 
         couvertureInput.addEventListener(
             "change",
-            function () {
+            function() {
 
-                couverturePreview.innerHTML = "";
+                couverturePreview.innerHTML =
+                    "";
+
 
                 const fichier =
                     this.files[0];
+
 
                 if (!fichier) {
                     return;
                 }
 
+
                 if (
-                    !fichier.type.startsWith("image/")
+                    !fichier.type.startsWith(
+                        "image/"
+                    )
                 ) {
 
                     couverturePreview.innerHTML =
@@ -1117,17 +1732,25 @@ Administration - NovaGaming
                     this.value = "";
 
                     return;
+
                 }
 
 
                 const image =
-                    document.createElement("img");
+                    document.createElement(
+                        "img"
+                    );
+
 
                 image.src =
-                    URL.createObjectURL(fichier);
+                    URL.createObjectURL(
+                        fichier
+                    );
+
 
                 image.className =
                     "preview-cover";
+
 
                 couverturePreview.appendChild(
                     image
@@ -1140,28 +1763,42 @@ Administration - NovaGaming
 
 
     const imagesInput =
-        document.getElementById("images");
+        document.getElementById(
+            "images"
+        );
+
 
     const imagesInfo =
-        document.getElementById("images-info");
+        document.getElementById(
+            "images-info"
+        );
+
 
     const galleryPreview =
-        document.getElementById("gallery-preview");
+        document.getElementById(
+            "gallery-preview"
+        );
 
 
     if (imagesInput) {
 
         imagesInput.addEventListener(
             "change",
-            function () {
+            function() {
 
-                galleryPreview.innerHTML = "";
+                galleryPreview.innerHTML =
+                    "";
+
 
                 const fichiers =
-                    Array.from(this.files);
+                    Array.from(
+                        this.files
+                    );
 
 
-                if (fichiers.length === 0) {
+                if (
+                    fichiers.length === 0
+                ) {
 
                     imagesInfo.textContent =
                         "Aucune image sélectionnée.";
@@ -1171,7 +1808,9 @@ Administration - NovaGaming
                 }
 
 
-                if (fichiers.length > 10) {
+                if (
+                    fichiers.length > 10
+                ) {
 
                     imagesInfo.textContent =
                         "⚠️ Maximum 10 images.";
@@ -1190,44 +1829,70 @@ Administration - NovaGaming
 
 
                 fichiers.forEach(
-                    function (fichier, index) {
+                    function(
+                        fichier,
+                        index
+                    ) {
 
                         if (
-                            !fichier.type.startsWith("image/")
+                            !fichier.type.startsWith(
+                                "image/"
+                            )
                         ) {
                             return;
                         }
 
 
                         const bloc =
-                            document.createElement("div");
+                            document.createElement(
+                                "div"
+                            );
+
 
                         bloc.className =
                             "preview-item";
 
 
                         const image =
-                            document.createElement("img");
+                            document.createElement(
+                                "img"
+                            );
+
 
                         image.src =
-                            URL.createObjectURL(fichier);
+                            URL.createObjectURL(
+                                fichier
+                            );
+
 
                         image.alt =
-                            "Capture " + (index + 1);
+                            "Capture " +
+                            (index + 1);
 
 
                         const numero =
-                            document.createElement("span");
+                            document.createElement(
+                                "span"
+                            );
+
 
                         numero.textContent =
                             index + 1;
 
 
-                        bloc.appendChild(image);
+                        bloc.appendChild(
+                            image
+                        );
 
-                        bloc.appendChild(numero);
 
-                        galleryPreview.appendChild(bloc);
+                        bloc.appendChild(
+                            numero
+                        );
+
+
+                        galleryPreview.appendChild(
+                            bloc
+                        );
 
                     }
                 );
@@ -1238,474 +1903,476 @@ Administration - NovaGaming
     }
 
     </script>
-
-
     <!-- ============================== -->
-    <!-- JEUX PUBLIÉS -->
-    <!-- ============================== -->
+<!-- JEUX PUBLIÉS -->
+<!-- ============================== -->
 
-    <section class="admin-section">
+<section class="admin-section">
 
-        <div class="section-title">
+    <div class="section-title">
 
-            <div>
+        <div>
 
-                <span class="small-label">
-                    CATALOGUE
-                </span>
-
-                <h2>
-                    📚 Jeux publiés
-                </h2>
-
-            </div>
-
-            <span class="count-badge">
-                {{ total_jeux }} jeux
+            <span class="small-label">
+                CATALOGUE
             </span>
+
+            <h2>
+                📚 Jeux publiés
+            </h2>
 
         </div>
 
+        <span class="count-badge">
+            {{ total_jeux|default(0) }} jeux
+        </span>
 
-        {% if jeux %}
+    </div>
 
-        <div class="games-admin-list">
 
-            {% for jeu in jeux %}
+    {% if jeux %}
 
-            <article class="admin-game-card">
+    <div class="games-admin-list">
 
-                <div class="game-cover">
+        {% for jeu in jeux %}
 
-                    {% if jeu.couverture %}
+        <article class="admin-game-card">
 
-                    <img
-                        src="{{ jeu.couverture }}"
-                        alt="{{ jeu.nom }}"
-                        loading="lazy"
-                    >
+            <div class="game-cover">
 
-                    {% else %}
+                {% if jeu.couverture %}
 
-                    <div class="no-cover">
-                        🎮
-                    </div>
+                <img
+                    src="{{ jeu.couverture }}"
+                    alt="{{ jeu.nom }}"
+                    loading="lazy"
+                >
 
-                    {% endif %}
+                {% else %}
 
+                <div class="no-cover">
+                    🎮
                 </div>
 
+                {% endif %}
 
-                <div class="game-details">
-
-                    <div class="game-top">
-
-                        <div>
-
-                            <h3>
-                                {{ jeu.nom }}
-                            </h3>
-
-                            <span class="console-tag">
-                                🎮
-                                {{ jeu.console or "Console inconnue" }}
-                            </span>
-
-                        </div>
-
-                    </div>
+            </div>
 
 
-                    <div class="game-meta">
+            <div class="game-details">
 
-                        <span>
-                            📦
-                            {{ jeu.taille or "Taille inconnue" }}
+                <div class="game-top">
+
+                    <div>
+
+                        <h3>
+                            {{ jeu.nom }}
+                        </h3>
+
+                        <span class="console-tag">
+                            🎮
+                            {{ jeu.console or "Console inconnue" }}
                         </span>
-
-                        <span>
-                            ⬇️
-                            {{ jeu.telechargements or 0 }}
-                        </span>
-
-                        <span>
-                            ⭐
-                            {{ nombre_favoris(jeu.id) }}
-                        </span>
-
-                    </div>
-
-
-                    <div class="game-actions">
-
-                        <a
-                            href="{{ url_for('jeu', jeu_id=jeu.id) }}"
-                            class="action-view"
-                        >
-                            👁️ Voir
-                        </a>
-
-                        <a
-                            href="{{ url_for('modifier', jeu_id=jeu.id) }}"
-                            class="action-edit"
-                        >
-                            ✏️ Modifier
-                        </a>
-
-                        <a
-                            href="{{ url_for('supprimer', jeu_id=jeu.id) }}"
-                            class="action-delete"
-                            onclick="return confirm('Supprimer ce jeu ?');"
-                        >
-                            🗑️ Supprimer
-                        </a>
 
                     </div>
 
                 </div>
 
-            </article>
 
-            {% endfor %}
+                <div class="game-meta">
 
-        </div>
+                    <span>
+                        📦
+                        {{ jeu.taille or "Taille inconnue" }}
+                    </span>
 
-        {% else %}
+                    <span>
+                        ⬇️
+                        {{ jeu.telechargements or 0 }}
+                    </span>
 
-        <div class="empty-state">
+                    <span>
+                        ⭐
+                        {{ nombre_favoris(jeu.id) }}
+                    </span>
 
-            <div class="empty-icon">
-                🎮
-            </div>
-
-            <h3>
-                Aucun jeu publié
-            </h3>
-
-            <p>
-                Commence par ajouter ton premier jeu.
-            </p>
-
-        </div>
-
-        {% endif %}
-
-    </section>
+                </div>
 
 
-    <!-- ============================== -->
-    <!-- COMMENTAIRES -->
-    <!-- ============================== -->
-
-    <section class="admin-section">
-
-        <div class="section-title">
-
-            <div>
-
-                <span class="small-label">
-                    COMMUNAUTÉ
-                </span>
-
-                <h2>
-                    💬 Commentaires
-                </h2>
-
-            </div>
-
-            <span class="count-badge">
-                {{ total_commentaires }}
-            </span>
-
-        </div>
-
-
-        <div class="comments-admin">
-
-            {% if commentaires_admin %}
-
-                {% for commentaire in commentaires_admin %}
-
-                <div class="admin-comment">
-
-                    <div class="comment-avatar">
-                        👤
-                    </div>
-
-                    <div class="comment-content">
-
-                        <strong>
-                            {{ commentaire.pseudo }}
-                        </strong>
-
-                        <span>
-                            Jeu #{{ commentaire.jeu_id }}
-                        </span>
-
-                        <p>
-                            {{ commentaire.commentaire }}
-                        </p>
-
-                    </div>
+                <div class="game-actions">
 
                     <a
-                        href="{{ url_for(
-                            'supprimer_commentaire',
-                            commentaire_id=commentaire.id
-                        ) }}"
-                        class="comment-delete"
-                        onclick="return confirm('Supprimer ce commentaire ?');"
+                        href="{{ url_for('jeu', jeu_id=jeu.id) }}"
+                        class="action-view"
                     >
-                        🗑️
+                        👁️ Voir
+                    </a>
+
+                    <a
+                        href="{{ url_for('modifier', jeu_id=jeu.id) }}"
+                        class="action-edit"
+                    >
+                        ✏️ Modifier
+                    </a>
+
+                    <a
+                        href="{{ url_for('supprimer', jeu_id=jeu.id) }}"
+                        class="action-delete"
+                        onclick="return confirm('Supprimer ce jeu ?');"
+                    >
+                        🗑️ Supprimer
                     </a>
 
                 </div>
 
-                {% endfor %}
+            </div>
 
-            {% else %}
+        </article>
 
-                <div class="empty-state small">
+        {% endfor %}
 
-                    <div class="empty-icon">
-                        💬
-                    </div>
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            🎮
+        </div>
+
+        <h3>
+            Aucun jeu publié
+        </h3>
+
+        <p>
+            Commence par ajouter ton premier jeu.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ============================== -->
+<!-- COMMENTAIRES -->
+<!-- ============================== -->
+
+<section class="admin-section">
+
+    <div class="section-title">
+
+        <div>
+
+            <span class="small-label">
+                COMMUNAUTÉ
+            </span>
+
+            <h2>
+                💬 Commentaires
+            </h2>
+
+        </div>
+
+        <span class="count-badge">
+            {{ total_commentaires|default(0) }}
+        </span>
+
+    </div>
+
+
+    <div class="comments-admin">
+
+        {% if commentaires_admin %}
+
+            {% for commentaire in commentaires_admin %}
+
+            <div class="admin-comment">
+
+                <div class="comment-avatar">
+                    👤
+                </div>
+
+                <div class="comment-content">
+
+                    <strong>
+                        {{ commentaire.pseudo }}
+                    </strong>
+
+                    <span>
+                        Jeu #{{ commentaire.jeu_id }}
+                    </span>
 
                     <p>
-                        Aucun commentaire pour le moment.
+                        {{ commentaire.commentaire }}
                     </p>
 
                 </div>
 
-            {% endif %}
-
-        </div>
-
-    </section>
-            <!-- ============================== -->
-    <!-- NOTIFICATIONS -->
-    <!-- ============================== -->
-
-    <section class="admin-section">
-
-        <div class="section-title">
-
-            <div>
-
-                <span class="small-label">
-                    ACTIVITÉ
-                </span>
-
-                <h2>
-                    🔔 Notifications
-                </h2>
+                <a
+                    href="{{ url_for(
+                        'supprimer_commentaire',
+                        commentaire_id=commentaire.id
+                    ) }}"
+                    class="comment-delete"
+                    onclick="return confirm('Supprimer ce commentaire ?');"
+                >
+                    🗑️
+                </a>
 
             </div>
 
-            <a
-                href="{{ url_for('notifications') }}"
-                class="see-all"
-            >
-                Voir toutes
-            </a>
+            {% endfor %}
 
-        </div>
+        {% else %}
 
+            <div class="empty-state small">
 
-        <div class="notifications-admin">
-
-            {% if notifications_admin %}
-
-                {% for notification in notifications_admin %}
-
-                <div class="notification-item">
-
-                    <div class="notification-icon">
-                        🔔
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            {{ notification.titre }}
-                        </strong>
-
-                        <p>
-                            {{ notification.message }}
-                        </p>
-
-                        <small>
-                            {{ notification.date }}
-                        </small>
-
-                    </div>
-
+                <div class="empty-icon">
+                    💬
                 </div>
-
-                {% endfor %}
-
-            {% else %}
-
-                <div class="empty-state small">
-
-                    <div class="empty-icon">
-                        🔔
-                    </div>
-
-                    <p>
-                        Aucune notification.
-                    </p>
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </section>
-
-
-    <!-- ============================== -->
-    <!-- RACCOURCIS -->
-    <!-- ============================== -->
-
-    <section class="admin-section">
-
-        <div class="section-title">
-
-            <div>
-
-                <span class="small-label">
-                    RACCOURCIS
-                </span>
-
-                <h2>
-                    ⚡ Actions rapides
-                </h2>
-
-            </div>
-
-        </div>
-
-
-        <div class="quick-actions">
-
-            <a
-                href="{{ url_for('accueil') }}"
-                class="quick-card"
-            >
-                <span>🏠</span>
-                <strong>Accueil</strong>
-                <small>Voir le site</small>
-            </a>
-
-
-            <a
-                href="{{ url_for('nouveautes') }}"
-                class="quick-card"
-            >
-                <span>🆕</span>
-                <strong>Nouveautés</strong>
-                <small>Derniers jeux</small>
-            </a>
-
-
-            <a
-                href="{{ url_for('populaires') }}"
-                class="quick-card"
-            >
-                <span>🔥</span>
-                <strong>Populaires</strong>
-                <small>Jeux les plus téléchargés</small>
-            </a>
-
-
-            <a
-                href="{{ url_for('notifications') }}"
-                class="quick-card"
-            >
-                <span>🔔</span>
-                <strong>Notifications</strong>
-                <small>Activité récente</small>
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- ============================== -->
-    <!-- PUBLICITÉ -->
-    <!-- ============================== -->
-
-    <section class="admin-section">
-
-        <div class="section-title">
-
-            <div>
-
-                <span class="small-label">
-                    MONÉTISATION
-                </span>
-
-                <h2>
-                    📢 Publicité
-                </h2>
-
-            </div>
-
-        </div>
-
-
-        <div class="ad-preview">
-
-            <div class="ad-label">
-                PUBLICITÉ
-            </div>
-
-            <div class="ad-placeholder">
-
-                <span>
-                    📢
-                </span>
 
                 <p>
-                    Emplacement publicitaire
+                    Aucun commentaire pour le moment.
                 </p>
-
-                <small>
-                    Tu pourras placer ici ton contenu publicitaire.
-                </small>
 
             </div>
 
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ============================== -->
+<!-- NOTIFICATIONS -->
+<!-- ============================== -->
+
+<section class="admin-section">
+
+    <div class="section-title">
+
+        <div>
+
+            <span class="small-label">
+                ACTIVITÉ
+            </span>
+
+            <h2>
+                🔔 Notifications
+            </h2>
+
         </div>
 
-    </section>
-
-
-    <!-- ============================== -->
-    <!-- FOOTER ADMIN -->
-    <!-- ============================== -->
-
-    <div class="admin-footer">
-
-        <span>
-            🎮 NovaGaming
-        </span>
-
-        <span>
-            Administration sécurisée
-        </span>
-
         <a
-            href="{{ url_for('logout') }}"
+            href="{{ url_for('notifications') }}"
+            class="see-all"
         >
-            Déconnexion
+            Voir toutes
         </a>
 
     </div>
 
+
+    <div class="notifications-admin">
+
+        {% if notifications_admin %}
+
+            {% for notification in notifications_admin %}
+
+            <div class="notification-item">
+
+                <div class="notification-icon">
+                    🔔
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ notification.titre }}
+                    </strong>
+
+                    <p>
+                        {{ notification.message }}
+                    </p>
+
+                    <small>
+                        {{ notification.date }}
+                    </small>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state small">
+
+                <div class="empty-icon">
+                    🔔
+                </div>
+
+                <p>
+                    Aucune notification.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ============================== -->
+<!-- RACCOURCIS -->
+<!-- ============================== -->
+
+<section class="admin-section">
+
+    <div class="section-title">
+
+        <div>
+
+            <span class="small-label">
+                RACCOURCIS
+            </span>
+
+            <h2>
+                ⚡ Actions rapides
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="quick-actions">
+
+        <a
+            href="{{ url_for('accueil') }}"
+            class="quick-card"
+        >
+            <span>🏠</span>
+            <strong>Accueil</strong>
+            <small>Voir le site</small>
+        </a>
+
+
+        <a
+            href="{{ url_for('nouveautes') }}"
+            class="quick-card"
+        >
+            <span>🆕</span>
+            <strong>Nouveautés</strong>
+            <small>Derniers jeux</small>
+        </a>
+
+
+        <a
+            href="{{ url_for('populaires') }}"
+            class="quick-card"
+        >
+            <span>🔥</span>
+            <strong>Populaires</strong>
+            <small>Jeux les plus téléchargés</small>
+        </a>
+
+
+        <a
+            href="{{ url_for('notifications') }}"
+            class="quick-card"
+        >
+            <span>🔔</span>
+            <strong>Notifications</strong>
+            <small>Activité récente</small>
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ============================== -->
+<!-- PUBLICITÉ -->
+<!-- ============================== -->
+
+<section class="admin-section">
+
+    <div class="section-title">
+
+        <div>
+
+            <span class="small-label">
+                MONÉTISATION
+            </span>
+
+            <h2>
+                📢 Publicité
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="ad-preview">
+
+        <div class="ad-label">
+            PUBLICITÉ
+        </div>
+
+        <div class="ad-placeholder">
+
+            <span>
+                📢
+            </span>
+
+            <p>
+                Emplacement publicitaire
+            </p>
+
+            <small>
+                Tu pourras placer ici ton contenu publicitaire.
+            </small>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ============================== -->
+<!-- FOOTER ADMIN -->
+<!-- ============================== -->
+
+<div class="admin-footer">
+
+    <span>
+        🎮 NovaGaming
+    </span>
+
+    <span>
+        Administration sécurisée
+    </span>
+
+    <a
+        href="{{ url_for('logout') }}"
+    >
+        Déconnexion
+    </a>
+
+</div>
+
+
 </div>
 
 {% endblock %}
+    
