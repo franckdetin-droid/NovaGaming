@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>NovaAds - Connexion</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #10131a,
+                    #171d28
+                );
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            color: white;
+        }
+
+
+        .ads-login {
+            width: 100%;
+            max-width: 390px;
+
+            background: #1a202b;
+
+            border: 1px solid #303947;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 20px 60px
+                rgba(0, 0, 0, .35);
+        }
+
+
+        .logo {
+            text-align: center;
+
+            font-size: 42px;
+
+            margin-bottom: 8px;
+        }
+
+
+        h1 {
+            text-align: center;
+
+            margin: 0;
+
+            font-size: 28px;
+        }
+
+
+        .subtitle {
+            text-align: center;
+
+            color: #8f9bad;
+
+            font-size: 14px;
+
+            margin:
+                8px
+                0
+                28px;
+        }
+
+
+        label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        input {
+            width: 100%;
+
+            padding: 14px;
+
+            border-radius: 10px;
+
+            border: 1px solid #354052;
+
+            background: #10151d;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 16px;
+        }
+
+
+        input:focus {
+            border-color: #4da3ff;
+        }
+
+
+        button {
+            width: 100%;
+
+            margin-top: 18px;
+
+            padding: 14px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            background: #4da3ff;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        button:hover {
+            opacity: .9;
+        }
+
+
+        .error {
+            margin-bottom: 15px;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            background: rgba(
+                255,
+                70,
+                70,
+                .12
+            );
+
+            border: 1px solid
+                rgba(
+                    255,
+                    70,
+                    70,
+                    .3
+                );
+
+            color: #ff8585;
+
+            font-size: 14px;
+
+            text-align: center;
+        }
+
+
+        .footer {
+            margin-top: 25px;
+
+            text-align: center;
+
+            color: #687386;
+
+            font-size: 12px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="ads-login">
+
+        <div class="logo">
+            📢
+        </div>
+
+        <h1>
+            NovaAds
+        </h1>
+
+        <p class="subtitle">
+            Gestionnaire publicitaire NovaGaming
+        </p>
+
+
+        {% if erreur %}
+
+        <div class="error">
+            ⚠️ {{ erreur }}
+        </div>
+
+        {% endif %}
+
+
+        <form
+            method="POST"
+            action="{{ url_for('ads_login') }}">
+
+            <label for="code">
+                Code d'accès
+            </label>
+
+            <input
+                type="password"
+                id="code"
+                name="code"
+                placeholder="Entrez le code"
+                autocomplete="current-password"
+                required>
+
+
+            <button type="submit">
+                🔐 Accéder à NovaAds
+            </button>
+
+        </form>
+
+
+        <div class="footer">
+            NovaGaming • NovaAds
+        </div>
+
+    </div>
+
+</body>
+
+</html>
