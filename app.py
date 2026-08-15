@@ -3122,6 +3122,578 @@ def statistiques_telechargements():
                 str(e)
 
         }, 500
+        # ==========================================================
+# NOVA ADS - SYSTEME PUBLICITAIRE SEPARE
+# ==========================================================
+
+# Mot de passe NovaAds
+CODE_ADS = "3004"
+
+
+# ==========================================================
+# PROTECTION NOVA ADS
+# ==========================================================
+
+def ads_required(f):
+
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+
+        if not session.get("ads_admin"):
+            return redirect(
+                url_for("ads_login")
+            )
+
+        return f(*args, **kwargs)
+
+    return wrapper
+
+
+# ==========================================================
+# CONNEXION NOVA ADS
+# ==========================================================
+
+@app.route(
+    "/ads-login",
+    methods=["GET", "POST"]
+)
+def ads_login():
+
+    if session.get("ads_admin"):
+
+        return redirect(
+            url_for("ads")
+        )
+
+    erreur = None
+
+    if request.method == "POST":
+
+        code = request.form.get(
+            "code",
+            ""
+        ).strip()
+
+        if code == CODE_ADS:
+
+            session["ads_admin"] = True
+
+            return redirect(
+                url_for("ads")
+            )
+
+        erreur = (
+            "Code NovaAds incorrect."
+        )
+
+    return render_template(
+        "ads-login.html",
+        erreur=erreur
+    )
+
+
+# ==========================================================
+# DECONNEXION NOVA ADS
+# ==========================================================
+
+@app.route("/ads-logout")
+def ads_logout():
+
+    session.pop(
+        "ads_admin",
+        None
+    )
+
+    return redirect(
+        url_for("ads_login")
+    )
+
+
+# ==========================================================
+# PAGE PRINCIPALE NOVA ADS
+# ==========================================================
+
+@app.route("/ads")
+@ads_required
+def ads():
+
+    try:
+
+        resultat = (
+            supabase
+            .table("publicites")
+            .select("*")
+            .order("id", desc=True)
+            .execute()
+        )
+
+        publicites = (
+            resultat.data or []
+        )
+
+    except Exception as e:
+
+        print(
+            "ERREUR NOVA ADS :",
+            str(e)
+        )
+
+        publicites = []
+
+    return render_template(
+        "ads.html",
+        publicites=publicites
+    )
+
+
+# ==========================================================
+# AJOUTER UNE PUBLICITE
+# ==========================================================
+
+@app.route(
+    "/ads/ajouter",
+    methods=["POST"]
+)
+@ads_required
+def ads_ajouter():
+
+    nom = request.form.get(
+        "nom",
+        ""
+    ).strip()
+
+    code = request.form.get(
+        "code",
+        ""
+    ).strip()
+
+    emplacement = request.form.get(
+        "emplacement",
+        ""
+    ).strip()
+
+    type_pub = request.form.get(
+        "type",
+        "image"
+    ).strip()
+
+    contenu_url = request.form.get(
+        "contenu_url",
+        ""
+    ).strip()
+
+    lien = request.form.get(
+        "lien",
+        ""
+    ).strip()
+
+    if not nom or not code or not emplacement:
+
+        return (
+            "Nom, code et emplacement sont obligatoires.",
+            400
+        )
+
+    try:
+
+        # ==================================================
+        # VERIFIER SI L'EMPLACEMENT EST DEJA OCCUPE
+        # ==================================================
+
+        existant = (
+            supabase
+            .table("publicites")
+            .select("id, nom, actif")
+            .eq(
+                "emplacement",
+                emplacement
+            )
+            .eq(
+                "actif",
+                True
+            )
+            .limit(1)
+            .execute()
+        )
+
+        if existant.data:
+
+            return (
+                "Cet emplacement publicitaire est déjà occupé. "
+                "La publicité existante n'a pas été modifiée.",
+                409
+            )
+
+
+        # ==================================================
+        # VERIFIER LE CODE
+        # ==================================================
+
+        code_existant = (
+            supabase
+            .table("publicites")
+            .select("id")
+            .eq(
+                "code",
+                code
+            )
+            .limit(1)
+            .execute()
+        )
+
+        if code_existant.data:
+
+            return (
+                "Ce code publicitaire existe déjà.",
+                409
+            )
+
+
+        # ==================================================
+        # CREATION
+        # ==================================================
+
+        supabase.table(
+            "publicites"
+        ).insert({
+
+            "nom":
+                nom,
+
+            "code":
+                code,
+
+            "emplacement":
+                emplacement,
+
+            "type":
+                type_pub,
+
+            "contenu_url":
+                contenu_url,
+
+            "lien":
+                lien,
+
+            "actif":
+                True,
+
+            "impressions":
+                0,
+
+            "clics":
+                0
+
+        }).execute()
+
+
+    except Exception as e:
+
+        print(
+            "ERREUR AJOUT PUBLICITE :",
+            str(e)
+        )
+
+        return (
+            "Erreur lors de l'ajout de la publicité.",
+            500
+        )
+
+
+    return redirect(
+        url_for("ads")
+    )
+
+
+# ==========================================================
+# ACTIVER / DESACTIVER UNE PUBLICITE
+# ==========================================================
+
+@app.route(
+    "/ads/toggle/<int:pub_id>",
+    methods=["POST"]
+)
+@ads_required
+def ads_toggle(pub_id):
+
+    try:
+
+        resultat = (
+            supabase
+            .table("publicites")
+            .select("*")
+            .eq("id", pub_id)
+            .limit(1)
+            .execute()
+        )
+
+        publicites = resultat.data or []
+
+        if not publicites:
+
+            abort(404)
+
+        publicite = publicites[0]
+
+        nouvel_etat = not bool(
+            publicite.get("actif")
+        )
+
+
+        # ==================================================
+        # SI ON ACTIVE UNE PUB
+        # VERIFIER QUE L'EMPLACEMENT EST LIBRE
+        # ==================================================
+
+        if nouvel_etat:
+
+            emplacement = publicite.get(
+                "emplacement"
+            )
+
+            autre_pub = (
+                supabase
+                .table("publicites")
+                .select("id")
+                .eq(
+                    "emplacement",
+                    emplacement
+                )
+                .eq(
+                    "actif",
+                    True
+                )
+                .neq(
+                    "id",
+                    pub_id
+                )
+                .limit(1)
+                .execute()
+            )
+
+            if autre_pub.data:
+
+                return (
+                    "Impossible d'activer cette publicité : "
+                    "l'emplacement est déjà occupé.",
+                    409
+                )
+
+
+        supabase.table(
+            "publicites"
+        ).update({
+
+            "actif":
+                nouvel_etat
+
+        }).eq(
+            "id",
+            pub_id
+        ).execute()
+
+
+    except Exception as e:
+
+        print(
+            "ERREUR ACTIVATION PUBLICITE :",
+            str(e)
+        )
+
+        return (
+            "Erreur lors de la modification de la publicité.",
+            500
+        )
+
+
+    return redirect(
+        url_for("ads")
+    )
+
+
+# ==========================================================
+# SUPPRIMER UNE PUBLICITE
+# ==========================================================
+
+@app.route(
+    "/ads/supprimer/<int:pub_id>",
+    methods=["POST"]
+)
+@ads_required
+def ads_supprimer(pub_id):
+
+    try:
+
+        supabase.table(
+            "publicites"
+        ).delete().eq(
+            "id",
+            pub_id
+        ).execute()
+
+
+    except Exception as e:
+
+        print(
+            "ERREUR SUPPRESSION PUBLICITE :",
+            str(e)
+        )
+
+        return (
+            "Erreur lors de la suppression.",
+            500
+        )
+
+
+    return redirect(
+        url_for("ads")
+    )
+
+
+# ==========================================================
+# COMPTER UNE IMPRESSION
+# ==========================================================
+
+@app.route(
+    "/api/ads/impression/<int:pub_id>",
+    methods=["POST"]
+)
+def ads_impression(pub_id):
+
+    try:
+
+        resultat = (
+            supabase
+            .table("publicites")
+            .select("impressions, actif")
+            .eq("id", pub_id)
+            .limit(1)
+            .execute()
+        )
+
+        publicites = resultat.data or []
+
+        if not publicites:
+
+            return {
+                "success": False
+            }, 404
+
+        publicite = publicites[0]
+
+        if not publicite.get("actif"):
+
+            return {
+                "success": False
+            }
+
+
+        impressions = (
+            publicite.get("impressions")
+            or 0
+        )
+
+        supabase.table(
+            "publicites"
+        ).update({
+
+            "impressions":
+                impressions + 1
+
+        }).eq(
+            "id",
+            pub_id
+        ).execute()
+
+
+        return {
+            "success": True
+        }
+
+
+    except Exception as e:
+
+        print(
+            "ERREUR IMPRESSION PUBLICITE :",
+            str(e)
+        )
+
+        return {
+            "success": False
+        }, 500
+
+
+# ==========================================================
+# COMPTER UN CLIC
+# ==========================================================
+
+@app.route(
+    "/api/ads/clic/<int:pub_id>",
+    methods=["POST"]
+)
+def ads_clic(pub_id):
+
+    try:
+
+        resultat = (
+            supabase
+            .table("publicites")
+            .select("clics, actif")
+            .eq("id", pub_id)
+            .limit(1)
+            .execute()
+        )
+
+        publicites = resultat.data or []
+
+        if not publicites:
+
+            return {
+                "success": False
+            }, 404
+
+        publicite = publicites[0]
+
+        if not publicite.get("actif"):
+
+            return {
+                "success": False
+            }
+
+
+        clics = (
+            publicite.get("clics")
+            or 0
+        )
+
+        supabase.table(
+            "publicites"
+        ).update({
+
+            "clics":
+                clics + 1
+
+        }).eq(
+            "id",
+            pub_id
+        ).execute()
+
+
+        return {
+            "success": True
+        }
+
+
+    except Exception as e:
+
+        print(
+            "ERREUR CLIC PUBLICITE :",
+            str(e)
+        )
+
+        return {
+            "success": False
+        }, 500
 
 
 # ==========================
