@@ -231,7 +231,7 @@
             line-height: 1.6;
         }
 
-        /* LISTE DES PUBLICITES */
+        /* LISTE PUBLICITES */
 
         .ads-list {
             display: flex;
@@ -297,6 +297,7 @@
             background: #171d27;
             border-radius: 8px;
             padding: 10px;
+            overflow: hidden;
         }
 
         .meta-box span {
@@ -307,7 +308,9 @@
         }
 
         .meta-box strong {
+            display: block;
             font-size: 14px;
+            overflow-wrap: anywhere;
         }
 
         .ad-actions {
@@ -411,9 +414,7 @@
 <div class="ads-container">
 
 
-    <!-- ============================= -->
     <!-- HEADER -->
-    <!-- ============================= -->
 
     <header class="ads-header">
 
@@ -449,9 +450,7 @@
     </header>
 
 
-    <!-- ============================= -->
     <!-- STATISTIQUES -->
-    <!-- ============================= -->
 
     <section class="stats">
 
@@ -494,9 +493,9 @@
         </div>
 
     </section>
-<!-- ============================= -->
-    <!-- AJOUTER UNE PUBLICITÉ -->
-    <!-- ============================= -->
+
+
+    <!-- AJOUTER UNE PUBLICITE -->
 
     <section class="section">
 
@@ -505,7 +504,9 @@
         </h2>
 
         <div class="section-description">
+
             Ajoute une publicité dans un emplacement libre.
+
         </div>
 
         <div class="warning">
@@ -519,7 +520,6 @@
         <form
             method="POST"
             action="{{ url_for('ads_ajouter') }}">
-
 
             <div class="form-grid">
 
@@ -556,7 +556,9 @@
                         required>
 
                     <span class="help">
+
                         Identifiant unique de la publicité.
+
                     </span>
 
                 </div>
@@ -612,7 +614,8 @@
                     </label>
 
                     <select
-                        name="type">
+                        name="type"
+                        id="typePub">
 
                         <option value="image">
                             🖼️ Image
@@ -631,12 +634,12 @@
                 </div>
 
 
-                <!-- URL -->
+                <!-- URL CONTENU -->
 
                 <div class="form-group full">
 
                     <label>
-                        URL de l'image ou de la vidéo
+                        URL Cloudinary de l'image ou vidéo
                     </label>
 
                     <input
@@ -645,8 +648,10 @@
                         placeholder="https://res.cloudinary.com/...">
 
                     <span class="help">
-                        Mets ici le lien Cloudinary de ton image
-                        ou de ta vidéo.
+
+                        Héberge ton fichier sur Cloudinary puis
+                        colle ici son URL.
+
                     </span>
 
                 </div>
@@ -666,8 +671,10 @@
                         placeholder="https://...">
 
                     <span class="help">
-                        Le visiteur sera envoyé vers ce lien
+
+                        Le visiteur sera redirigé vers ce lien
                         lorsqu'il clique sur la publicité.
+
                     </span>
 
                 </div>
@@ -688,9 +695,7 @@
     </section>
 
 
-    <!-- ============================= -->
-    <!-- EMPLACEMENTS PUBLICITAIRES -->
-    <!-- ============================= -->
+    <!-- EMPLACEMENTS -->
 
     <section class="section">
 
@@ -699,13 +704,14 @@
         </h2>
 
         <div class="section-description">
+
             Vérifie rapidement quels emplacements sont libres
             ou déjà utilisés.
+
         </div>
 
 
         <div class="placements">
-
 
             {% set emplacements = [
 
@@ -740,7 +746,6 @@
             {% for code_emplacement, nom_emplacement
                in emplacements %}
 
-
                 {% set occupee =
                     namespace(value=false) %}
 
@@ -760,7 +765,6 @@
 
                 <div class="placement">
 
-
                     <div class="placement-top">
 
                         <span class="placement-name">
@@ -773,17 +777,13 @@
                         {% if occupee.value %}
 
                             <span class="occupied">
-
                                 🟠 Occupé
-
                             </span>
 
                         {% else %}
 
                             <span class="available">
-
                                 🟢 Libre
-
                             </span>
 
                         {% endif %}
@@ -803,7 +803,6 @@
 
                 </div>
 
-
             {% endfor %}
 
         </div>
@@ -811,9 +810,7 @@
     </section>
 
 
-    <!-- ============================= -->
-    <!-- LISTE DES PUBLICITÉS -->
-    <!-- ============================= -->
+        <!-- LISTE DES PUBLICITÉS -->
 
     <section class="section">
 
@@ -822,7 +819,9 @@
         </h2>
 
         <div class="section-description">
+
             Gère ici toutes les publicités que tu as créées.
+
         </div>
 
 
@@ -833,7 +832,6 @@
 
                 {% for pub in publicites %}
 
-
                 <article class="ad-card">
 
 
@@ -841,20 +839,14 @@
 
                     <div class="ad-card-top">
 
-
                         <div>
 
                             <div class="ad-name">
-
                                 {{ pub.nom }}
-
                             </div>
 
-
                             <span class="ad-code">
-
                                 {{ pub.code }}
-
                             </span>
 
                         </div>
@@ -863,21 +855,16 @@
                         {% if pub.actif %}
 
                             <span class="status status-active">
-
                                 🟢 ACTIVE
-
                             </span>
 
                         {% else %}
 
                             <span class="status status-off">
-
                                 ⚪ DÉSACTIVÉE
-
                             </span>
 
                         {% endif %}
-
 
                     </div>
 
@@ -941,10 +928,103 @@
                     </div>
 
 
+                    <!-- APERÇU -->
+
+                    {% if pub.contenu_url %}
+
+                    <div
+                        style="
+                            margin-top:15px;
+                            background:#0b0f15;
+                            border-radius:10px;
+                            overflow:hidden;
+                        ">
+
+
+                        {% if pub.type == "image" %}
+
+                            <img
+                                src="{{ pub.contenu_url }}"
+                                alt="{{ pub.nom }}"
+                                style="
+                                    display:block;
+                                    width:100%;
+                                    max-height:250px;
+                                    object-fit:contain;
+                                ">
+
+
+                        {% elif pub.type == "video" %}
+
+                            <video
+                                controls
+                                muted
+                                playsinline
+                                preload="metadata"
+                                style="
+                                    display:block;
+                                    width:100%;
+                                    max-height:250px;
+                                    background:#000;
+                                ">
+
+                                <source
+                                    src="{{ pub.contenu_url }}">
+
+                                Votre navigateur ne peut pas lire
+                                cette vidéo.
+
+                            </video>
+
+
+                        {% elif pub.type == "html" %}
+
+                            <div
+                                style="
+                                    padding:15px;
+                                    overflow:hidden;
+                                ">
+
+                                {{ pub.contenu_url | safe }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- LIEN -->
+
+                    {% if pub.lien %}
+
+                    <div
+                        style="
+                            margin-top:10px;
+                            color:#788496;
+                            font-size:11px;
+                            overflow-wrap:anywhere;
+                        ">
+
+                        🔗 Destination :
+
+                        <strong style="color:#8fc6ff;">
+                            {{ pub.lien }}
+                        </strong>
+
+                    </div>
+
+                    {% endif %}
+
+
                     <!-- ACTIONS -->
 
                     <div class="ad-actions">
 
+
+                        <!-- ACTIVER / DESACTIVER -->
 
                         <form
                             method="POST"
@@ -953,11 +1033,9 @@
                                 pub_id=pub.id
                             ) }}">
 
-
                             <button
                                 type="submit"
                                 class="action-btn">
-
 
                                 {% if pub.actif %}
 
@@ -969,11 +1047,12 @@
 
                                 {% endif %}
 
-
                             </button>
 
                         </form>
 
+
+                        <!-- SUPPRIMER -->
 
                         <form
                             method="POST"
@@ -985,7 +1064,6 @@
                                 'Supprimer cette publicité ?'
                             );">
 
-
                             <button
                                 type="submit"
                                 class="action-btn delete-btn">
@@ -993,7 +1071,6 @@
                                 🗑️ Supprimer
 
                             </button>
-
 
                         </form>
 
@@ -1003,9 +1080,7 @@
 
                 </article>
 
-
                 {% endfor %}
-
 
             </div>
 
@@ -1015,7 +1090,7 @@
 
             <div class="empty">
 
-                <div style="font-size: 35px;">
+                <div style="font-size:35px;">
                     📢
                 </div>
 
@@ -1033,15 +1108,16 @@
 
         {% endif %}
 
-
     </section>
-<!-- ============================= -->
+
+
+
     <!-- FOOTER -->
-    <!-- ============================= -->
 
     <div class="footer">
 
         NovaGaming • NovaAds
+
         <br>
 
         <span>
@@ -1054,9 +1130,10 @@
 </div>
 
 
-<!-- ============================= -->
-<!-- PETITES ANIMATIONS -->
-<!-- ============================= -->
+
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
 
 <script>
 
@@ -1076,7 +1153,9 @@ document
                 if (bouton) {
 
                     bouton.style.opacity = "0.6";
-                    bouton.style.pointerEvents = "none";
+
+                    bouton.style.pointerEvents =
+                        "none";
 
                 }
 
@@ -1087,8 +1166,7 @@ document
 
 
 /*
-    Confirmation supplémentaire
-    avant suppression
+    Confirmation avant suppression
 */
 
 document
@@ -1119,5 +1197,4 @@ document
 
 </body>
 
-</html>
-
+    </html>
