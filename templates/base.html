@@ -17,12 +17,18 @@
     <link
         rel="icon"
         type="image/png"
-        href="{{ url_for('static', filename='images/logo.png') }}"
+        href="{{ url_for(
+            'static',
+            filename='images/logo.png'
+        ) }}"
     >
 
     <link
         rel="apple-touch-icon"
-        href="{{ url_for('static', filename='images/logo.png') }}"
+        href="{{ url_for(
+            'static',
+            filename='images/logo.png'
+        ) }}"
     >
 
 
@@ -32,18 +38,16 @@
 
     <script
         async
-        src="https://www.googletagmanager.com/gtag/js?id=G-BPNC77TV9T">
-    </script>
+        src="https://www.googletagmanager.com/gtag/js?id=G-BPNC77TV9T"
+    ></script>
 
     <script>
 
         window.dataLayer =
             window.dataLayer || [];
 
-        function gtag(){
-
+        function gtag() {
             dataLayer.push(arguments);
-
         }
 
         gtag(
@@ -113,7 +117,10 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
+        href="{{ url_for(
+            'static',
+            filename='style.css'
+        ) }}"
     >
 
 
@@ -144,9 +151,14 @@
 
     <style>
 
+        /* ==================================================
+           LOGO
+        ================================================== */
+
         .logo-image {
 
             width: 28px;
+
             height: 28px;
 
             object-fit: contain;
@@ -157,7 +169,7 @@
 
 
         /* ==================================================
-           NOVA ADS
+           PUBLICITÉS
         ================================================== */
 
         .nova-ad-container {
@@ -200,6 +212,10 @@
         }
 
 
+        /* ==================================================
+           IMAGE PUBLICITAIRE
+        ================================================== */
+
         .nova-ad img {
 
             display: block;
@@ -215,7 +231,24 @@
         }
 
 
-        .nova-ad video {
+        /* ==================================================
+           VIDÉO PUBLICITAIRE
+        ================================================== */
+
+        .nova-video-ad {
+
+            position: relative;
+
+            width: 100%;
+
+            cursor: pointer;
+
+            overflow: hidden;
+
+        }
+
+
+        .nova-video-ad video {
 
             display: block;
 
@@ -225,8 +258,14 @@
 
             background: #000;
 
+            object-fit: cover;
+
         }
 
+
+        /* ==================================================
+           LIEN PUBLICITAIRE IMAGE
+        ================================================== */
 
         .nova-ad-link {
 
@@ -236,8 +275,14 @@
 
             text-decoration: none;
 
+            cursor: pointer;
+
         }
 
+
+        /* ==================================================
+           PUBLICITÉ HTML
+        ================================================== */
 
         .nova-ad-html {
 
@@ -256,6 +301,10 @@
         }
 
 
+        /* ==================================================
+           LABEL PUBLICITÉ
+        ================================================== */
+
         .nova-ad-label {
 
             position: absolute;
@@ -270,7 +319,7 @@
 
             border-radius: 4px;
 
-            background: rgba(0,0,0,.55);
+            background: rgba(0, 0, 0, .55);
 
             color: #b8c0cc;
 
@@ -284,7 +333,7 @@
 
 
         /* ==================================================
-           NOTIFICATIONS
+           BOUTON NOTIFICATIONS
         ================================================== */
 
         .notification-activate-btn {
@@ -369,7 +418,9 @@
             font-size: 17px;
 
         }
-               /* ==================================================
+
+
+        /* ==================================================
            MOBILE
         ================================================== */
 
@@ -418,18 +469,13 @@
 
 
 <body>
-
-
-<!-- ==================================================
+    <!-- ==================================================
      HEADER
 ================================================== -->
 
 <header class="topbar">
 
     <div class="topbar-inner">
-
-
-        <!-- LOGO -->
 
         <a
             href="{{ url_for('accueil') }}"
@@ -452,59 +498,36 @@
         </a>
 
 
-        <!-- ACTIONS -->
-
         <div class="header-actions">
-
-
-            <!-- NOUVEAUTÉS -->
 
             <a
                 href="{{ url_for('nouveautes') }}"
                 class="header-btn"
             >
-
                 🆕
-
-                <span>
-                    Nouveautés
-                </span>
-
+                <span>Nouveautés</span>
             </a>
 
-
-            <!-- POPULAIRES -->
 
             <a
                 href="{{ url_for('populaires') }}"
                 class="header-btn"
             >
-
                 🔥
-
-                <span>
-                    Populaires
-                </span>
-
+                <span>Populaires</span>
             </a>
 
-
-            <!-- NOTIFICATIONS -->
 
             <a
                 href="{{ url_for('notifications') }}"
                 class="header-btn notification-btn"
             >
-
                 🔔
 
                 {% if notifications_non_lues is defined
                       and notifications_non_lues > 0 %}
 
-                    <span
-                        class="notification-dot"
-                    >
-                    </span>
+                    <span class="notification-dot"></span>
 
                 {% endif %}
 
@@ -515,9 +538,7 @@
     </div>
 
 
-    <!-- ==================================================
-         RECHERCHE
-    ================================================== -->
+    <!-- RECHERCHE -->
 
     <form
         action="{{ url_for('recherche') }}"
@@ -529,7 +550,6 @@
             🔍
         </div>
 
-
         <input
             type="search"
             name="q"
@@ -537,7 +557,6 @@
             placeholder="Rechercher un jeu..."
             autocomplete="off"
         >
-
 
         <button type="submit">
             Rechercher
@@ -548,18 +567,14 @@
 </header>
 
 
-
 <!-- ==================================================
-     NOVA ADS - HAUT
+     PUBLICITÉ HAUT
 ================================================== -->
 
 {% if nova_ads is defined
       and nova_ads.get('jeu_publicite_1') %}
 
-    {% set pub =
-        nova_ads.get('jeu_publicite_1')
-    %}
-
+    {% set pub = nova_ads.get('jeu_publicite_1') %}
 
     {% if pub.actif %}
 
@@ -572,8 +587,9 @@
             </span>
 
 
-            {% if pub.type == "image" %}
+            <!-- IMAGE -->
 
+            {% if pub.type == "image" %}
 
                 {% if pub.lien %}
 
@@ -603,48 +619,30 @@
                 {% endif %}
 
 
+            <!-- VIDÉO -->
 
             {% elif pub.type == "video" %}
 
-
-                {% if pub.lien %}
-
-                    <a
-                        href="{{ pub.lien }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="nova-ad-link"
-                    >
-
-                        <video
-                            controls
-                            muted
-                            playsinline
-                            preload="metadata"
-                        >
-
-                            <source
-                                src="{{ pub.contenu_url }}"
-                            >
-
-                            Votre navigateur ne peut pas lire
-                            cette vidéo.
-
-                        </video>
-
-                    </a>
-
-                {% else %}
+                <div
+                    class="nova-video-ad"
+                    onclick="ouvrirPublicite(this)"
+                    data-lien="{{ pub.lien|default('') }}"
+                    role="link"
+                    tabindex="0"
+                >
 
                     <video
-                        controls
                         muted
                         playsinline
+                        autoplay
+                        loop
                         preload="metadata"
+                        disablepictureinpicture
                     >
 
                         <source
                             src="{{ pub.contenu_url }}"
+                            type="video/mp4"
                         >
 
                         Votre navigateur ne peut pas lire
@@ -652,16 +650,15 @@
 
                     </video>
 
-                {% endif %}
+                </div>
 
 
+            <!-- HTML -->
 
             {% elif pub.type == "html" %}
 
                 <div class="nova-ad-html">
-
-                    {{ pub.contenu_url | safe }}
-
+                    {{ pub.contenu_url|safe }}
                 </div>
 
             {% endif %}
@@ -675,32 +672,26 @@
 {% endif %}
 
 
-
 <!-- ==================================================
-     CONTENU DES PAGES
+     CONTENU
 ================================================== -->
 
 <main class="conteneur">
 
     {% block content %}
-
     {% endblock %}
 
 </main>
 
 
-
 <!-- ==================================================
-     NOVA ADS - MILIEU
+     PUBLICITÉ MILIEU
 ================================================== -->
 
 {% if nova_ads is defined
       and nova_ads.get('jeu_publicite_2') %}
 
-    {% set pub =
-        nova_ads.get('jeu_publicite_2')
-    %}
-
+    {% set pub = nova_ads.get('jeu_publicite_2') %}
 
     {% if pub.actif %}
 
@@ -714,7 +705,6 @@
 
 
             {% if pub.type == "image" %}
-
 
                 {% if pub.lien %}
 
@@ -744,48 +734,28 @@
                 {% endif %}
 
 
-
             {% elif pub.type == "video" %}
 
-
-                {% if pub.lien %}
-
-                    <a
-                        href="{{ pub.lien }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="nova-ad-link"
-                    >
-
-                        <video
-                            controls
-                            muted
-                            playsinline
-                            preload="metadata"
-                        >
-
-                            <source
-                                src="{{ pub.contenu_url }}"
-                            >
-
-                            Votre navigateur ne peut pas lire
-                            cette vidéo.
-
-                        </video>
-
-                    </a>
-
-                {% else %}
+                <div
+                    class="nova-video-ad"
+                    onclick="ouvrirPublicite(this)"
+                    data-lien="{{ pub.lien|default('') }}"
+                    role="link"
+                    tabindex="0"
+                >
 
                     <video
-                        controls
                         muted
                         playsinline
+                        autoplay
+                        loop
                         preload="metadata"
+                        disablepictureinpicture
                     >
 
                         <source
                             src="{{ pub.contenu_url }}"
+                            type="video/mp4"
                         >
 
                         Votre navigateur ne peut pas lire
@@ -793,16 +763,13 @@
 
                     </video>
 
-                {% endif %}
-
+                </div>
 
 
             {% elif pub.type == "html" %}
 
                 <div class="nova-ad-html">
-
-                    {{ pub.contenu_url | safe }}
-
+                    {{ pub.contenu_url|safe }}
                 </div>
 
             {% endif %}
@@ -814,88 +781,51 @@
     {% endif %}
 
 {% endif %}
-   <!-- ==================================================
+
+
+<!-- ==================================================
      NAVIGATION MOBILE
 ================================================== -->
 
 <nav class="bottom-nav">
 
-    <!-- ACCUEIL -->
-
     <a
         href="{{ url_for('accueil') }}"
         class="bottom-nav-item"
     >
-
-        <span>
-            🏠
-        </span>
-
-        <small>
-            Accueil
-        </small>
-
+        <span>🏠</span>
+        <small>Accueil</small>
     </a>
 
-
-    <!-- NOUVEAUTÉS -->
 
     <a
         href="{{ url_for('nouveautes') }}"
         class="bottom-nav-item"
     >
-
-        <span>
-            🆕
-        </span>
-
-        <small>
-            Nouveautés
-        </small>
-
+        <span>🆕</span>
+        <small>Nouveautés</small>
     </a>
 
-
-    <!-- POPULAIRES -->
 
     <a
         href="{{ url_for('populaires') }}"
         class="bottom-nav-item"
     >
-
-        <span>
-            🔥
-        </span>
-
-        <small>
-            Populaires
-        </small>
-
+        <span>🔥</span>
+        <small>Populaires</small>
     </a>
 
-
-    <!-- NOTIFICATIONS -->
 
     <a
         href="{{ url_for('notifications') }}"
         class="bottom-nav-item"
     >
-
-        <span>
-            🔔
-        </span>
-
-        <small>
-            Alertes
-        </small>
-
+        <span>🔔</span>
+        <small>Alertes</small>
     </a>
 
 </nav>
-
-
-
-<!-- ==================================================
+    <!-- ==================================================
      FOOTER
 ================================================== -->
 
@@ -903,15 +833,10 @@
 
     <div class="footer-content">
 
-
-        <!-- MARQUE -->
-
         <div class="footer-brand">
 
             <div class="footer-logo">
-
                 🎮 NovaGaming
-
             </div>
 
             <p>
@@ -922,35 +847,21 @@
         </div>
 
 
-
-        <!-- LIENS -->
-
         <div class="footer-links">
 
-            <a
-                href="{{ url_for('accueil') }}"
-            >
+            <a href="{{ url_for('accueil') }}">
                 Accueil
             </a>
 
-
-            <a
-                href="{{ url_for('nouveautes') }}"
-            >
+            <a href="{{ url_for('nouveautes') }}">
                 Nouveautés
             </a>
 
-
-            <a
-                href="{{ url_for('populaires') }}"
-            >
+            <a href="{{ url_for('populaires') }}">
                 Populaires
             </a>
 
-
-            <a
-                href="{{ url_for('notifications') }}"
-            >
+            <a href="{{ url_for('notifications') }}">
                 Notifications
             </a>
 
@@ -958,11 +869,6 @@
 
     </div>
 
-
-
-    <!-- ==================================================
-         FOOTER BAS
-    ================================================== -->
 
     <div class="footer-bottom">
 
@@ -979,7 +885,6 @@
 </footer>
 
 
-
 <!-- ==================================================
      MESSAGES FLASH
 ================================================== -->
@@ -993,9 +898,7 @@
             {% for message in messages %}
 
                 <div class="flash-message">
-
                     {{ message }}
-
                 </div>
 
             {% endfor %}
@@ -1007,9 +910,8 @@
 {% endwith %}
 
 
-
 <!-- ==================================================
-     BOUTON NOTIFICATIONS PUSH
+     BOUTON NOTIFICATIONS
 ================================================== -->
 
 <button
@@ -1030,38 +932,86 @@
 </button>
 
 
-
 <!-- ==================================================
-     JAVASCRIPT NOVAGAMING
+     JAVASCRIPT PUBLICITÉ
 ================================================== -->
 
 <script>
 
+function ouvrirPublicite(element) {
+
+    const lien = element.dataset.lien;
+
+    if (!lien || lien.trim() === "") {
+        return;
+    }
+
+    window.open(
+        lien,
+        "_blank",
+        "noopener,noreferrer"
+    );
+}
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        const element =
+            event.target.closest(
+                ".nova-video-ad"
+            );
+
+        if (!element) {
+            return;
+        }
+
+        if (
+            event.key === "Enter" ||
+            event.key === " "
+        ) {
+
+            event.preventDefault();
+
+            ouvrirPublicite(element);
+
+        }
+
+    }
+);
+
+
 /* ==================================================
-   DISPARITION DES MESSAGES FLASH
+   FLASH
 ================================================== */
 
-setTimeout(function() {
+setTimeout(
+    function() {
 
-    const messages =
-        document.querySelectorAll(
-            ".flash-message"
+        const messages =
+            document.querySelectorAll(
+                ".flash-message"
+            );
+
+        messages.forEach(
+            function(message) {
+
+                message.style.opacity = "0";
+
+                setTimeout(
+                    function() {
+                        message.remove();
+                    },
+                    400
+                );
+
+            }
         );
 
-    messages.forEach(function(message) {
-
-        message.style.opacity = "0";
-
-        setTimeout(function() {
-
-            message.remove();
-
-        }, 400);
-
-    });
-
-}, 4000);
-
+    },
+    4000
+);
 
 
 /* ==================================================
@@ -1070,31 +1020,32 @@ setTimeout(function() {
 
 document
     .querySelectorAll(".action-delete")
-    .forEach(function(button) {
+    .forEach(
+        function(button) {
 
-        button.addEventListener(
-            "click",
-            function(event) {
+            button.addEventListener(
+                "click",
+                function(event) {
 
-                if (
-                    !confirm(
-                        "Voulez-vous vraiment supprimer cet élément ?"
-                    )
-                ) {
+                    if (
+                        !confirm(
+                            "Voulez-vous vraiment supprimer cet élément ?"
+                        )
+                    ) {
 
-                    event.preventDefault();
+                        event.preventDefault();
+
+                    }
 
                 }
+            );
 
-            }
-        );
-
-    });
-
+        }
+    );
 
 
 /* ==================================================
-   VÉRIFICATION NOTIFICATIONS
+   NOTIFICATIONS
 ================================================== */
 
 function verifierNotifications() {
@@ -1104,49 +1055,36 @@ function verifierNotifications() {
             "notificationActivateBtn"
         );
 
-
     if (!bouton) {
         return;
     }
 
 
-    /* Navigateur incompatible */
-
     if (!("Notification" in window)) {
 
-        bouton.classList.add(
-            "hidden"
-        );
+        bouton.classList.add("hidden");
 
         return;
 
     }
 
-
-    /* Déjà autorisées */
 
     if (
         Notification.permission === "granted"
     ) {
 
-        bouton.classList.add(
-            "hidden"
-        );
+        bouton.classList.add("hidden");
 
         return;
 
     }
 
 
-    /* Bloquées */
-
     if (
         Notification.permission === "denied"
     ) {
 
-        bouton.classList.remove(
-            "loading"
-        );
+        bouton.classList.remove("loading");
 
         bouton.querySelector(
             "span:last-child"
@@ -1158,14 +1096,9 @@ function verifierNotifications() {
     }
 
 
-    /* Autorisation encore disponible */
-
-    bouton.classList.remove(
-        "hidden"
-    );
+    bouton.classList.remove("hidden");
 
 }
-
 
 
 /* ==================================================
@@ -1179,7 +1112,6 @@ async function activerNotifications() {
             "notificationActivateBtn"
         );
 
-
     if (!("Notification" in window)) {
         return;
     }
@@ -1189,9 +1121,7 @@ async function activerNotifications() {
 
         if (bouton) {
 
-            bouton.classList.add(
-                "loading"
-            );
+            bouton.classList.add("loading");
 
             bouton.querySelector(
                 "span:last-child"
@@ -1201,13 +1131,9 @@ async function activerNotifications() {
         }
 
 
-        /* Demande d'autorisation */
-
         const permission =
             await Notification.requestPermission();
 
-
-        /* Autorisation refusée */
 
         if (
             permission !== "granted"
@@ -1220,19 +1146,12 @@ async function activerNotifications() {
         }
 
 
-        /* Firebase Messaging */
-
         window.dispatchEvent(
             new CustomEvent(
                 "novagaming-notifications-authorized"
             )
         );
 
-
-        /*
-         * Si Firebase expose une fonction
-         * d'activation, on l'utilise.
-         */
 
         if (
             typeof window.initialiserFirebaseMessaging
@@ -1273,7 +1192,6 @@ async function activerNotifications() {
 }
 
 
-
 /* ==================================================
    INITIALISATION
 ================================================== */
@@ -1290,7 +1208,6 @@ document.addEventListener(
 </script>
 
 
-
 <!-- ==================================================
      FIREBASE CLOUD MESSAGING
 ================================================== -->
@@ -1304,12 +1221,14 @@ document.addEventListener(
 ></script>
 
 
-
 <!-- ==================================================
      FIN BASE.HTML
 ================================================== -->
 
 </body>
 
-   </html>
-   
+</html>
+
+
+    
+    
