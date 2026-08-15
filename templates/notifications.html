@@ -1,38 +1,77 @@
-<!-- templates/notifications.html -->
-
 {% extends "base.html" %}
 
-{% block title %}Notifications - Game Store{% endblock %}
+{% block title %}
+Notifications - Game Store
+{% endblock %}
 
 {% block content %}
 
 <div class="notifications-page">
 
+    <!-- =========================
+         EN-TÊTE
+    ========================= -->
+
     <div class="notifications-header">
 
         <div>
-            <span class="small-label">GAME STORE</span>
 
-            <h1>🔔 Notifications</h1>
+            <span class="small-label">
+                GAME STORE
+            </span>
+
+            <h1>
+                🔔 Notifications
+            </h1>
 
             <p>
                 Découvre les dernières nouveautés du site.
             </p>
+
         </div>
 
-        <a href="{{ url_for('accueil') }}" class="back-btn">
+
+        <a
+            href="{{ url_for('accueil') }}"
+            class="back-btn">
+
             ← Accueil
+
         </a>
 
     </div>
 
 
-    <!-- BANNIÈRE PUBLICITAIRE -->
+    <!-- =========================
+         EMPLACEMENT NOVA ADS
+         
+         Cet emplacement est libre.
+         Il peut être géré depuis ads.html.
+    ========================= -->
 
-    <div class="notification-ad">
-        <span>PUBLICITÉ</span>
+    <div
+        class="notification-ad nova-ad-slot"
+        data-ad-placement="notifications_banniere_1">
+
+        {% if nova_ads is defined
+              and nova_ads.get('notifications_banniere_1') %}
+
+            {{ nova_ads['notifications_banniere_1'] | safe }}
+
+        {% else %}
+
+            <span>
+                PUBLICITÉ
+            </span>
+
+        {% endif %}
+
     </div>
 
+
+    <!-- =========================
+         NOTIFICATIONS
+    ========================= -->
 
     {% if notifications %}
 
@@ -46,6 +85,7 @@
                     🎮
                 </div>
 
+
                 <div class="notification-content">
 
                     <div class="notification-top">
@@ -55,16 +95,21 @@
                         </h2>
 
                         {% if notification.date %}
+
                         <time>
                             {{ notification.date }}
                         </time>
+
                         {% elif notification.date_creation %}
+
                         <time>
                             {{ notification.date_creation }}
                         </time>
+
                         {% endif %}
 
                     </div>
+
 
                     <p>
                         {{ notification.message }}
@@ -106,13 +151,15 @@
         </div>
 
     {% endif %}
-
-
-    <!-- INFORMATIONS -->
+    <!-- =========================
+         INFORMATIONS
+    ========================= -->
 
     <div class="notification-info">
 
-        <span>💡</span>
+        <span>
+            💡
+        </span>
 
         <div>
 
@@ -129,9 +176,8 @@
 
     </div>
 
+
 </div>
-
-
 <style>
 
 /* =========================
@@ -143,6 +189,7 @@
     margin:auto;
 }
 
+
 .notifications-header{
     display:flex;
     justify-content:space-between;
@@ -151,15 +198,18 @@
     margin-bottom:20px;
 }
 
+
 .notifications-header h1{
     margin:6px 0;
     font-size:28px;
 }
 
+
 .notifications-header p{
     color:#8b96a5;
     font-size:12px;
 }
+
 
 .small-label{
     color:#4da3ff;
@@ -167,6 +217,7 @@
     font-weight:700;
     letter-spacing:1.5px;
 }
+
 
 .back-btn{
     background:#222b38;
@@ -179,11 +230,11 @@
 
 
 /* =========================
-   PUBLICITÉ
+   NOVA ADS
    ========================= */
 
 .notification-ad{
-    height:75px;
+    min-height:75px;
     margin-bottom:20px;
 
     display:flex;
@@ -193,7 +244,10 @@
     background:#12161e;
     border:1px dashed #303947;
     border-radius:12px;
+
+    overflow:hidden;
 }
+
 
 .notification-ad span{
     color:#697586;
@@ -212,6 +266,7 @@
     gap:12px;
 }
 
+
 .notification-card{
     display:flex;
     gap:15px;
@@ -224,10 +279,12 @@
     transition:.2s;
 }
 
+
 .notification-card:hover{
     border-color:#40516a;
     transform:translateY(-2px);
 }
+
 
 .notification-icon{
     width:45px;
@@ -245,10 +302,12 @@
     font-size:22px;
 }
 
+
 .notification-content{
     flex:1;
     min-width:0;
 }
+
 
 .notification-top{
     display:flex;
@@ -257,16 +316,19 @@
     gap:10px;
 }
 
+
 .notification-top h2{
     font-size:15px;
     color:white;
 }
+
 
 .notification-top time{
     color:#697586;
     font-size:9px;
     white-space:nowrap;
 }
+
 
 .notification-content p{
     margin-top:7px;
@@ -289,20 +351,24 @@
     border-radius:17px;
 }
 
+
 .empty-icon{
     font-size:45px;
     margin-bottom:10px;
 }
 
+
 .empty-notifications h2{
     font-size:18px;
 }
+
 
 .empty-notifications p{
     color:#7e8998;
     font-size:12px;
     margin:7px 0 20px;
 }
+
 
 .home-btn{
     display:inline-block;
@@ -336,13 +402,16 @@
     border-radius:14px;
 }
 
+
 .notification-info > span{
     font-size:25px;
 }
 
+
 .notification-info strong{
     font-size:12px;
 }
+
 
 .notification-info p{
     margin-top:4px;
@@ -361,18 +430,22 @@
         align-items:flex-start;
     }
 
+
     .notifications-header h1{
         font-size:23px;
     }
+
 
     .back-btn{
         padding:8px 10px;
     }
 
+
     .notification-card{
         padding:13px;
         gap:10px;
     }
+
 
     .notification-icon{
         width:40px;
@@ -380,18 +453,22 @@
         font-size:19px;
     }
 
+
     .notification-top{
         flex-direction:column;
         gap:4px;
     }
 
+
     .notification-top h2{
         font-size:14px;
     }
 
+
     .notification-top time{
         font-size:8px;
     }
+
 
     .notification-content p{
         font-size:11px;
@@ -399,11 +476,13 @@
 
 }
 
+
 @media(max-width:400px){
 
     .notifications-header{
         flex-direction:column;
     }
+
 
     .back-btn{
         width:100%;
@@ -413,5 +492,6 @@
 }
 
 </style>
+
 
 {% endblock %}
