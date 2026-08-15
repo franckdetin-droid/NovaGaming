@@ -7,35 +7,53 @@
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BPNC77TV9T"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-     function gtag(){dataLayer.push(arguments);}
-     gtag('js', new Date());
 
-      gtag('config', 'G-BPNC77TV9T');
-      </script>
+    <!-- Icône NovaGaming -->
+    <link rel="icon"
+          type="image/png"
+          href="{{ url_for('static', filename='images/logo.png') }}">
+
+    <link rel="apple-touch-icon"
+          href="{{ url_for('static', filename='images/logo.png') }}">
+
+    <!-- Google tag (gtag.js) -->
+    <script async
+            src="https://www.googletagmanager.com/gtag/js?id=G-BPNC77TV9T"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag(){
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-BPNC77TV9T');
+    </script>
 
     <meta name="description"
-          content="Game Store - Découvrez les derniers jeux disponibles."> 
+          content="NovaGaming - Découvrez les derniers jeux disponibles.">
 
     <meta name="theme-color"
           content="#10131a">
-    <meta name="google-site-verification"
-      content="RARc8emy2eT_XwrT90Q0wvtCbyuvcn_SU-8E8UII-xI">
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "NovaGaming",
-  "url": "https://novagaming.up.railway.app",
-  "logo": "https://novagaming.up.railway.app/static/images/logo.png"
 
-}
+    <meta name="google-site-verification"
+          content="RARc8emy2eT_XwrT90Q0wvtCbyuvcn_SU-8E8UII-xI">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "NovaGaming",
+        "url": "https://novagaming.up.railway.app",
+        "logo": "https://novagaming.up.railway.app/static/images/logo.png"
+    }
     </script>
 
-    <title>{% block title %}Game Store{% endblock %}</title>
+    <title>
+        {% block title %}NovaGaming{% endblock %}
+    </title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -50,7 +68,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet">
 
+    <!-- Petit logo NovaGaming -->
+    <style>
+        .logo-image {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+    </style>
+
 </head>
+
 
 <body>
 
@@ -61,22 +90,38 @@
         <a href="{{ url_for('accueil') }}"
            class="logo">
 
-            <span class="logo-icon">🎮</span>
-            <span class="logo-text">Game Store</span>
+            <!-- Petit logo uniquement ici -->
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="NovaGaming"
+                class="logo-image">
+
+            <span class="logo-text">
+                NovaGaming
+            </span>
 
         </a>
+
 
         <div class="header-actions">
 
             <a href="{{ url_for('nouveautes') }}"
                class="header-btn">
-                🆕 <span>Nouveautés</span>
+
+                🆕
+                <span>Nouveautés</span>
+
             </a>
+
 
             <a href="{{ url_for('populaires') }}"
                class="header-btn">
-                🔥 <span>Populaires</span>
+
+                🔥
+                <span>Populaires</span>
+
             </a>
+
 
             <a href="{{ url_for('notifications') }}"
                class="header-btn notification-btn">
@@ -101,7 +146,10 @@
           method="GET"
           class="search-box">
 
-        <div class="search-icon">🔍</div>
+        <!-- Icône de recherche normale -->
+        <div class="search-icon">
+            🔍
+        </div>
 
         <input
             type="search"
@@ -137,6 +185,7 @@
 
     </a>
 
+
     <a href="{{ url_for('nouveautes') }}"
        class="bottom-nav-item">
 
@@ -145,6 +194,7 @@
 
     </a>
 
+
     <a href="{{ url_for('populaires') }}"
        class="bottom-nav-item">
 
@@ -152,6 +202,7 @@
         <small>Populaires</small>
 
     </a>
+
 
     <a href="{{ url_for('notifications') }}"
        class="bottom-nav-item">
@@ -171,7 +222,7 @@
         <div class="footer-brand">
 
             <div class="footer-logo">
-                🎮 Game Store
+                🎮 NovaGaming
             </div>
 
             <p>
@@ -180,6 +231,7 @@
             </p>
 
         </div>
+
 
         <div class="footer-links">
 
@@ -203,11 +255,16 @@
 
     </div>
 
+
     <div class="footer-bottom">
 
-        <span>© 2026 Game Store</span>
+        <span>
+            © 2026 NovaGaming
+        </span>
 
-        <span>Fait par Franck</span>
+        <span>
+            Fait par Franck
+        </span>
 
     </div>
 
@@ -259,21 +316,32 @@ document
     .querySelectorAll(".action-delete")
     .forEach(function(button){
 
-        button.addEventListener("click", function(event){
+        button.addEventListener(
+            "click",
+            function(event){
 
-            if(!confirm(
-                "Voulez-vous vraiment supprimer cet élément ?"
-            )){
+                if(!confirm(
+                    "Voulez-vous vraiment supprimer cet élément ?"
+                )){
 
-                event.preventDefault();
+                    event.preventDefault();
+
+                }
 
             }
-
-        });
+        );
 
     });
 
 </script>
 
+
+<!-- Firebase Cloud Messaging -->
+<script
+    type="module"
+    src="{{ url_for('static', filename='firebase-messaging.js') }}">
+</script>
+
+
 </body>
-</html>
+    </html>
