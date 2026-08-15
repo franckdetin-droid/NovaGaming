@@ -1,284 +1,6 @@
-<!-- templates/admin.html - PARTIE 1/3 -->
-
-{% extends "base.html" %}
-
-{% block title %}Administration - Game Store{% endblock %}
-
-{% block content %}
-
-<div class="admin-page">
-
-    <div class="admin-header">
-
-        <div>
-            <span class="admin-badge">ADMINISTRATION</span>
-            <h1>🎮 Tableau de bord</h1>
-            <p>Gère facilement ton catalogue de jeux.</p>
-        </div>
-
-        <a href="{{ url_for('logout') }}" class="logout-btn">
-            🚪 Déconnexion
-        </a>
-
-    </div>
-
-    <!-- STATISTIQUES -->
-
-    <div class="dashboard">
-
-        <div class="dashboard-card">
-            <div class="dashboard-icon">🎮</div>
-            <div>
-                <strong>{{ total_jeux }}</strong>
-                <span>Jeux publiés</span>
-            </div>
-        </div>
-
-        <div class="dashboard-card">
-            <div class="dashboard-icon">⬇️</div>
-            <div>
-                <strong>{{ total_telechargements }}</strong>
-                <span>Téléchargements</span>
-            </div>
-        </div>
-
-        <div class="dashboard-card">
-            <div class="dashboard-icon">💬</div>
-            <div>
-                <strong>{{ total_commentaires }}</strong>
-                <span>Commentaires</span>
-            </div>
-        </div>
-
-    </div>
-
-
-    <!-- AJOUTER UN JEU -->
-
-    <section class="admin-section">
-
-        <div class="section-title">
-
-            <div>
-                <span class="small-label">CATALOGUE</span>
-                <h2>➕ Ajouter un jeu</h2>
-            </div>
-
-        </div>
-
-
-        <form
-            action="{{ url_for('ajouter') }}"
-            method="POST"
-            enctype="multipart/form-data"
-            class="admin-form">
-
-            <!-- INFORMATIONS -->
-
-            <div class="form-grid">
-
-                <div class="form-group full">
-
-                    <label>Nom du jeu</label>
-
-                    <input
-                        type="text"
-                        name="nom"
-                        placeholder="Ex : PES 2021"
-                        required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>Console</label>
-
-                    <input
-                        type="text"
-                        name="console"
-                        placeholder="PSP, PS2, PS3...">
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>Taille</label>
-
-                    <input
-                        type="text"
-                        name="taille"
-                        placeholder="Ex : 1.5 Go">
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>Version</label>
-
-                    <input
-                        type="text"
-                        name="version"
-                        placeholder="Ex : v1.0">
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>Langue</label>
-
-                    <input
-                        type="text"
-                        name="langue"
-                        placeholder="Français">
-
-                </div>
-
-
-                <div class="form-group full">
-
-                    <label>Description</label>
-
-                    <textarea
-                        name="description"
-                        rows="6"
-                        placeholder="Présente le jeu aux visiteurs..."></textarea>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-divider"></div>
-
-
-            <!-- COUVERTURE -->
-
-            <div class="upload-section">
-
-                <span class="small-label">
-                    VISUEL PRINCIPAL
-                </span>
-
-                <h3>🖼️ Image de couverture</h3>
-
-                <p>
-                    Choisis une image depuis ton téléphone.
-                </p>
-
-
-                <input
-                    type="file"
-                    name="couverture_file"
-                    id="couverture_file"
-                    accept="image/*">
-
-
-                <div
-                    id="couverture-preview"
-                    class="image-preview">
-                </div>
-
-
-                <p class="ou">
-                    OU
-                </p>
-
-
-                <input
-                    type="url"
-                    name="couverture"
-                    placeholder="https://...">
-
-            </div>
-
-
-            <div class="form-divider"></div>
-
-
-            <!-- GALERIE -->
-
-            <div class="upload-section">
-
-                <span class="small-label">
-                    GALERIE
-                </span>
-
-                <h3>📷 Captures d'écran</h3>
-
-                <p>
-                    Sélectionne jusqu'à 10 images en une seule fois.
-                </p>
-
-
-                <input
-                    type="file"
-                    name="images"
-                    id="images"
-                    accept="image/*"
-                    multiple>
-
-
-                <div
-                    id="images-info"
-                    class="upload-info">
-
-                    Aucune image sélectionnée.
-
-                </div>
-
-
-                <div
-                    id="gallery-preview"
-                    class="gallery-preview">
-                </div>
-
-            </div>
-
-
-            <div class="form-divider"></div>
-
-
-            <!-- LIEN -->
-
-            <div class="download-section">
-
-                <span class="small-label">
-                    TÉLÉCHARGEMENT
-                </span>
-
-                <h3>⬇️ Lien du fichier</h3>
-
-                <p>
-                    Ajoute le lien du fichier du jeu.
-                </p>
-
-                <input
-                    type="url"
-                    name="lien"
-                    placeholder="Lien de téléchargement"
-                    required>
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="publish-btn">
-
-                🚀 Publier le jeu
-
-            </button>
-
-        </form>
-
-    </section>
-    <!-- templates/admin.html - PARTIE 2/3 -->
-
+    <!-- ============================== -->
     <!-- LISTE DES JEUX -->
+    <!-- ============================== -->
 
     <section class="admin-section">
 
@@ -426,7 +148,9 @@
     </section>
 
 
+    <!-- ============================== -->
     <!-- COMMENTAIRES -->
+    <!-- ============================== -->
 
     <section class="admin-section">
 
@@ -517,10 +241,11 @@
         </div>
 
     </section>
-    <!-- templates/admin.html - PARTIE 3/3 -->
 
 
+    <!-- ============================== -->
     <!-- NOTIFICATIONS -->
+    <!-- ============================== -->
 
     <section class="admin-section">
 
@@ -604,7 +329,9 @@
     </section>
 
 
+    <!-- ============================== -->
     <!-- RACCOURCIS -->
+    <!-- ============================== -->
 
     <section class="admin-section">
 
@@ -631,7 +358,9 @@
                 href="{{ url_for('accueil') }}"
                 class="quick-card">
 
-                <span>🏠</span>
+                <span>
+                    🏠
+                </span>
 
                 <strong>
                     Accueil
@@ -648,7 +377,9 @@
                 href="{{ url_for('nouveautes') }}"
                 class="quick-card">
 
-                <span>🆕</span>
+                <span>
+                    🆕
+                </span>
 
                 <strong>
                     Nouveautés
@@ -665,7 +396,9 @@
                 href="{{ url_for('populaires') }}"
                 class="quick-card">
 
-                <span>🔥</span>
+                <span>
+                    🔥
+                </span>
 
                 <strong>
                     Populaires
@@ -682,7 +415,9 @@
                 href="{{ url_for('notifications') }}"
                 class="quick-card">
 
-                <span>🔔</span>
+                <span>
+                    🔔
+                </span>
 
                 <strong>
                     Notifications
@@ -699,7 +434,9 @@
     </section>
 
 
+    <!-- ============================== -->
     <!-- PUBLICITÉ -->
+    <!-- ============================== -->
 
     <section class="admin-section">
 
@@ -737,7 +474,7 @@
                 </p>
 
                 <small>
-                    Tu pourras placer ici ton code publicitaire.
+                    Tu pourras placer ici ton contenu publicitaire.
                 </small>
 
             </div>
@@ -747,12 +484,14 @@
     </section>
 
 
+    <!-- ============================== -->
     <!-- FOOTER ADMIN -->
+    <!-- ============================== -->
 
     <div class="admin-footer">
 
         <span>
-            🎮 Game Store
+            🎮 NovaGaming
         </span>
 
         <span>
@@ -766,20 +505,250 @@
     </div>
 
 
-</div>
-
-
+                            </div>
+                            <!-- ============================== -->
+<!-- CHART.JS -->
 <!-- ============================== -->
-<!-- APERÇU DES IMAGES -->
-<!-- ============================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 <script>
 
+/* ============================== */
+/* DONNÉES DES GRAPHIQUES */
+/* ============================== */
+
+/*
+    Pour l'instant, si aucune donnée n'est
+    envoyée par Flask, on utilise 0.
+
+    Plus tard, app.py pourra envoyer :
+
+    visiteurs_7_jours
+    pages_vues_7_jours
+    telechargements_7_jours
+
+    sous forme de listes.
+*/
+
+
+const visiteursData =
+    {{ visiteurs_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+const pagesData =
+    {{ pages_vues_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+const telechargementsData =
+    {{ telechargements_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+
+const labels =
+    {{ labels_7_jours|default([
+        "J-6",
+        "J-5",
+        "J-4",
+        "J-3",
+        "J-2",
+        "Hier",
+        "Aujourd'hui"
+    ])|tojson }};
+
+
+/* ============================== */
+/* GRAPHIQUE VISITEURS */
+/* ============================== */
+
+const visiteursCanvas =
+    document.getElementById(
+        "visiteursChart"
+    );
+
+
+if (visiteursCanvas) {
+
+    new Chart(
+        visiteursCanvas,
+        {
+
+            type: "line",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Visiteurs",
+
+                        data:
+                            visiteursData,
+
+                        borderWidth: 3,
+
+                        tension: 0.4,
+
+                        fill: true
+
+                    },
+
+
+                    {
+
+                        label:
+                            "Pages vues",
+
+                        data:
+                            pagesData,
+
+                        borderWidth: 3,
+
+                        tension: 0.4,
+
+                        fill: true
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: true
+
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            precision: 0
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================== */
+/* GRAPHIQUE TÉLÉCHARGEMENTS */
+/* ============================== */
+
+const downloadsCanvas =
+    document.getElementById(
+        "telechargementsChart"
+    );
+
+
+if (downloadsCanvas) {
+
+    new Chart(
+        downloadsCanvas,
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Téléchargements",
+
+                        data:
+                            telechargementsData,
+
+                        borderWidth: 1
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: true
+
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            precision: 0
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================== */
+/* APERÇU COUVERTURE */
+/* ============================== */
+
 const couvertureInput =
-    document.getElementById("couverture_file");
+    document.getElementById(
+        "couverture_file"
+    );
 
 const couverturePreview =
-    document.getElementById("couverture-preview");
+    document.getElementById(
+        "couverture-preview"
+    );
 
 
 if (couvertureInput) {
@@ -790,13 +759,18 @@ if (couvertureInput) {
 
             couverturePreview.innerHTML = "";
 
-            const fichier = this.files[0];
+            const fichier =
+                this.files[0];
 
             if (!fichier) {
                 return;
             }
 
-            if (!fichier.type.startsWith("image/")) {
+            if (
+                !fichier.type.startsWith(
+                    "image/"
+                )
+            ) {
 
                 couverturePreview.innerHTML =
                     "<p>⚠️ Ce fichier n'est pas une image.</p>";
@@ -808,16 +782,21 @@ if (couvertureInput) {
 
 
             const image =
-                document.createElement("img");
+                document.createElement(
+                    "img"
+                );
 
             image.src =
-                URL.createObjectURL(fichier);
+                URL.createObjectURL(
+                    fichier
+                );
 
             image.className =
                 "preview-cover";
 
-
-            couverturePreview.appendChild(image);
+            couverturePreview.appendChild(
+                image
+            );
 
         }
     );
@@ -830,13 +809,19 @@ if (couvertureInput) {
 /* ============================== */
 
 const imagesInput =
-    document.getElementById("images");
+    document.getElementById(
+        "images"
+    );
 
 const imagesInfo =
-    document.getElementById("images-info");
+    document.getElementById(
+        "images-info"
+    );
 
 const galleryPreview =
-    document.getElementById("gallery-preview");
+    document.getElementById(
+        "gallery-preview"
+    );
 
 
 if (imagesInput) {
@@ -848,19 +833,26 @@ if (imagesInput) {
             galleryPreview.innerHTML = "";
 
             const fichiers =
-                Array.from(this.files);
+                Array.from(
+                    this.files
+                );
 
 
-            if (fichiers.length === 0) {
+            if (
+                fichiers.length === 0
+            ) {
 
                 imagesInfo.textContent =
                     "Aucune image sélectionnée.";
 
                 return;
+
             }
 
 
-            if (fichiers.length > 10) {
+            if (
+                fichiers.length > 10
+            ) {
 
                 imagesInfo.textContent =
                     "⚠️ Maximum 10 images.";
@@ -868,6 +860,7 @@ if (imagesInput) {
                 this.value = "";
 
                 return;
+
             }
 
 
@@ -878,42 +871,64 @@ if (imagesInput) {
 
 
             fichiers.forEach(
-                function (fichier, index) {
+                function (
+                    fichier,
+                    index
+                ) {
 
-                    if (!fichier.type.startsWith("image/")) {
+                    if (
+                        !fichier.type.startsWith(
+                            "image/"
+                        )
+                    ) {
                         return;
                     }
 
 
                     const bloc =
-                        document.createElement("div");
+                        document.createElement(
+                            "div"
+                        );
 
                     bloc.className =
                         "preview-item";
 
 
                     const image =
-                        document.createElement("img");
+                        document.createElement(
+                            "img"
+                        );
 
                     image.src =
-                        URL.createObjectURL(fichier);
+                        URL.createObjectURL(
+                            fichier
+                        );
 
                     image.alt =
-                        "Capture " + (index + 1);
+                        "Capture " +
+                        (index + 1);
 
 
                     const numero =
-                        document.createElement("span");
+                        document.createElement(
+                            "span"
+                        );
 
                     numero.textContent =
                         index + 1;
 
 
-                    bloc.appendChild(image);
+                    bloc.appendChild(
+                        image
+                    );
 
-                    bloc.appendChild(numero);
+                    bloc.appendChild(
+                        numero
+                    );
 
-                    galleryPreview.appendChild(bloc);
+                    galleryPreview.appendChild(
+                        bloc
+                    );
 
                 }
             );
@@ -925,94 +940,1145 @@ if (imagesInput) {
 
 </script>
 
+
 <!-- ============================== -->
-<!-- STYLE APERÇU -->
+<!-- STYLE DES GRAPHIQUES -->
 <!-- ============================== -->
 
 <style>
 
-.image-preview {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.analytics-section {
+    margin-top: 25px;
 }
 
-/* COUVERTURE : PETITE TAILLE FORCÉE */
-.image-preview .preview-cover {
-    width: 90px !important;
-    height: 120px !important;
-    max-width: 90px !important;
-    max-height: 120px !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    object-fit: cover;
-    display: block;
-    border-radius: 8px;
-    border: 2px solid #303947;
-    box-shadow: 0 4px 10px rgba(0,0,0,.20);
+
+/* PETITES CARTES */
+
+.analytics-mini-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
 }
+
+
+.analytics-mini-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    background: #151a23;
+
+    border: 1px solid #29313d;
+
+}
+
+
+.analytics-mini-icon {
+
+    width: 45px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #202735;
+
+    font-size: 22px;
+
+}
+
+
+.analytics-mini-card small {
+
+    display: block;
+
+    color: #8e98a8;
+
+    margin-bottom: 4px;
+
+}
+
+
+.analytics-mini-card strong {
+
+    display: block;
+
+    font-size: 22px;
+
+}
+
+
+/* CARTES GRAPHIQUES */
+
+.chart-card {
+
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border-radius: 16px;
+
+    background: #151a23;
+
+    border: 1px solid #29313d;
+
+}
+
+
+.chart-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.chart-header h3 {
+
+    margin: 4px 0 0;
+
+}
+
+
+.chart-period {
+
+    font-size: 12px;
+
+    padding: 7px 10px;
+
+    border-radius: 20px;
+
+    background: #202735;
+
+    color: #9da7b7;
+
+}
+
+
+.chart-container {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 280px;
+
+}
+
+
+/* TEMPS */
+
+.time-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+}
+
+
+.time-stat {
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: #202631;
+
+}
+
+
+.time-stat span {
+
+    display: block;
+
+    color: #8f99a9;
+
+    font-size: 13px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.time-stat strong {
+
+    font-size: 24px;
+
+}
+
+
+/* COUVERTURE */
+
+.image-preview {
+
+    margin-top: 15px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.image-preview .preview-cover {
+
+    width: 90px !important;
+
+    height: 120px !important;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    border: 2px solid #303947;
+
+}
+
 
 /* GALERIE */
+
 .gallery-preview {
+
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 10px;
+
     margin-top: 15px;
+
 }
+
 
 .preview-item {
+
     position: relative;
+
     overflow: hidden;
+
     border-radius: 10px;
+
     background: #12161e;
+
     border: 1px solid #303947;
+
 }
+
 
 .preview-item img {
+
     width: 100%;
+
     height: 130px;
+
     object-fit: cover;
+
     display: block;
+
 }
+
 
 .preview-item span {
+
     position: absolute;
+
     top: 6px;
+
     left: 6px;
+
     width: 25px;
+
     height: 25px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     border-radius: 50%;
+
     background: #4da3ff;
+
     color: white;
+
     font-size: 11px;
+
     font-weight: bold;
+
 }
 
-.upload-info {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #12161e;
-    color: #8fa0b5;
-    font-size: 12px;
-}
 
-.ou {
-    text-align: center;
-    color: #777;
-    margin: 12px 0;
-}
+/* MOBILE */
 
-@media (min-width: 700px) {
-    .gallery-preview {
-        grid-template-columns: repeat(5, 1fr);
+@media (max-width: 800px) {
+
+    .analytics-mini-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
     }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .analytics-mini-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .time-stats {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .chart-card {
+
+        padding: 14px;
+
+    }
+
+
+    .chart-container {
+
+        height: 230px;
+
+    }
+
 }
 
 </style>
+
+
+{% endblock %}
+<!-- ============================== -->
+<!-- CHART.JS -->
+<!-- ============================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+/* ============================== */
+/* DONNÉES DES GRAPHIQUES */
+/* ============================== */
+
+/*
+    Pour l'instant, si aucune donnée n'est
+    envoyée par Flask, on utilise 0.
+
+    Plus tard, app.py pourra envoyer :
+
+    visiteurs_7_jours
+    pages_vues_7_jours
+    telechargements_7_jours
+
+    sous forme de listes.
+*/
+
+
+const visiteursData =
+    {{ visiteurs_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+const pagesData =
+    {{ pages_vues_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+const telechargementsData =
+    {{ telechargements_7_jours|default([0,0,0,0,0,0,0])|tojson }};
+
+
+const labels =
+    {{ labels_7_jours|default([
+        "J-6",
+        "J-5",
+        "J-4",
+        "J-3",
+        "J-2",
+        "Hier",
+        "Aujourd'hui"
+    ])|tojson }};
+
+
+/* ============================== */
+/* GRAPHIQUE VISITEURS */
+/* ============================== */
+
+const visiteursCanvas =
+    document.getElementById(
+        "visiteursChart"
+    );
+
+
+if (visiteursCanvas) {
+
+    new Chart(
+        visiteursCanvas,
+        {
+
+            type: "line",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Visiteurs",
+
+                        data:
+                            visiteursData,
+
+                        borderWidth: 3,
+
+                        tension: 0.4,
+
+                        fill: true
+
+                    },
+
+
+                    {
+
+                        label:
+                            "Pages vues",
+
+                        data:
+                            pagesData,
+
+                        borderWidth: 3,
+
+                        tension: 0.4,
+
+                        fill: true
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: true
+
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            precision: 0
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================== */
+/* GRAPHIQUE TÉLÉCHARGEMENTS */
+/* ============================== */
+
+const downloadsCanvas =
+    document.getElementById(
+        "telechargementsChart"
+    );
+
+
+if (downloadsCanvas) {
+
+    new Chart(
+        downloadsCanvas,
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Téléchargements",
+
+                        data:
+                            telechargementsData,
+
+                        borderWidth: 1
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: true
+
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            precision: 0
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================== */
+/* APERÇU COUVERTURE */
+/* ============================== */
+
+const couvertureInput =
+    document.getElementById(
+        "couverture_file"
+    );
+
+const couverturePreview =
+    document.getElementById(
+        "couverture-preview"
+    );
+
+
+if (couvertureInput) {
+
+    couvertureInput.addEventListener(
+        "change",
+        function () {
+
+            couverturePreview.innerHTML = "";
+
+            const fichier =
+                this.files[0];
+
+            if (!fichier) {
+                return;
+            }
+
+            if (
+                !fichier.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                couverturePreview.innerHTML =
+                    "<p>⚠️ Ce fichier n'est pas une image.</p>";
+
+                this.value = "";
+
+                return;
+            }
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+            image.src =
+                URL.createObjectURL(
+                    fichier
+                );
+
+            image.className =
+                "preview-cover";
+
+            couverturePreview.appendChild(
+                image
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================== */
+/* GALERIE */
+/* ============================== */
+
+const imagesInput =
+    document.getElementById(
+        "images"
+    );
+
+const imagesInfo =
+    document.getElementById(
+        "images-info"
+    );
+
+const galleryPreview =
+    document.getElementById(
+        "gallery-preview"
+    );
+
+
+if (imagesInput) {
+
+    imagesInput.addEventListener(
+        "change",
+        function () {
+
+            galleryPreview.innerHTML = "";
+
+            const fichiers =
+                Array.from(
+                    this.files
+                );
+
+
+            if (
+                fichiers.length === 0
+            ) {
+
+                imagesInfo.textContent =
+                    "Aucune image sélectionnée.";
+
+                return;
+
+            }
+
+
+            if (
+                fichiers.length > 10
+            ) {
+
+                imagesInfo.textContent =
+                    "⚠️ Maximum 10 images.";
+
+                this.value = "";
+
+                return;
+
+            }
+
+
+            imagesInfo.textContent =
+                "✅ " +
+                fichiers.length +
+                " image(s) sélectionnée(s).";
+
+
+            fichiers.forEach(
+                function (
+                    fichier,
+                    index
+                ) {
+
+                    if (
+                        !fichier.type.startsWith(
+                            "image/"
+                        )
+                    ) {
+                        return;
+                    }
+
+
+                    const bloc =
+                        document.createElement(
+                            "div"
+                        );
+
+                    bloc.className =
+                        "preview-item";
+
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
+
+                    image.src =
+                        URL.createObjectURL(
+                            fichier
+                        );
+
+                    image.alt =
+                        "Capture " +
+                        (index + 1);
+
+
+                    const numero =
+                        document.createElement(
+                            "span"
+                        );
+
+                    numero.textContent =
+                        index + 1;
+
+
+                    bloc.appendChild(
+                        image
+                    );
+
+                    bloc.appendChild(
+                        numero
+                    );
+
+                    galleryPreview.appendChild(
+                        bloc
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+</script>
+
+
+<!-- ============================== -->
+<!-- STYLE DES GRAPHIQUES -->
+<!-- ============================== -->
+
+<style>
+
+.analytics-section {
+    margin-top: 25px;
+}
+
+
+/* PETITES CARTES */
+
+.analytics-mini-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.analytics-mini-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    background: #151a23;
+
+    border: 1px solid #29313d;
+
+}
+
+
+.analytics-mini-icon {
+
+    width: 45px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #202735;
+
+    font-size: 22px;
+
+}
+
+
+.analytics-mini-card small {
+
+    display: block;
+
+    color: #8e98a8;
+
+    margin-bottom: 4px;
+
+}
+
+
+.analytics-mini-card strong {
+
+    display: block;
+
+    font-size: 22px;
+
+}
+
+
+/* CARTES GRAPHIQUES */
+
+.chart-card {
+
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border-radius: 16px;
+
+    background: #151a23;
+
+    border: 1px solid #29313d;
+
+}
+
+
+.chart-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.chart-header h3 {
+
+    margin: 4px 0 0;
+
+}
+
+
+.chart-period {
+
+    font-size: 12px;
+
+    padding: 7px 10px;
+
+    border-radius: 20px;
+
+    background: #202735;
+
+    color: #9da7b7;
+
+}
+
+
+.chart-container {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 280px;
+
+}
+
+
+/* TEMPS */
+
+.time-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+}
+
+
+.time-stat {
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: #202631;
+
+}
+
+
+.time-stat span {
+
+    display: block;
+
+    color: #8f99a9;
+
+    font-size: 13px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.time-stat strong {
+
+    font-size: 24px;
+
+}
+
+
+/* COUVERTURE */
+
+.image-preview {
+
+    margin-top: 15px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.image-preview .preview-cover {
+
+    width: 90px !important;
+
+    height: 120px !important;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    border: 2px solid #303947;
+
+}
+
+
+/* GALERIE */
+
+.gallery-preview {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.preview-item {
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: #12161e;
+
+    border: 1px solid #303947;
+
+}
+
+
+.preview-item img {
+
+    width: 100%;
+
+    height: 130px;
+
+    object-fit: cover;
+
+    display: block;
+
+}
+
+
+.preview-item span {
+
+    position: absolute;
+
+    top: 6px;
+
+    left: 6px;
+
+    width: 25px;
+
+    height: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #4da3ff;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .analytics-mini-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .analytics-mini-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .time-stats {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .chart-card {
+
+        padding: 14px;
+
+    }
+
+
+    .chart-container {
+
+        height: 230px;
+
+    }
+
+}
+
+</style>
+
 
 {% endblock %}
