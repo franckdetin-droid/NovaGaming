@@ -2452,6 +2452,57 @@ def test_supabase():
             "message": "Erreur Supabase",
             "error": str(e)
         }, 500
+        # ==========================
+# ENREGISTRER UN TOKEN FCM
+# ==========================
+
+@app.route(
+    "/api/token-fcm",
+    methods=["POST"]
+)
+def enregistrer_token_fcm():
+
+    donnees = request.get_json(
+        silent=True
+    ) or {}
+
+    token = donnees.get(
+        "token",
+        ""
+    ).strip()
+
+    if not token:
+
+        return {
+            "success": False,
+            "message": "Token manquant."
+        }, 400
+
+    try:
+
+        supabase.table(
+            "tokens_fcm"
+        ).upsert(
+            {
+                "token": token
+            },
+            on_conflict="token"
+        ).execute()
+
+        return {
+            "success": True
+        }
+
+    except Exception as e:
+
+        print(
+            "ERREUR TOKEN FCM :",
+            str(e)
+        )
+
+        return {
+            "success": False
+        }, 500
 
 
 # ==========================
