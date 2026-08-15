@@ -3667,12 +3667,12 @@ def ads_impression(pub_id):
 
 
 # ==========================================================
-# COMPTER UN CLIC
+# COMPTER UN CLIC + REDIRECTION
 # ==========================================================
 
 @app.route(
-    "/api/ads/clic/<int:pub_id>",
-    methods=["POST"]
+    "/ads/clic/<int:pub_id>",
+    methods=["GET"]
 )
 def ads_clic(pub_id):
 
@@ -3681,7 +3681,7 @@ def ads_clic(pub_id):
         resultat = (
             supabase
             .table("publicites")
-            .select("clics, actif")
+            .select("clics, actif, lien")
             .eq("id", pub_id)
             .limit(1)
             .execute()
@@ -3690,19 +3690,27 @@ def ads_clic(pub_id):
         publicites = resultat.data or []
 
         if not publicites:
-
-            return {
-                "success": False
-            }, 404
+            abort(404)
 
         publicite = publicites[0]
 
         if not publicite.get("actif"):
+            abort(404)
 
-            return {
-                "success": False
-            }
+        lien = (
+            publicite.get("lien")
+            or ""
+        ).strip()
 
+        if not lien:
+            return redirect(
+                url_for("accueil")
+            )
+
+
+        # ==================================================
+        # AJOUTER 1 CLIC
+        # ==================================================
 
         clics = (
             publicite.get("clics")
@@ -3713,8 +3721,7 @@ def ads_clic(pub_id):
             "publicites"
         ).update({
 
-            "clics":
-                clics + 1
+            "clics": clics + 1
 
         }).eq(
             "id",
@@ -3722,9 +3729,11 @@ def ads_clic(pub_id):
         ).execute()
 
 
-        return {
-            "success": True
-        }
+        # ==================================================
+        # REDIRECTION VERS LE LIEN DE LA PUB
+        # ==================================================
+
+        return redirect(lien)
 
 
     except Exception as e:
@@ -3734,10 +3743,9 @@ def ads_clic(pub_id):
             str(e)
         )
 
-        return {
-            "success": False
-        }, 500
-
+        return redirect(
+            url_for("accueil")
+                )
 
 # ==========================
 # LANCEMENT
