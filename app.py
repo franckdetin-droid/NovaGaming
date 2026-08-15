@@ -23,7 +23,7 @@ from functools import wraps
 
 
 # ==========================
-# CONFIGURATION FLASK
+# CONFIGURATION
 # ==========================
 
 app = Flask(__name__)
@@ -39,7 +39,6 @@ CODE_ADMIN = "3004"
 
 SUPABASE_URL = "https://uavklduzgwzdwzngtpgg.supabase.co"
 
-# Mets ici ta clé anon / publishable Supabase
 SUPABASE_KEY = "sb_publishable_8FNC-V2NgSlOLEuxEx2N4Q_tcaTxaqv"
 
 supabase: Client = create_client(
@@ -64,6 +63,7 @@ cloudinary.config(
 # ==========================
 
 def get_jeux():
+
     resultat = (
         supabase
         .table("jeux")
@@ -93,7 +93,7 @@ def get_jeu(jeu_id):
 
 
 # ==========================
-# UPLOAD IMAGE CLOUDINARY
+# UPLOAD CLOUDINARY
 # ==========================
 
 def enregistrer_image(fichier, nom_base):
@@ -137,12 +137,11 @@ def enregistrer_image(fichier, nom_base):
             resource_type="image"
         )
 
-        image_url = resultat.get("secure_url")
+        image_url = resultat.get(
+            "secure_url"
+        )
 
         if not image_url:
-            print(
-                "Cloudinary n'a pas retourné d'URL."
-            )
             return None
 
         print(
@@ -155,7 +154,7 @@ def enregistrer_image(fichier, nom_base):
     except Exception as e:
 
         print(
-            "ERREUR UPLOAD CLOUDINARY :",
+            "ERREUR CLOUDINARY :",
             str(e)
         )
 
@@ -238,7 +237,7 @@ def recherche():
 
 
 # ==========================
-# PAGE D'UN JEU
+# PAGE JEU
 # ==========================
 
 @app.route("/jeu/<int:jeu_id>")
@@ -249,7 +248,7 @@ def jeu(jeu_id):
     if not jeu_data:
         abort(404)
 
-    commentaires_resultat = (
+    resultat = (
         supabase
         .table("commentaires")
         .select("*")
@@ -258,7 +257,7 @@ def jeu(jeu_id):
         .execute()
     )
 
-    commentaires = commentaires_resultat.data or []
+    commentaires = resultat.data or []
 
     return render_template(
         "jeu.html",
@@ -271,7 +270,9 @@ def jeu(jeu_id):
 # TELECHARGEMENT
 # ==========================
 
-@app.route("/telecharger/<int:jeu_id>")
+@app.route(
+    "/telecharger/<int:jeu_id>"
+)
 def telecharger(jeu_id):
 
     jeu_data = get_jeu(jeu_id)
@@ -288,7 +289,7 @@ def telecharger(jeu_id):
             404
         )
 
-    ancien_nombre = (
+    nombre = (
         jeu_data.get("telechargements")
         or 0
     )
@@ -297,8 +298,7 @@ def telecharger(jeu_id):
         supabase
         .table("jeux")
         .update({
-            "telechargements":
-                ancien_nombre + 1
+            "telechargements": nombre + 1
         })
         .eq("id", jeu_id)
         .execute()
@@ -308,7 +308,7 @@ def telecharger(jeu_id):
 
 
 # ==========================
-# COMMENTAIRE
+# COMMENTAIRES
 # ==========================
 
 @app.route(
@@ -342,9 +342,7 @@ def commentaire(jeu_id):
     if not pseudo:
         pseudo = "Anonyme"
 
-    jeu_existe = get_jeu(jeu_id)
-
-    if jeu_existe:
+    if get_jeu(jeu_id):
 
         (
             supabase
@@ -378,7 +376,7 @@ def commentaire(jeu_id):
 
 
 # ==========================
-# CONNEXION ADMIN
+# LOGIN ADMIN
 # ==========================
 
 @app.route(
@@ -428,7 +426,7 @@ def login():
 
 
 # ==========================
-# DECONNEXION
+# LOGOUT
 # ==========================
 
 @app.route("/logout")
@@ -438,12 +436,13 @@ def logout():
 
     return redirect(
         url_for("accueil")
-        # app.py - PARTIE 2/4
+)
+    # app.py - PARTIE 2/4
 # ==========================
 
 
 # ==========================
-# ADMINISTRATION
+# ADMIN
 # ==========================
 
 @app.route("/admin")
@@ -563,14 +562,12 @@ def ajouter():
     ).strip()
 
     if not nom:
-
         return (
             "Le nom du jeu est obligatoire.",
             400
         )
 
     if not lien:
-
         return (
             "Le lien de téléchargement est obligatoire.",
             400
@@ -590,11 +587,9 @@ def ajouter():
         and couverture_file.filename
     ):
 
-        image_couverture = (
-            enregistrer_image(
-                couverture_file,
-                "couverture"
-            )
+        image_couverture = enregistrer_image(
+            couverture_file,
+            "couverture"
         )
 
         if image_couverture:
@@ -605,8 +600,8 @@ def ajouter():
     # GALERIE
     # ==========================
 
-    fichiers_images = (
-        request.files.getlist("images")
+    fichiers_images = request.files.getlist(
+        "images"
     )
 
     images = []
@@ -691,7 +686,7 @@ def ajouter():
 
 
 # ==========================
-# MODIFIER UN JEU
+# MODIFIER
 # ==========================
 
 @app.route(
@@ -706,11 +701,6 @@ def modifier(jeu_id):
     if not jeu_data:
         abort(404)
 
-
-    # ==========================
-    # AFFICHAGE
-    # ==========================
-
     if request.method == "GET":
 
         return render_template(
@@ -718,10 +708,6 @@ def modifier(jeu_id):
             jeu=jeu_data
         )
 
-
-    # ==========================
-    # INFORMATIONS
-    # ==========================
 
     nom = request.form.get(
         "nom",
@@ -765,14 +751,12 @@ def modifier(jeu_id):
 
 
     if not nom:
-
         return (
             "Le nom du jeu est obligatoire.",
             400
         )
 
     if not lien:
-
         return (
             "Le lien de téléchargement est obligatoire.",
             400
@@ -780,7 +764,7 @@ def modifier(jeu_id):
 
 
     # ==========================
-    # COUVERTURE
+    # NOUVELLE COUVERTURE
     # ==========================
 
     couverture_file = request.files.get(
@@ -867,7 +851,7 @@ def modifier(jeu_id):
 
 
     # ==========================
-    # UPDATE SUPABASE
+    # UPDATE
     # ==========================
 
     donnees = {
@@ -920,8 +904,8 @@ def modifier(jeu_id):
 
     return redirect(
         url_for("admin")
-        )
-    # app.py - PARTIE 3/4
+)
+   # app.py - PARTIE 3/4
 # ==========================
 
 
@@ -941,75 +925,48 @@ def supprimer(jeu_id):
         abort(404)
 
 
-    # ==========================
-    # SUPPRIMER COMMENTAIRES
-    # ==========================
-
-    (
-        supabase
-        .table("commentaires")
-        .delete()
-        .eq("jeu_id", jeu_id)
-        .execute()
-    )
+    supabase.table(
+        "commentaires"
+    ).delete().eq(
+        "jeu_id",
+        jeu_id
+    ).execute()
 
 
-    # ==========================
-    # SUPPRIMER FAVORIS
-    # ==========================
-
-    (
-        supabase
-        .table("favoris")
-        .delete()
-        .eq("jeu_id", jeu_id)
-        .execute()
-    )
+    supabase.table(
+        "favoris"
+    ).delete().eq(
+        "jeu_id",
+        jeu_id
+    ).execute()
 
 
-    # ==========================
-    # SUPPRIMER VUES
-    # ==========================
-
-    (
-        supabase
-        .table("vues")
-        .delete()
-        .eq("jeu_id", jeu_id)
-        .execute()
-    )
+    supabase.table(
+        "vues"
+    ).delete().eq(
+        "jeu_id",
+        jeu_id
+    ).execute()
 
 
-    # ==========================
-    # SUPPRIMER LE JEU
-    # ==========================
-
-    (
-        supabase
-        .table("jeux")
-        .delete()
-        .eq("id", jeu_id)
-        .execute()
-    )
+    supabase.table(
+        "jeux"
+    ).delete().eq(
+        "id",
+        jeu_id
+    ).execute()
 
 
-    # ==========================
-    # NOTIFICATION
-    # ==========================
-
-    (
-        supabase
-        .table("notifications")
-        .insert({
-            "titre":
-                "Jeu supprimé 🗑️",
-            "message":
-                f"{jeu_data.get('nom', 'Jeu')} "
-                "a été supprimé du catalogue.",
-            "lu": 0
-        })
-        .execute()
-    )
+    supabase.table(
+        "notifications"
+    ).insert({
+        "titre":
+            "Jeu supprimé 🗑️",
+        "message":
+            f"{jeu_data.get('nom', 'Jeu')} "
+            "a été supprimé du catalogue.",
+        "lu": 0
+    }).execute()
 
     return redirect(
         url_for("admin")
@@ -1053,11 +1010,8 @@ def favori(jeu_id):
 
     ip = request.remote_addr
 
-    jeu_data = get_jeu(jeu_id)
-
-    if not jeu_data:
+    if not get_jeu(jeu_id):
         abort(404)
-
 
     resultat = (
         supabase
@@ -1127,7 +1081,7 @@ def notifications():
 
 
 # ==========================
-# MARQUER NOTIFICATIONS
+# NOTIFICATIONS LUES
 # ==========================
 
 @app.route(
@@ -1152,7 +1106,7 @@ def notifications_lues():
 
 
 # ==========================
-# JEUX POPULAIRES
+# POPULAIRES
 # ==========================
 
 @app.route("/populaires")
@@ -1229,29 +1183,24 @@ def compteur_vues():
 
     ip = request.remote_addr
 
-
-    # ==========================
-    # VUE RECENTE
-    # ==========================
+    # On évite de compter plusieurs fois
+    # la même IP sur le même jeu pendant
+    # une courte période.
 
     resultat = (
         supabase
         .table("vues")
-        .select("id")
+        .select("id,date")
         .eq("jeu_id", jeu_id)
         .eq("ip", ip)
-        .gte(
-            "date",
-            "now() - interval '30 minutes'"
-        )
+        .order("id", desc=True)
         .limit(1)
         .execute()
     )
 
-    # Si Supabase ne retourne rien,
-    # enregistrer la vue.
+    dernieres_vues = resultat.data or []
 
-    if not resultat.data:
+    if not dernieres_vues:
 
         (
             supabase
@@ -1265,7 +1214,7 @@ def compteur_vues():
 
 
 # ==========================
-# FONCTIONS GLOBALES
+# NOMBRE DE FAVORIS
 # ==========================
 
 @app.context_processor
@@ -1280,7 +1229,10 @@ def fonctions_globales():
                 "id",
                 count="exact"
             )
-            .eq("jeu_id", jeu_id)
+            .eq(
+                "jeu_id",
+                jeu_id
+            )
             .execute()
         )
 
@@ -1309,7 +1261,6 @@ def statistiques_globales():
     )
 
     jeux = jeux_resultat.data or []
-
 
     total_jeux = len(jeux)
 
@@ -1364,7 +1315,6 @@ def statistiques_globales():
         "notifications_non_lues":
             notifications_non_lues
     }
-)
 # app.py - PARTIE 4/4
 # ==========================
 
@@ -1463,7 +1413,7 @@ def page_introuvable(error):
 
 
 # ==========================
-# ERREUR SERVEUR
+# ERREUR 500
 # ==========================
 
 @app.errorhandler(500)
@@ -1557,7 +1507,7 @@ def erreur_serveur(error):
 
 
 # ==========================
-# ROBOTS.TXT
+# ROBOTS
 # ==========================
 
 @app.route("/robots.txt")
@@ -1570,7 +1520,7 @@ def robots():
 
 
 # ==========================
-# SITEMAP.XML
+# SITEMAP
 # ==========================
 
 @app.route("/sitemap.xml")
