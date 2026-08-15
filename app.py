@@ -147,20 +147,21 @@ CODE_ADMIN = "3004"
 # SUPABASE
 # ==========================
 
-SUPABASE_URL = "https://uavklduzgwzdwzngtpgg.supabase.co"
+SUPABASE_URL = os.environ.get(
+    "SUPABASE_URL"
+)
 
-SUPABASE_KEY = "sb_publishable_8FNC-V2NgSlOLEuxExN2Q_tcaTxaqv"
+SUPABASE_KEY = os.environ.get(
+    "SUPABASE_KEY"
+)
 
 supabase: Client = create_client(
     SUPABASE_URL,
     SUPABASE_KEY
 )
-
-
 # ==========================
 # CLOUDINARY
-# ==========================
-
+# ========================
 cloudinary.config(
     cloud_name="zgp2vxel",
     api_key="357264626165689",
