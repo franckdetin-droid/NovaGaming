@@ -2315,6 +2315,71 @@ def sitemap():
         ".",
         "sitemap.xml"
     )
+    # ==========================
+# FIREBASE CLOUD MESSAGING
+# ==========================
+
+import firebase_admin
+from firebase_admin import credentials, messaging
+
+
+# Fichier de compte de service Firebase
+FIREBASE_CREDENTIALS = "firebase-service-account.json"
+
+
+# Initialisation Firebase
+if not firebase_admin._apps:
+
+    cred = credentials.Certificate(
+        FIREBASE_CREDENTIALS
+    )
+
+    firebase_admin.initialize_app(
+        cred
+    )
+
+
+# ==========================
+# ENVOYER UNE NOTIFICATION PUSH
+# ==========================
+
+def envoyer_notification_push(
+    token,
+    titre,
+    message
+):
+
+    try:
+
+        notification = messaging.Notification(
+            title=titre,
+            body=message
+        )
+
+        message_firebase = messaging.Message(
+            notification=notification,
+            token=token
+        )
+
+        resultat = messaging.send(
+            message_firebase
+        )
+
+        print(
+            "✅ Notification Firebase envoyée :",
+            resultat
+        )
+
+        return True
+
+    except Exception as e:
+
+        print(
+            "❌ ERREUR NOTIFICATION FIREBASE :",
+            str(e)
+        )
+
+        return False
 
 
 # ==========================
