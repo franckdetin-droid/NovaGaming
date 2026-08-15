@@ -40,7 +40,7 @@ CODE_ADMIN = "3004"
 SUPABASE_URL = "https://uavklduzgwzdwzngtpgg.supabase.co"
 
 # Mets ici ta clé anon / publishable Supabase
-SUPABASE_KEY = "TA_CLE_SUPABASE"
+SUPABASE_KEY = "sb_publishable_8FNC-V2NgSlOLEuxEx2N4Q_tcaTxaqv"
 
 supabase: Client = create_client(
     SUPABASE_URL,
