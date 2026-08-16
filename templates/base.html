@@ -621,7 +621,6 @@ document.addEventListener(
     </form>
 
 </header>
-
 <!-- ==================================================
      PUBLICITÉ HAUT
 ================================================== -->
@@ -633,27 +632,40 @@ document.addEventListener(
 
     {% if pub.actif %}
 
-    <div
-        class="nova-ad-container"
-        data-pub-id="{{ pub.id }}"
-    >
+        <div
+            class="nova-ad-container"
+            data-pub-id="{{ pub.id }}"
+        >
 
-        <div class="nova-ad">
+            <div class="nova-ad">
 
-            <span class="nova-ad-label">
-                PUBLICITÉ
-            </span>
+                <span class="nova-ad-label">
+                    PUBLICITÉ
+                </span>
 
-            {% if pub.type == "image" %}
 
-                {% if pub.lien %}
+                <!-- IMAGE -->
 
-                    <a
-                        href="{{ url_for('ads_clic', pub_id=pub.id) }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="nova-ad-link"
-                    >
+                {% if pub.type == "image" %}
+
+                    {% if pub.lien %}
+
+                        <a
+                            href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="nova-ad-link"
+                        >
+
+                            <img
+                                src="{{ pub.contenu_url }}"
+                                alt="{{ pub.nom }}"
+                                loading="eager"
+                            >
+
+                        </a>
+
+                    {% else %}
 
                         <img
                             src="{{ pub.contenu_url }}"
@@ -661,54 +673,62 @@ document.addEventListener(
                             loading="eager"
                         >
 
-                    </a>
+                    {% endif %}
 
-                {% else %}
 
-                    <img
-                        src="{{ pub.contenu_url }}"
-                        alt="{{ pub.nom }}"
-                        loading="eager"
+                <!-- VIDEO -->
+
+                {% elif pub.type == "video" %}
+
+                    <div
+                        class="nova-video-ad"
+                        onclick="ouvrirPublicite(this)"
+                        data-lien="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                        role="link"
+                        tabindex="0"
                     >
+
+                        <video
+                            muted
+                            playsinline
+                            autoplay
+                            loop
+                            preload="metadata"
+                            disablepictureinpicture
+                        >
+
+                            <source
+                                src="{{ pub.contenu_url }}"
+                                type="video/mp4"
+                            >
+
+                            Votre navigateur ne peut pas lire
+                            cette vidéo.
+
+                        </video>
+
+                    </div>
+
+
+                <!-- HTML -->
+
+                {% elif pub.type == "html" %}
+
+                    <div class="nova-ad-html">
+
+                        {{ pub.contenu_url|safe }}
+
+                    </div>
 
                 {% endif %}
 
-            {% elif pub.type == "video" %}
+            </div>
 
-                <div
-                    class="nova-video-ad"
-                    onclick="ouvrirPublicite(this)"
-                    data-lien="{{ url_for('ads_clic', pub_id=pub.id) }}"
-                    role="link"
-                    tabindex="0"
-                >
+        </div>
 
-                    <video
-                        muted
-                        playsinline
-                        autoplay
-                        loop
-                        preload="metadata"
-                        disablepictureinpicture
-                    >
+    {% endif %}
 
-                        <source
-                            src="{{ pub.contenu_url }}"
-                            type="video/mp4"
-                        >
-
-                    </video>
-
-                </div>
-
-            {% elif pub.type == "html" %}
-
-                <div class="nova-ad-html">
-                    {{ pub.contenu_url|safe }}
-                </div>
-
-            {% endif %}
-
+{% endif %}
         </div>
 
     </div>
