@@ -98,6 +98,62 @@
     }
 
     </script>
+    <!-- ==================================================
+     ANALYTICS VISITE
+================================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        fetch(
+            "/api/analytics/visite",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    page: window.location.pathname
+                }),
+
+                keepalive: true
+            }
+        )
+
+        .then(function (response) {
+
+            return response.json();
+
+        })
+
+        .then(function (data) {
+
+            console.log(
+                "VISITE ENREGISTRÉE :",
+                data
+            );
+
+        })
+
+        .catch(function (erreur) {
+
+            console.error(
+                "ERREUR ANALYTICS VISITE :",
+                erreur
+            );
+
+        });
+
+    }
+
+);
+
+</script>
 
 
     <!-- ==================================================
