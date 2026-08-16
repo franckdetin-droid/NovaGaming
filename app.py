@@ -2675,8 +2675,6 @@ def enregistrer_token_fcm():
             "success": False,
             "message": str(e)
         }, 500
-
-
 # ==========================================================
 # ANALYTICS
 # ==========================================================
@@ -2693,26 +2691,15 @@ def enregistrer_statistique(
 
     try:
 
-        # --------------------------------------------------
-        # IP
-        # --------------------------------------------------
-
         ip = request.headers.get(
             "X-Forwarded-For"
         )
 
         if ip:
-
             ip = ip.split(",")[0].strip()
-
         else:
-
             ip = request.remote_addr
 
-
-        # --------------------------------------------------
-        # USER AGENT
-        # --------------------------------------------------
 
         user_agent = request.headers.get(
             "User-Agent",
@@ -2720,45 +2707,20 @@ def enregistrer_statistique(
         )
 
 
-        # --------------------------------------------------
-        # DATE UTC
-        # --------------------------------------------------
-
         date_actuelle = datetime.now(
             timezone.utc
         ).isoformat()
 
 
-        # --------------------------------------------------
-        # DONNEES
-        # --------------------------------------------------
-
         donnees = {
-
-            "type_evenement":
-                type_evenement,
-
-            "page":
-                page,
-
-            "jeu_id":
-                jeu_id,
-
-            "ip":
-                ip,
-
-            "user_agent":
-                user_agent,
-
-            "date":
-                date_actuelle
-
+            "type_evenement": type_evenement,
+            "page": page,
+            "jeu_id": jeu_id,
+            "ip": ip,
+            "user_agent": user_agent,
+            "date": date_actuelle
         }
 
-
-        # --------------------------------------------------
-        # TEMPS
-        # --------------------------------------------------
 
         if secondes is not None:
 
@@ -2766,10 +2728,6 @@ def enregistrer_statistique(
                 secondes
             )
 
-
-        # --------------------------------------------------
-        # INSERTION
-        # --------------------------------------------------
 
         resultat = (
             supabase
@@ -2780,23 +2738,27 @@ def enregistrer_statistique(
 
 
         print(
-            "ANALYTICS ENREGISTREE :",
+            "✅ ANALYTICS ENREGISTRÉE :",
             type_evenement,
-            page
+            "| page =",
+            page,
+            "| jeu_id =",
+            jeu_id
         )
 
-        return resultat
+
+        return True
 
 
-    except Exception as e:
+    except Exception as erreur:
 
         print(
-            "ERREUR ANALYTICS :",
-            str(e)
+            "❌ ERREUR ANALYTICS :",
+            repr(erreur)
         )
 
-        return None
-
+        return False
+        
 
 # ==========================================================
 # ENREGISTRER UNE VISITE
@@ -2808,34 +2770,51 @@ def enregistrer_statistique(
 )
 def analytics_visite():
 
-    donnees = request.get_json(
-        silent=True
-    ) or {}
+    try:
 
-    page = str(
-        donnees.get(
-            "page",
-            "/"
+        donnees = request.get_json(
+            silent=True
+        ) or {}
+
+        page = str(
+            donnees.get("page", "/")
+        ).strip()
+
+        if not page:
+            page = "/"
+
+
+        succes = enregistrer_statistique(
+            type_evenement="visite",
+            page=page
         )
-    ).strip()
-
-    if not page:
-
-        page = "/"
 
 
-    enregistrer_statistique(
+        if not succes:
 
-        type_evenement="visite",
+            return {
+                "success": False,
+                "message": "Impossible d'enregistrer la visite."
+            }, 500
 
-        page=page
 
-    )
+        return {
+            "success": True,
+            "page": page
+        }, 200
 
 
-    return {
-        "success": True
-    }
+    except Exception as erreur:
+
+        print(
+            "❌ ERREUR ROUTE VISITE :",
+            repr(erreur)
+        )
+
+        return {
+            "success": False,
+            "message": str(erreur)
+        }, 500
 
 
 # ==========================================================
