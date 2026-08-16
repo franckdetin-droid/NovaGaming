@@ -199,7 +199,9 @@ Game Store - Jeux
         {% endfor %}
 
     </div>
-        <!-- ==================================================
+
+
+    <!-- ==================================================
          PUBLICITÉ ADS TERRA 320x50
          
          ⚠️ EMPLACEMENT DÉJÀ OCCUPÉ
@@ -390,12 +392,124 @@ Game Store - Jeux
     </section>
 
 
+    <!-- ==================================================
+         NOVA ADS — ACCUEIL — BANNIÈRE 3
+         FORMAT : 300 x 200
+         
+         ⚠️ NOUVEL EMPLACEMENT NOVA ADS
+    ================================================== -->
+
+    {% if nova_ads is defined and nova_ads.get('accueil_banniere_3') %}
+
+        {% set pub = nova_ads.get('accueil_banniere_3') %}
+
+        {% if pub.actif %}
+
+            <div
+                class="nova-ad-container nova-ad-300x200"
+                data-pub-id="{{ pub.id }}"
+            >
+
+                <div class="nova-ad">
+
+                    <span class="nova-ad-label">
+                        PUBLICITÉ
+                    </span>
+
+
+                    {% if pub.type == "image" %}
+
+                        {% if pub.lien %}
+
+                            <a
+                                href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="nova-ad-link"
+                            >
+
+                                <img
+                                    src="{{ pub.contenu_url }}"
+                                    alt="{{ pub.nom }}"
+                                    loading="lazy"
+                                >
+
+                            </a>
+
+                        {% else %}
+
+                            <img
+                                src="{{ pub.contenu_url }}"
+                                alt="{{ pub.nom }}"
+                                loading="lazy"
+                            >
+
+                        {% endif %}
+
+
+                    {% elif pub.type == "video" %}
+
+                        <div
+                            class="nova-video-ad"
+                            data-lien="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                            role="link"
+                            tabindex="0"
+                            onclick="ouvrirPublicite(this)"
+                        >
+
+                            <video
+                                muted
+                                playsinline
+                                autoplay
+                                loop
+                                preload="metadata"
+                                disablepictureinpicture
+                            >
+
+                                <source
+                                    src="{{ pub.contenu_url }}"
+                                    type="video/mp4"
+                                >
+
+                                Votre navigateur ne peut pas lire
+                                cette vidéo.
+
+                            </video>
+
+                        </div>
+
+
+                    {% elif pub.type == "html" %}
+
+                        <div class="nova-ad-html">
+
+                            {{ pub.contenu_url|safe }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
             </div>
-            <style>
+
+        {% endif %}
+
+    {% endif %}
+
+
+</div>
+
+
+<!-- ==================================================
+     STYLE PAGE
+================================================== -->
+
+<style>
 
 /* ==========================
    PAGE
-   ========================== */
+========================== */
 
 .home-page{
     max-width:1100px;
@@ -405,7 +519,7 @@ Game Store - Jeux
 
 /* ==========================
    HERO
-   ========================== */
+========================== */
 
 .home-hero{
     background:linear-gradient(
@@ -439,8 +553,8 @@ Game Store - Jeux
 
 
 /* ==========================
-   PUBLICITÉS
-   ========================== */
+   PUBLICITÉS ADS TERRA
+========================== */
 
 .ad-container{
     width:100%;
@@ -464,15 +578,9 @@ Game Store - Jeux
     margin-bottom:5px;
 }
 
-
-/* 300 x 250 */
-
 .ad-300{
     min-height:268px;
 }
-
-
-/* 320 x 50 */
 
 .ad-320{
     min-height:70px;
@@ -480,8 +588,49 @@ Game Store - Jeux
 
 
 /* ==========================
+   NOVA ADS 300x200
+========================== */
+
+.nova-ad-300x200{
+    width:100%;
+    max-width:300px;
+    height:200px;
+    margin:25px auto;
+    padding:0;
+}
+
+.nova-ad-300x200 .nova-ad{
+    width:300px;
+    height:200px;
+    min-height:200px;
+}
+
+.nova-ad-300x200 .nova-ad img{
+    width:300px;
+    height:200px;
+    object-fit:cover;
+}
+
+.nova-ad-300x200 .nova-video-ad{
+    width:300px;
+    height:200px;
+}
+
+.nova-ad-300x200 .nova-video-ad video{
+    width:300px;
+    height:200px;
+    object-fit:cover;
+}
+
+.nova-ad-300x200 .nova-ad-html{
+    width:300px;
+    height:200px;
+}
+
+
+/* ==========================
    CATALOGUE
-   ========================== */
+========================== */
 
 .catalogue-header{
     display:flex;
@@ -505,7 +654,7 @@ Game Store - Jeux
 
 /* ==========================
    LISTE DES JEUX
-   ========================== */
+========================== */
 
 .liste-jeux{
     display:grid;
@@ -530,7 +679,7 @@ Game Store - Jeux
 
 /* ==========================
    COUVERTURE
-   ========================== */
+========================== */
 
 .cover-container{
     position:relative;
@@ -566,7 +715,7 @@ Game Store - Jeux
 
 /* ==========================
    CONTENU CARTE
-   ========================== */
+========================== */
 
 .card-content{
     padding:15px;
@@ -594,7 +743,7 @@ Game Store - Jeux
 
 /* ==========================
    BOUTONS
-   ========================== */
+========================== */
 
 .boutons{
     display:grid;
@@ -624,7 +773,7 @@ Game Store - Jeux
 
 /* ==========================
    AUCUN JEU
-   ========================== */
+========================== */
 
 .empty-home{
     grid-column:1 / -1;
@@ -642,7 +791,7 @@ Game Store - Jeux
 
 /* ==========================
    SECTION POPULAIRE
-   ========================== */
+========================== */
 
 .home-section{
     margin-top:25px;
@@ -668,7 +817,7 @@ Game Store - Jeux
 
 /* ==========================
    MINI JEUX
-   ========================== */
+========================== */
 
 .mini-games{
     display:grid;
@@ -711,7 +860,7 @@ Game Store - Jeux
 
 /* ==========================
    INFORMATIONS
-   ========================== */
+========================== */
 
 .info-home{
     display:flex;
@@ -741,7 +890,7 @@ Game Store - Jeux
 
 /* ==========================
    NAVIGATION RAPIDE
-   ========================== */
+========================== */
 
 .quick-home{
     display:grid;
@@ -780,7 +929,7 @@ Game Store - Jeux
 
 /* ==========================
    TÉLÉPHONE
-   ========================== */
+========================== */
 
 @media(max-width:750px){
 
@@ -839,12 +988,18 @@ Game Store - Jeux
         overflow-x:auto;
     }
 
+    .nova-ad-300x200{
+        width:300px;
+        height:200px;
+        max-width:300px;
+    }
+
 }
 
 
 /* ==========================
    PETIT ÉCRAN
-   ========================== */
+========================== */
 
 @media(max-width:420px){
 
@@ -863,6 +1018,5 @@ Game Store - Jeux
 }
 
 </style>
-
 
 {% endblock %}
