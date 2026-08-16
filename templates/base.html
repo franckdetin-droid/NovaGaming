@@ -634,7 +634,10 @@ document.addEventListener(
 
     {% if pub.actif %}
 
-    <div class="nova-ad-container">
+    <div
+        class="nova-ad-container"
+        data-pub-id="{{ pub.id }}"
+    >
 
         <div class="nova-ad">
 
@@ -650,7 +653,7 @@ document.addEventListener(
                 {% if pub.lien %}
 
                     <a
-                        href="{{ pub.lien }}"
+                        href="{{ url_for('clic_publicite', pub_id=pub.id) }}"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="nova-ad-link"
@@ -673,6 +676,60 @@ document.addEventListener(
                     >
 
                 {% endif %}
+
+
+            <!-- VIDÉO -->
+
+            {% elif pub.type == "video" %}
+
+                <div
+                    class="nova-video-ad"
+                    data-lien="{{ url_for('clic_publicite', pub_id=pub.id) }}"
+                    role="link"
+                    tabindex="0"
+                >
+
+                    <video
+                        muted
+                        playsinline
+                        autoplay
+                        loop
+                        preload="metadata"
+                        disablepictureinpicture
+                    >
+
+                        <source
+                            src="{{ pub.contenu_url }}"
+                            type="video/mp4"
+                        >
+
+                        Votre navigateur ne peut pas lire
+                        cette vidéo.
+
+                    </video>
+
+                </div>
+
+
+            <!-- HTML -->
+
+            {% elif pub.type == "html" %}
+
+                <div class="nova-ad-html">
+
+                    {{ pub.contenu_url|safe }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+{% endif %}
 
 
             <!-- VIDÉO -->
