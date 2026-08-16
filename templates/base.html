@@ -622,7 +622,6 @@ document.addEventListener(
 
 </header>
 
-
 <!-- ==================================================
      PUBLICITÉ HAUT
 ================================================== -->
@@ -645,15 +644,12 @@ document.addEventListener(
                 PUBLICITÉ
             </span>
 
-
-            <!-- IMAGE -->
-
             {% if pub.type == "image" %}
 
                 {% if pub.lien %}
 
                     <a
-                        href="{{ url_for('clic_publicite', pub_id=pub.id) }}"
+                        href="{{ url_for('ads_clic', pub_id=pub.id) }}"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="nova-ad-link"
@@ -677,7 +673,49 @@ document.addEventListener(
 
                 {% endif %}
 
+            {% elif pub.type == "video" %}
 
+                <div
+                    class="nova-video-ad"
+                    onclick="ouvrirPublicite(this)"
+                    data-lien="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                    role="link"
+                    tabindex="0"
+                >
+
+                    <video
+                        muted
+                        playsinline
+                        autoplay
+                        loop
+                        preload="metadata"
+                        disablepictureinpicture
+                    >
+
+                        <source
+                            src="{{ pub.contenu_url }}"
+                            type="video/mp4"
+                        >
+
+                    </video>
+
+                </div>
+
+            {% elif pub.type == "html" %}
+
+                <div class="nova-ad-html">
+                    {{ pub.contenu_url|safe }}
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+{% endif %}
             <!-- VIDÉO -->
 
             {% elif pub.type == "video" %}
