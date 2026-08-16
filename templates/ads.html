@@ -1193,6 +1193,38 @@ document
     });
 
 </script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll("[data-pub-id]").forEach(function (element) {
+
+        const pubId = element.dataset.pubId;
+
+        if (!pubId) {
+            return;
+        }
+
+        fetch("/api/ads/impression/" + pubId, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Impression pub :", pubId, data);
+        })
+        .catch(error => {
+            console.error(
+                "Erreur impression publicité :",
+                error
+            );
+        });
+
+    });
+
+});
+    </script>
 
 
 </body>
