@@ -625,26 +625,19 @@ document.addEventListener(
      PUBLICITÉ HAUT
 ================================================== -->
 
-{% if nova_ads is defined
-      and nova_ads.get('jeu_publicite_1') %}
+{% if nova_ads is defined and nova_ads.get('jeu_publicite_1') %}
 
     {% set pub = nova_ads.get('jeu_publicite_1') %}
 
     {% if pub.actif %}
 
-        <div
-            class="nova-ad-container"
-            data-pub-id="{{ pub.id }}"
-        >
+        <div class="nova-ad-container">
 
             <div class="nova-ad">
 
                 <span class="nova-ad-label">
                     PUBLICITÉ
                 </span>
-
-
-                <!-- IMAGE -->
 
                 {% if pub.type == "image" %}
 
@@ -675,6 +668,52 @@ document.addEventListener(
 
                     {% endif %}
 
+
+                {% elif pub.type == "video" %}
+
+                    <a
+                        href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="nova-ad-link"
+                    >
+
+                        <video
+                            muted
+                            playsinline
+                            autoplay
+                            loop
+                            controls
+                            preload="metadata"
+                        >
+
+                            <source
+                                src="{{ pub.contenu_url }}"
+                                type="video/mp4"
+                            >
+
+                            Votre navigateur ne peut pas lire cette vidéo.
+
+                        </video>
+
+                    </a>
+
+
+                {% elif pub.type == "html" %}
+
+                    <div class="nova-ad-html">
+                        {{ pub.contenu_url|safe }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+{% endif %}
 
                 <!-- VIDEO -->
 
