@@ -10,31 +10,21 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <!-- ==================================================
-         ICÔNE NOVAGAMING
-    ================================================== -->
+    <!-- ICÔNE NOVAGAMING -->
 
     <link
         rel="icon"
         type="image/png"
-        href="{{ url_for(
-            'static',
-            filename='images/logo.png'
-        ) }}"
+        href="{{ url_for('static', filename='images/logo.png') }}"
     >
 
     <link
         rel="apple-touch-icon"
-        href="{{ url_for(
-            'static',
-            filename='images/logo.png'
-        ) }}"
+        href="{{ url_for('static', filename='images/logo.png') }}"
     >
 
 
-    <!-- ==================================================
-         GOOGLE ANALYTICS
-    ================================================== -->
+    <!-- GOOGLE ANALYTICS -->
 
     <script
         async
@@ -43,17 +33,13 @@
 
     <script>
 
-        window.dataLayer =
-            window.dataLayer || [];
+        window.dataLayer = window.dataLayer || [];
 
         function gtag() {
             dataLayer.push(arguments);
         }
 
-        gtag(
-            'js',
-            new Date()
-        );
+        gtag('js', new Date());
 
         gtag(
             'config',
@@ -63,9 +49,7 @@
     </script>
 
 
-    <!-- ==================================================
-         META
-    ================================================== -->
+    <!-- META -->
 
     <meta
         name="description"
@@ -83,9 +67,7 @@
     >
 
 
-    <!-- ==================================================
-         SEO
-    ================================================== -->
+    <!-- SEO -->
 
     <script type="application/ld+json">
 
@@ -98,91 +80,71 @@
     }
 
     </script>
-    <!-- ==================================================
-     ANALYTICS VISITE
-================================================== -->
-
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        fetch(
-            "/api/analytics/visite",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    page: window.location.pathname
-                }),
-
-                keepalive: true
-            }
-        )
-
-        .then(function (response) {
-
-            return response.json();
-
-        })
-
-        .then(function (data) {
-
-            console.log(
-                "VISITE ENREGISTRÉE :",
-                data
-            );
-
-        })
-
-        .catch(function (erreur) {
-
-            console.error(
-                "ERREUR ANALYTICS VISITE :",
-                erreur
-            );
-
-        });
-
-    }
-
-);
-
-</script>
 
 
-    <!-- ==================================================
-         TITRE
-    ================================================== -->
+    <!-- ANALYTICS VISITE -->
+
+    <script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            fetch(
+                "/api/analytics/visite",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        page: window.location.pathname
+                    }),
+                    keepalive: true
+                }
+            )
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(
+                    "VISITE ENREGISTRÉE :",
+                    data
+                );
+            })
+            .catch(function (erreur) {
+                console.error(
+                    "ERREUR ANALYTICS VISITE :",
+                    erreur
+                );
+            });
+
+        }
+    );
+
+    </script>
+
+
+    <!-- TITRE -->
 
     <title>
+
         {% block title %}
             NovaGaming
         {% endblock %}
+
     </title>
 
 
-    <!-- ==================================================
-         CSS PRINCIPAL
-    ================================================== -->
+    <!-- CSS PRINCIPAL -->
 
     <link
         rel="stylesheet"
-        href="{{ url_for(
-            'static',
-            filename='style.css'
-        ) }}"
+        href="{{ url_for('static', filename='style.css') }}"
     >
 
 
-    <!-- ==================================================
-         GOOGLE FONT
-    ================================================== -->
+    <!-- GOOGLE FONT -->
 
     <link
         rel="preconnect"
@@ -201,37 +163,23 @@ document.addEventListener(
     >
 
 
-    <!-- ==================================================
-         STYLE BASE
-    ================================================== -->
-
     <style>
 
-        /* ==================================================
-           LOGO
-        ================================================== */
-
         .logo-image {
-
             width: 28px;
-
             height: 28px;
-
             object-fit: contain;
-
             vertical-align: middle;
-
         }
 
 
-        /* ==================================================
+        /* ==============================
            PUBLICITÉS
-        ================================================== */
+        ============================== */
 
         .nova-ad-container {
 
             width: 100%;
-
             max-width: 1000px;
 
             margin: 15px auto;
@@ -268,10 +216,6 @@ document.addEventListener(
         }
 
 
-        /* ==================================================
-           IMAGE PUBLICITAIRE
-        ================================================== */
-
         .nova-ad img {
 
             display: block;
@@ -287,9 +231,18 @@ document.addEventListener(
         }
 
 
-        /* ==================================================
-           VIDÉO PUBLICITAIRE
-        ================================================== */
+        .nova-ad-link {
+
+            display: block;
+
+            width: 100%;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+        }
+
 
         .nova-video-ad {
 
@@ -297,9 +250,9 @@ document.addEventListener(
 
             width: 100%;
 
-            cursor: pointer;
-
             overflow: hidden;
+
+            cursor: pointer;
 
         }
 
@@ -319,27 +272,6 @@ document.addEventListener(
         }
 
 
-        /* ==================================================
-           LIEN PUBLICITAIRE IMAGE
-        ================================================== */
-
-        .nova-ad-link {
-
-            display: block;
-
-            width: 100%;
-
-            text-decoration: none;
-
-            cursor: pointer;
-
-        }
-
-
-        /* ==================================================
-           PUBLICITÉ HTML
-        ================================================== */
-
         .nova-ad-html {
 
             width: 100%;
@@ -356,10 +288,6 @@ document.addEventListener(
 
         }
 
-
-        /* ==================================================
-           LABEL PUBLICITÉ
-        ================================================== */
 
         .nova-ad-label {
 
@@ -388,9 +316,9 @@ document.addEventListener(
         }
 
 
-        /* ==================================================
-           BOUTON NOTIFICATIONS
-        ================================================== */
+        /* ==============================
+           NOTIFICATIONS
+        ============================== */
 
         .notification-activate-btn {
 
@@ -470,15 +398,13 @@ document.addEventListener(
 
 
         .notification-activate-icon {
-
             font-size: 17px;
-
         }
 
 
-        /* ==================================================
+        /* ==============================
            MOBILE
-        ================================================== */
+        ============================== */
 
         @media (max-width: 600px) {
 
@@ -504,13 +430,7 @@ document.addEventListener(
             }
 
 
-            .nova-ad img {
-
-                max-height: 220px;
-
-            }
-
-
+            .nova-ad img,
             .nova-ad video {
 
                 max-height: 220px;
@@ -525,7 +445,9 @@ document.addEventListener(
 
 
 <body>
-    <!-- ==================================================
+
+
+<!-- ==================================================
      HEADER
 ================================================== -->
 
@@ -539,10 +461,7 @@ document.addEventListener(
         >
 
             <img
-                src="{{ url_for(
-                    'static',
-                    filename='images/logo.png'
-                ) }}"
+                src="{{ url_for('static', filename='images/logo.png') }}"
                 alt="NovaGaming"
                 class="logo-image"
             >
@@ -578,6 +497,7 @@ document.addEventListener(
                 href="{{ url_for('notifications') }}"
                 class="header-btn notification-btn"
             >
+
                 🔔
 
                 {% if notifications_non_lues is defined
@@ -621,11 +541,14 @@ document.addEventListener(
     </form>
 
 </header>
+
+
 <!-- ==================================================
-     PUBLICITÉ HAUT
+     PUBLICITÉ 1 — HAUT
 ================================================== -->
 
-{% if nova_ads is defined and nova_ads.get('jeu_publicite_1') %}
+{% if nova_ads is defined
+      and nova_ads.get('jeu_publicite_1') %}
 
     {% set pub = nova_ads.get('jeu_publicite_1') %}
 
@@ -633,11 +556,15 @@ document.addEventListener(
 
         <div class="nova-ad-container">
 
-            <div class="nova-ad">
+            <div
+                class="nova-ad"
+                data-pub-id="{{ pub.id }}"
+            >
 
                 <span class="nova-ad-label">
                     PUBLICITÉ
                 </span>
+
 
                 {% if pub.type == "image" %}
 
@@ -671,12 +598,37 @@ document.addEventListener(
 
                 {% elif pub.type == "video" %}
 
-                    <a
-                        href="{{ url_for('ads_clic', pub_id=pub.id) }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="nova-ad-link"
-                    >
+                    {% if pub.lien %}
+
+                        <a
+                            href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="nova-ad-link"
+                        >
+
+                            <video
+                                muted
+                                playsinline
+                                autoplay
+                                loop
+                                controls
+                                preload="metadata"
+                            >
+
+                                <source
+                                    src="{{ pub.contenu_url }}"
+                                    type="video/mp4"
+                                >
+
+                                Votre navigateur ne peut pas lire
+                                cette vidéo.
+
+                            </video>
+
+                        </a>
+
+                    {% else %}
 
                         <video
                             muted
@@ -692,17 +644,20 @@ document.addEventListener(
                                 type="video/mp4"
                             >
 
-                            Votre navigateur ne peut pas lire cette vidéo.
+                            Votre navigateur ne peut pas lire
+                            cette vidéo.
 
                         </video>
 
-                    </a>
+                    {% endif %}
 
 
                 {% elif pub.type == "html" %}
 
                     <div class="nova-ad-html">
+
                         {{ pub.contenu_url|safe }}
+
                     </div>
 
                 {% endif %}
@@ -715,25 +670,111 @@ document.addEventListener(
 
 {% endif %}
 
-                <!-- VIDEO -->
+
+<!-- ==================================================
+     CONTENU DE LA PAGE
+================================================== -->
+
+<main class="conteneur">
+
+    {% block content %}
+    {% endblock %}
+
+    </main>
+    <!-- ==================================================
+     PUBLICITÉ 2 — MILIEU
+================================================== -->
+
+{% if nova_ads is defined
+      and nova_ads.get('jeu_publicite_2') %}
+
+    {% set pub = nova_ads.get('jeu_publicite_2') %}
+
+    {% if pub.actif %}
+
+        <div class="nova-ad-container">
+
+            <div
+                class="nova-ad"
+                data-pub-id="{{ pub.id }}"
+            >
+
+                <span class="nova-ad-label">
+                    PUBLICITÉ
+                </span>
+
+
+                {% if pub.type == "image" %}
+
+                    {% if pub.lien %}
+
+                        <a
+                            href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="nova-ad-link"
+                        >
+
+                            <img
+                                src="{{ pub.contenu_url }}"
+                                alt="{{ pub.nom }}"
+                                loading="lazy"
+                            >
+
+                        </a>
+
+                    {% else %}
+
+                        <img
+                            src="{{ pub.contenu_url }}"
+                            alt="{{ pub.nom }}"
+                            loading="lazy"
+                        >
+
+                    {% endif %}
+
 
                 {% elif pub.type == "video" %}
 
-                    <div
-                        class="nova-video-ad"
-                        onclick="ouvrirPublicite(this)"
-                        data-lien="{{ url_for('ads_clic', pub_id=pub.id) }}"
-                        role="link"
-                        tabindex="0"
-                    >
+                    {% if pub.lien %}
+
+                        <a
+                            href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="nova-ad-link"
+                        >
+
+                            <video
+                                muted
+                                playsinline
+                                autoplay
+                                loop
+                                controls
+                                preload="metadata"
+                            >
+
+                                <source
+                                    src="{{ pub.contenu_url }}"
+                                    type="video/mp4"
+                                >
+
+                                Votre navigateur ne peut pas lire
+                                cette vidéo.
+
+                            </video>
+
+                        </a>
+
+                    {% else %}
 
                         <video
                             muted
                             playsinline
                             autoplay
                             loop
+                            controls
                             preload="metadata"
-                            disablepictureinpicture
                         >
 
                             <source
@@ -746,10 +787,8 @@ document.addEventListener(
 
                         </video>
 
-                    </div>
+                    {% endif %}
 
-
-                <!-- HTML -->
 
                 {% elif pub.type == "html" %}
 
@@ -768,225 +807,136 @@ document.addEventListener(
     {% endif %}
 
 {% endif %}
-        </div>
-
-    </div>
-
-    {% endif %}
-
-{% endif %}
-            <!-- VIDÉO -->
-
-            {% elif pub.type == "video" %}
-
-                <div
-                    class="nova-video-ad"
-                    data-lien="{{ url_for('clic_publicite', pub_id=pub.id) }}"
-                    role="link"
-                    tabindex="0"
-                >
-
-                    <video
-                        muted
-                        playsinline
-                        autoplay
-                        loop
-                        preload="metadata"
-                        disablepictureinpicture
-                    >
-
-                        <source
-                            src="{{ pub.contenu_url }}"
-                            type="video/mp4"
-                        >
-
-                        Votre navigateur ne peut pas lire
-                        cette vidéo.
-
-                    </video>
-
-                </div>
-
-
-            <!-- HTML -->
-
-            {% elif pub.type == "html" %}
-
-                <div class="nova-ad-html">
-
-                    {{ pub.contenu_url|safe }}
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-    {% endif %}
-
-{% endif %}
-
-
-            <!-- VIDÉO -->
-
-            {% elif pub.type == "video" %}
-
-                <div
-                    class="nova-video-ad"
-                    onclick="ouvrirPublicite(this)"
-                    data-lien="{{ pub.lien|default('') }}"
-                    role="link"
-                    tabindex="0"
-                >
-
-                    <video
-                        muted
-                        playsinline
-                        autoplay
-                        loop
-                        preload="metadata"
-                        disablepictureinpicture
-                    >
-
-                        <source
-                            src="{{ pub.contenu_url }}"
-                            type="video/mp4"
-                        >
-
-                        Votre navigateur ne peut pas lire
-                        cette vidéo.
-
-                    </video>
-
-                </div>
-
-
-            <!-- HTML -->
-
-            {% elif pub.type == "html" %}
-
-                <div class="nova-ad-html">
-                    {{ pub.contenu_url|safe }}
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-    {% endif %}
-
-{% endif %}
 
 
 <!-- ==================================================
-     CONTENU
+     PUBLICITÉ 3 — BAS DE L'ACCUEIL
+     
+     Elle apparaît uniquement sur la page accueil.
 ================================================== -->
 
-<main class="conteneur">
+{% if request.endpoint == 'accueil' %}
 
-    {% block content %}
-    {% endblock %}
+    {% if nova_ads is defined
+          and nova_ads.get('accueil_banniere_3') %}
 
-</main>
+        {% set pub = nova_ads.get('accueil_banniere_3') %}
 
+        {% if pub.actif %}
 
-<!-- ==================================================
-     PUBLICITÉ MILIEU
-================================================== -->
-
-{% if nova_ads is defined
-      and nova_ads.get('jeu_publicite_2') %}
-
-    {% set pub = nova_ads.get('jeu_publicite_2') %}
-
-    {% if pub.actif %}
-
-    <div class="nova-ad-container">
-
-        <div class="nova-ad">
-
-            <span class="nova-ad-label">
-                PUBLICITÉ
-            </span>
-
-
-            {% if pub.type == "image" %}
-
-                {% if pub.lien %}
-
-                    <a
-                        href="{{ pub.lien }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="nova-ad-link"
-                    >
-
-                        <img
-                            src="{{ pub.contenu_url }}"
-                            alt="{{ pub.nom }}"
-                            loading="lazy"
-                        >
-
-                    </a>
-
-                {% else %}
-
-                    <img
-                        src="{{ pub.contenu_url }}"
-                        alt="{{ pub.nom }}"
-                        loading="lazy"
-                    >
-
-                {% endif %}
-
-
-            {% elif pub.type == "video" %}
+            <div class="nova-ad-container">
 
                 <div
-                    class="nova-video-ad"
-                    onclick="ouvrirPublicite(this)"
-                    data-lien="{{ pub.lien|default('') }}"
-                    role="link"
-                    tabindex="0"
+                    class="nova-ad"
+                    data-pub-id="{{ pub.id }}"
                 >
 
-                    <video
-                        muted
-                        playsinline
-                        autoplay
-                        loop
-                        preload="metadata"
-                        disablepictureinpicture
-                    >
+                    <span class="nova-ad-label">
+                        PUBLICITÉ
+                    </span>
 
-                        <source
-                            src="{{ pub.contenu_url }}"
-                            type="video/mp4"
-                        >
 
-                        Votre navigateur ne peut pas lire
-                        cette vidéo.
+                    {% if pub.type == "image" %}
 
-                    </video>
+                        {% if pub.lien %}
+
+                            <a
+                                href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="nova-ad-link"
+                            >
+
+                                <img
+                                    src="{{ pub.contenu_url }}"
+                                    alt="{{ pub.nom }}"
+                                    loading="lazy"
+                                >
+
+                            </a>
+
+                        {% else %}
+
+                            <img
+                                src="{{ pub.contenu_url }}"
+                                alt="{{ pub.nom }}"
+                                loading="lazy"
+                            >
+
+                        {% endif %}
+
+
+                    {% elif pub.type == "video" %}
+
+                        {% if pub.lien %}
+
+                            <a
+                                href="{{ url_for('ads_clic', pub_id=pub.id) }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="nova-ad-link"
+                            >
+
+                                <video
+                                    muted
+                                    playsinline
+                                    autoplay
+                                    loop
+                                    controls
+                                    preload="metadata"
+                                >
+
+                                    <source
+                                        src="{{ pub.contenu_url }}"
+                                        type="video/mp4"
+                                    >
+
+                                    Votre navigateur ne peut pas lire
+                                    cette vidéo.
+
+                                </video>
+
+                            </a>
+
+                        {% else %}
+
+                            <video
+                                muted
+                                playsinline
+                                autoplay
+                                loop
+                                controls
+                                preload="metadata"
+                            >
+
+                                <source
+                                    src="{{ pub.contenu_url }}"
+                                    type="video/mp4"
+                                >
+
+                                Votre navigateur ne peut pas lire
+                                cette vidéo.
+
+                            </video>
+
+                        {% endif %}
+
+
+                    {% elif pub.type == "html" %}
+
+                        <div class="nova-ad-html">
+
+                            {{ pub.contenu_url|safe }}
+
+                        </div>
+
+                    {% endif %}
 
                 </div>
 
+            </div>
 
-            {% elif pub.type == "html" %}
-
-                <div class="nova-ad-html">
-                    {{ pub.contenu_url|safe }}
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    </div>
+        {% endif %}
 
     {% endif %}
 
@@ -1003,8 +953,13 @@ document.addEventListener(
         href="{{ url_for('accueil') }}"
         class="bottom-nav-item"
     >
+
         <span>🏠</span>
-        <small>Accueil</small>
+
+        <small>
+            Accueil
+        </small>
+
     </a>
 
 
@@ -1012,8 +967,13 @@ document.addEventListener(
         href="{{ url_for('nouveautes') }}"
         class="bottom-nav-item"
     >
+
         <span>🆕</span>
-        <small>Nouveautés</small>
+
+        <small>
+            Nouveautés
+        </small>
+
     </a>
 
 
@@ -1021,8 +981,13 @@ document.addEventListener(
         href="{{ url_for('populaires') }}"
         class="bottom-nav-item"
     >
+
         <span>🔥</span>
-        <small>Populaires</small>
+
+        <small>
+            Populaires
+        </small>
+
     </a>
 
 
@@ -1030,12 +995,19 @@ document.addEventListener(
         href="{{ url_for('notifications') }}"
         class="bottom-nav-item"
     >
+
         <span>🔔</span>
-        <small>Alertes</small>
+
+        <small>
+            Alertes
+        </small>
+
     </a>
 
 </nav>
-    <!-- ==================================================
+
+
+<!-- ==================================================
      FOOTER
 ================================================== -->
 
@@ -1092,10 +1064,8 @@ document.addEventListener(
 
     </div>
 
-</footer>
-
-
-<!-- ==================================================
+    </footer>
+    <!-- ==================================================
      MESSAGES FLASH
 ================================================== -->
 
@@ -1108,7 +1078,9 @@ document.addEventListener(
             {% for message in messages %}
 
                 <div class="flash-message">
+
                     {{ message }}
+
                 </div>
 
             {% endfor %}
@@ -1143,54 +1115,10 @@ document.addEventListener(
 
 
 <!-- ==================================================
-     JAVASCRIPT PUBLICITÉ
+     JAVASCRIPT
 ================================================== -->
 
 <script>
-
-function ouvrirPublicite(element) {
-
-    const lien = element.dataset.lien;
-
-    if (!lien || lien.trim() === "") {
-        return;
-    }
-
-    window.open(
-        lien,
-        "_blank",
-        "noopener,noreferrer"
-    );
-}
-
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        const element =
-            event.target.closest(
-                ".nova-video-ad"
-            );
-
-        if (!element) {
-            return;
-        }
-
-        if (
-            event.key === "Enter" ||
-            event.key === " "
-        ) {
-
-            event.preventDefault();
-
-            ouvrirPublicite(element);
-
-        }
-
-    }
-);
-
 
 /* ==================================================
    FLASH
@@ -1211,7 +1139,9 @@ setTimeout(
 
                 setTimeout(
                     function() {
+
                         message.remove();
+
                     },
                     400
                 );
@@ -1438,7 +1368,3 @@ document.addEventListener(
 </body>
 
 </html>
-
-
-    
-    
