@@ -1494,6 +1494,123 @@ document.addEventListener(
         filename='firebase-messaging.js'
     ) }}"
 ></script>
+    <!-- ==================================================
+     ANALYTICS — TEMPS PASSE
+================================================== -->
+
+<script>
+
+(function () {
+
+    const debut = Date.now();
+
+    const page =
+        window.location.pathname || "/";
+
+    let dejaEnvoye = false;
+
+
+    function envoyerTemps() {
+
+        if (dejaEnvoye) {
+            return;
+        }
+
+        dejaEnvoye = true;
+
+        const secondes = Math.floor(
+            (Date.now() - debut) / 1000
+        );
+
+
+        const donnees = JSON.stringify({
+
+            page: page,
+
+            secondes: secondes
+
+        });
+
+
+        /*
+         * sendBeacon est idéal ici :
+         * le navigateur peut envoyer les données
+         * même lorsque la page est en train de se fermer.
+         */
+
+        if (
+            navigator.sendBeacon
+        ) {
+
+            const blob = new Blob(
+                [donnees],
+                {
+                    type: "application/json"
+                }
+            );
+
+            navigator.sendBeacon(
+                "/api/analytics/temps",
+                blob
+            );
+
+        } else {
+
+            fetch(
+                "/api/analytics/temps",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: donnees,
+
+                    keepalive: true
+                }
+            );
+
+        }
+
+    }
+
+
+    /*
+     * L'utilisateur quitte la page
+     */
+
+    window.addEventListener(
+        "pagehide",
+        envoyerTemps
+    );
+
+
+    /*
+     * Certains navigateurs déclenchent
+     * visibilitychange avant de quitter.
+     */
+
+    document.addEventListener(
+        "visibilitychange",
+        function () {
+
+            if (
+                document.visibilityState ===
+                "hidden"
+            ) {
+
+                envoyerTemps();
+
+            }
+
+        }
+    );
+
+})();
+
+</script>
 
 
 <!-- ==================================================
