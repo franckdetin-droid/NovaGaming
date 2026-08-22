@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaGaming AutoPilot - Administration IA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nova: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-16">
+
+    <!-- BARRE DE NAVIGATION SUPÉRIEURE -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🤖</span>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        NovaGaming <span class="text-emerald-400 font-extrabold">AutoPilot</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Système intelligent de détection & publication de jeux partenaires</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- Badge de Statut Global -->
+                {% if autopilot_status == 'active' or autopilot_status == 1 or autopilot_status == True %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        🟢 ACTIF
+                    </span>
+                {% else %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                        <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                        🔴 DÉSACTIVÉ
+                    </span>
+                {% endif %}
+
+                <!-- Bouton Analyser Maintenant -->
+                <form action="/admin/autopilot/run" method="POST" class="inline m-0" onsubmit="return confirmRun(event);">
+                    <button type="submit" id="btn-run-analysis" class="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-lg shadow-emerald-900/30 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>▶️ Analyser maintenant</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+
+        <!-- MESSAGES FLASH / NOTIFICATIONS -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-2">
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-xl border text-sm flex items-center justify-between {% if category == 'error' or category == 'danger' %}bg-rose-950/40 border-rose-800/60 text-rose-300{% elif category == 'success' %}bg-emerald-950/40 border-emerald-800/60 text-emerald-300{% else %}bg-slate-800/80 border-slate-700 text-slate-300{% endif %}">
+                            <div class="flex items-center gap-2">
+                                <span>{% if category == 'error' %}⚠️{% else %}✅{% endif %}</span>
+                                <span>{{ message }}</span>
+                            </div>
+                            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- CARTES DE MÉTRIQUES PRINCIPALES -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            
+            <!-- Aujourd'hui -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Aujourd'hui</span>
+                    <span class="text-lg">🎯</span>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white flex items-baseline gap-1">
+                        <span class="text-emerald-400">{{ games_today|default(0) }}</span>
+                        <span class="text-slate-500 text-lg sm:text-xl font-medium">/ {{ daily_limit|default(2) }}</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">jeux publiés aujourd'hui</p>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                    <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: {{ ((games_today|default(0) / daily_limit|default(2)) * 100)|round }}%;"></div>
+                </div>
+            </div>
+
+            <!-- Partenaires -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Partenaires</span>
+                    <span class="text-lg">🌐</span>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white">
+                        {{ partners|length if partners is defined else 0 }}
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">sources autorisées</p>
+                </div>
+                <div class="mt-3 flex items-center gap-1.5 text-xs text-emerald-400">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>Whitelist active</span>
+                </div>
+            </div>
+
+            <!-- Dernière analyse -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Dernière analyse</span>
+                    <span class="text-lg">⏱️</span>
+                </div>
+                <div>
+                    <div class="text-sm sm:text-base font-bold text-slate-100 truncate">
+                        {{ last_run|default('Non exécuté') }}
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">cycle précédent</p>
+                </div>
+                <div class="mt-3 text-xs text-slate-500">
+                    Auto-planifié quotidiennement
+                </div>
+            </div>
+
+            <!-- Prochaine analyse -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Prochaine analyse</span>
+                    <span class="text-lg">📅</span>
+                </div>
+                <div>
+                    <div class="text-sm sm:text-base font-bold text-slate-100 truncate">
+                        {{ next_run|default('Demain 10:00') }}
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">prochain passage prévu</p>
+                </div>
+                <div class="mt-3 text-xs text-indigo-400 font-medium">
+                    2 jeux max par cycle
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION ÉTAT & CONTRÔLE AUTOPILOT -->
+        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                        <span>⚙️</span> État AutoPilot
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
+                        Contrôle de l'automatisation. Lorsque l'AutoPilot est activé, il analyse les partenaires et publie jusqu'à 2 fiches par jour.
+                    </p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <form action="/admin/autopilot/toggle" method="POST" class="m-0">
+                        {% if autopilot_status == 'active' or autopilot_status == 1 or autopilot_status == True %}
+                            <button type="submit" class="px-4 py-2 bg-rose-950/60 hover:bg-rose-900 border border-rose-700/60 text-rose-300 text-xs sm:text-sm font-semibold rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span>🔴</span> Désactiver l'AutoPilot
+                            </button>
+                        {% else %}
+                            <button type="submit" class="px-4 py-2 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-xs sm:text-sm font-semibold rounded-xl transition flex items-center gap-2 cursor-pointer">
+                                <span>🟢</span> Activer l'AutoPilot
+                            </button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION STATISTIQUES D'ANALYSE -->
+        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span>📊</span> Statistiques d'Analyse & Conformité
+                </h2>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-center">
+                    <span class="text-xs text-slate-400">Pages analysées</span>
+                    <div class="text-xl sm:text-2xl font-black text-slate-100 mt-1">
+                        {{ stats.pages_scanned if stats is defined and stats.pages_scanned is defined else 0 }}
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-center">
+                    <span class="text-xs text-slate-400">Jeux détectés</span>
+                    <div class="text-xl sm:text-2xl font-black text-cyan-400 mt-1">
+                        {{ stats.games_detected if stats is defined and stats.games_detected is defined else 0 }}
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-center">
+                    <span class="text-xs text-slate-400">Doublons filtrés</span>
+                    <div class="text-xl sm:text-2xl font-black text-amber-400 mt-1">
+                        {{ stats.duplicates if stats is defined and stats.duplicates is defined else 0 }}
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-center">
+                    <span class="text-xs text-slate-400">Liens invalides</span>
+                    <div class="text-xl sm:text-2xl font-black text-rose-400 mt-1">
+                        {{ stats.invalid_links if stats is defined and stats.invalid_links is defined else 0 }}
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-center">
+                    <span class="text-xs text-slate-400">Jeux publiés</span>
+                    <div class="text-xl sm:text-2xl font-black text-emerald-400 mt-1">
+                        {{ stats.games_published if stats is defined and stats.games_published is defined else 0 }}
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3.5 text-center">
+                    <span class="text-xs text-slate-400">Erreurs</span>
+                    <div class="text-xl sm:text-2xl font-black text-slate-300 mt-1">
+                        {{ stats.errors if stats is defined and stats.errors is defined else 0 }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION PARTENAIRES -->
+        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                        <span>🤝</span> Partenaires Autorisés (Whitelist)
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-400">
+                        L'AutoPilot analyse exclusivement les domaines enregistrés ci-dessous.
+                    </p>
+                </div>
+                <button onclick="openAddPartnerModal()" class="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold rounded-xl border border-slate-700 transition cursor-pointer">
+                    <span>➕</span> Ajouter un partenaire
+                </button>
+            </div>
+
+            <!-- TABLEAU DES PARTENAIRES (Desktop) -->
+            <div class="hidden md:block overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-950/70 text-slate-400 uppercase text-xs border-b border-slate-800">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold">Nom</th>
+                            <th class="px-4 py-3 font-semibold">URL</th>
+                            <th class="px-4 py-3 font-semibold text-center">Statut</th>
+                            <th class="px-4 py-3 font-semibold">Dernière analyse</th>
+                            <th class="px-4 py-3 font-semibold text-center">Jeux trouvés</th>
+                            <th class="px-4 py-3 font-semibold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% if partners and partners|length > 0 %}
+                            {% for partner in partners %}
+                                <tr class="hover:bg-slate-800/30 transition">
+                                    <td class="px-4 py-3.5 font-medium text-white flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full {% if partner.is_active %}bg-emerald-400{% else %}bg-slate-600{% endif %}"></span>
+                                        {{ partner.name }}
+                                    </td>
+                                    <td class="px-4 py-3.5">
+                                        <a href="{{ partner.base_url }}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline font-mono text-xs flex items-center gap-1">
+                                            {{ partner.base_url }}
+                                            <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                        </a>
+                                    </td>
+                                    <td class="px-4 py-3.5 text-center">
+                                        {% if partner.is_active %}
+                                            <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">Actif</span>
+                                        {% else %}
+                                            <span class="px-2 py-0.5 text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 rounded-full">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-4 py-3.5 text-xs text-slate-400">
+                                        {{ partner.last_scanned_at|default('Jamais') }}
+                                    </td>
+                                    <td class="px-4 py-3.5 text-center font-bold text-slate-200">
+                                        {{ partner.total_found|default(0) }}
+                                    </td>
+                                    <td class="px-4 py-3.5 text-right space-x-1.5">
+                                        <!-- Tester -->
+                                        <form action="/admin/autopilot/partner/test/{{ partner.id }}" method="POST" class="inline">
+                                            <button type="submit" title="Tester la connectivité" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-medium border border-slate-700 transition cursor-pointer">
+                                                🔍 Tester
+                                            </button>
+                                        </form>
+
+                                        <!-- Activer / Désactiver -->
+                                        <form action="/admin/autopilot/partner/toggle/{{ partner.id }}" method="POST" class="inline">
+                                            <button type="submit" title="Activer/Désactiver" class="px-2.5 py-1 {% if partner.is_active %}bg-amber-950/40 border-amber-800/60 text-amber-300 hover:bg-amber-900/50{% else %}bg-emerald-950/40 border-emerald-800/60 text-emerald-300 hover:bg-emerald-900/50{% endif %} rounded-lg text-xs font-medium border transition cursor-pointer">
+                                                {% if partner.is_active %}⏸️ Pause{% else %}▶️ Activer{% endif %}
+                                            </button>
+                                        </form>
+
+                                        <!-- Supprimer -->
+                                        <form action="/admin/autopilot/partner/delete/{{ partner.id }}" method="POST" class="inline" onsubmit="return confirm('Voulez-vous vraiment supprimer ce partenaire ?');">
+                                            <button type="submit" title="Supprimer" class="px-2.5 py-1 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 rounded-lg text-xs font-medium border border-rose-800/50 transition cursor-pointer">
+                                                🗑️
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-slate-500 text-sm">
+                                    Aucun site partenaire configuré. Cliquez sur "Ajouter un partenaire" pour débuter.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CARTES PARTENAIRES (Mobile) -->
+            <div class="md:hidden space-y-3">
+                {% if partners and partners|length > 0 %}
+                    {% for partner in partners %}
+                        <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="font-bold text-white flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full {% if partner.is_active %}bg-emerald-400{% else %}bg-slate-600{% endif %}"></span>
+                                    {{ partner.name }}
+                                </div>
+                                {% if partner.is_active %}
+                                    <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">Actif</span>
+                                {% else %}
+                                    <span class="px-2 py-0.5 text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 rounded-full">Inactif</span>
+                                {% endif %}
+                            </div>
+
+                            <a href="{{ partner.base_url }}" target="_blank" class="text-xs text-emerald-400 font-mono block truncate">
+                                {{ partner.base_url }}
+                            </a>
+
+                            <div class="grid grid-cols-2 text-xs text-slate-400 pt-2 border-t border-slate-800/60">
+                                <div>Dernière analyse : <span class="text-slate-200 block">{{ partner.last_scanned_at|default('Jamais') }}</span></div>
+                                <div>Jeux trouvés : <span class="text-slate-200 font-bold block">{{ partner.total_found|default(0) }}</span></div>
+                            </div>
+
+                            <div class="flex items-center gap-2 pt-2 border-t border-slate-800/60">
+                                <form action="/admin/autopilot/partner/test/{{ partner.id }}" method="POST" class="flex-1">
+                                    <button type="submit" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-700">
+                                        🔍 Tester
+                                    </button>
+                                </form>
+                                <form action="/admin/autopilot/partner/toggle/{{ partner.id }}" method="POST" class="flex-1">
+                                    <button type="submit" class="w-full py-1.5 {% if partner.is_active %}bg-amber-950/40 border-amber-800/60 text-amber-300{% else %}bg-emerald-950/40 border-emerald-800/60 text-emerald-300{% endif %} rounded-lg text-xs font-medium border">
+                                        {% if partner.is_active %}⏸️ Pause{% else %}▶️ Activer{% endif %}
+                                    </button>
+                                </form>
+                                <form action="/admin/autopilot/partner/delete/{{ partner.id }}" method="POST" onsubmit="return confirm('Supprimer ce partenaire ?');">
+                                    <button type="submit" class="p-1.5 bg-rose-950/40 text-rose-300 rounded-lg text-xs border border-rose-800/50">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-6 text-slate-500 text-sm">
+                        Aucun partenaire enregistré.
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- SECTION HISTORIQUE DES EXÉCUTIONS -->
+        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span>📜</span> Historique des Exécutions
+                </h2>
+            </div>
+
+            <!-- TABLEAU DES LOGS (Desktop) -->
+            <div class="hidden sm:block overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-950/70 text-slate-400 uppercase text-xs border-b border-slate-800">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold">Date / Heure</th>
+                            <th class="px-4 py-3 font-semibold">Partenaire</th>
+                            <th class="px-4 py-3 font-semibold text-center">Jeux Détectés</th>
+                            <th class="px-4 py-3 font-semibold text-center">Jeux Publiés</th>
+                            <th class="px-4 py-3 font-semibold text-right">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% if logs and logs|length > 0 %}
+                            {% for log in logs %}
+                                <tr class="hover:bg-slate-800/30 transition">
+                                    <td class="px-4 py-3 font-mono text-xs text-slate-300">
+                                        {{ log.timestamp }}
+                                    </td>
+                                    <td class="px-4 py-3 text-slate-200">
+                                        {{ log.partner_name|default('Tous les partenaires') }}
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-cyan-400 font-semibold">
+                                        {{ log.games_detected }}
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="px-2 py-0.5 text-xs font-bold rounded-md {% if log.games_published_count > 0 %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% else %}text-slate-400{% endif %}">
+                                            {{ log.games_published_count }} / 2
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {% if log.status == 'SUCCESS' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/30{% elif log.status == 'NO_NEW_GAMES' %}bg-amber-500/10 text-amber-400 border border-amber-500/30{% else %}bg-slate-800 text-slate-400 border border-slate-700{% endif %}">
+                                            {{ log.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="px-4 py-8 text-center text-slate-500 text-sm">
+                                    Aucun historique d'exécution disponible pour le moment.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- LOGS (Mobile) -->
+            <div class="sm:hidden space-y-2.5">
+                {% if logs and logs|length > 0 %}
+                    {% for log in logs %}
+                        <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-mono text-slate-400">{{ log.timestamp }}</span>
+                                <span class="px-2 py-0.5 text-xs rounded-full font-medium {% if log.status == 'SUCCESS' %}bg-emerald-500/10 text-emerald-400{% else %}bg-slate-800 text-slate-400{% endif %}">
+                                    {{ log.status }}
+                                </span>
+                            </div>
+                            <div class="text-xs text-slate-300 font-medium">
+                                {{ log.partner_name|default('Tous les partenaires') }}
+                            </div>
+                            <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-800/60">
+                                <span class="text-slate-400">Détectés: <strong class="text-cyan-400">{{ log.games_detected }}</strong></span>
+                                <span class="text-slate-400">Publiés: <strong class="text-emerald-400">{{ log.games_published_count }}/2</strong></span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-6 text-slate-500 text-sm">
+                        Aucun historique disponible.
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL AJOUTER UN PARTENAIRE -->
+    <div id="addPartnerModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span>➕</span> Ajouter un site partenaire
+                </h3>
+                <button onclick="closeAddPartnerModal()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+            </div>
+
+            <form action="/admin/autopilot/partner/add" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Nom du partenaire</label>
+                    <input type="text" name="name" required placeholder="Ex: Partenaire Gaming" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">URL du site partenaire</label>
+                    <input type="url" name="base_url" required placeholder="https://partenaire-exemple.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    <p class="text-xs text-slate-500 mt-1">L'AutoPilot analysera cette URL pour détecter les fiches de jeux.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Domaines autorisés pour les liens (Optionnel)</label>
+                    <input type="text" name="allowed_domains" placeholder="partenaire-exemple.com, cdn.partenaire.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 text-xs">
+                    <p class="text-xs text-slate-500 mt-1">Séparés par des virgules si des miroirs de téléchargement légitimes sont utilisés.</p>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-800">
+                    <button type="button" onclick="closeAddPartnerModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold rounded-xl transition cursor-pointer">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS INTERACTIFS -->
+    <script>
+        function openAddPartnerModal() {
+            document.getElementById('addPartnerModal').classList.remove('hidden');
+        }
+
+        function closeAddPartnerModal() {
+            document.getElementById('addPartnerModal').classList.add('hidden');
+        }
+
+        function confirmRun(event) {
+            return confirm("Lancer l'analyse AutoPilot immédiatement sur tous les partenaires actifs ?");
+        }
+
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('addPartnerModal');
+            if (e.target === modal) {
+                closeAddPartnerModal();
+            }
+        });
+    </script>
+</body>
+</html>
