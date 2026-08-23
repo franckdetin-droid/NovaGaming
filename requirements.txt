@@ -6,3 +6,5 @@ python-dotenv
 Pillow
 cloudinary
 supabase
+beautifulsoup4
+requests
