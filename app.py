@@ -4270,6 +4270,120 @@ def autopilot_status_api():
             "error": str(e)
         }), 500
 
+
+‎# =========================================================================
+‎# ROUTE D'AUTO-PUBLICATION IA VERS VOTRE TABLE 'jeux' (Code: 3004)
+‎# =========================================================================
+‎@app.route('/api/admin/games', methods=['POST'])
+‎@app.route('/admin/api/games', methods=['POST'])
+‎@app.route('/admin', methods=['POST'])
+‎def publish_game_to_supabase():
+‎    try:
+‎        # 1. Vérification sécurisée du code d'accès administrateur (3004)
+‎        auth_header = request.headers.get('Authorization', '')
+‎        custom_header = request.headers.get('X-Admin-Code', '')
+‎        data = request.get_json(silent=True) or {}
+‎
+‎        provided_code = (
+‎            custom_header 
+‎            or data.get('accessCode') 
+‎            or data.get('authCode')
+‎            or auth_header.replace('Bearer ', '').strip()
+‎        )
+‎
+‎        if str(provided_code) != '3004':
+‎            return jsonify({
+‎                "success": False, 
+‎                "error": "Accès refusé : Code administrateur 3004 invalide."
+‎            }), 403
+‎
+‎        # Si le jeu est encapsulé dans data.get('game') ou à la racine
+‎        game_data = data.get('game') if isinstance(data.get('game'), dict) else data
+‎
+‎        nom_jeu = game_data.get('title') or game_data.get('nom')
+‎        if not nom_jeu:
+‎            return jsonify({"success": False, "error": "Le nom du jeu est obligatoire."}), 400
+‎
+‎        slug = re.sub(r'[^a-zA-Z0-9]+', '-', nom_jeu.lower()).strip('-')
+‎
+‎        # 2. Gestion de la jaquette principale (couverture) via Cloudinary
+‎        raw_couverture = game_data.get('coverImage') or game_data.get('couverture') or ''
+‎        couverture_url = raw_couverture
+‎        if raw_couverture and raw_couverture.startswith('http'):
+‎            try:
+‎                res_cover = cloudinary.uploader.upload(
+‎                    raw_couverture,
+‎                    folder="novagaming/couvertures",
+‎                    public_id=f"cover_{slug}"
+‎                )
+‎                couverture_url = res_cover.get('secure_url', raw_couverture)
+‎            except Exception as e:
+‎                print(f"[Cloudinary Warning] Erreur upload couverture: {e}")
+‎
+‎        # 3. Gestion des captures d'écran (image1 ... image10) via Cloudinary
+‎        screenshots = game_data.get('screenshots') or []
+‎        images_dict = {}
+‎        for idx in range(1, 11):
+‎            col_name = f"image{idx}"
+‎            img_src = game_data.get(col_name)
+‎            
+‎            # Si non spécifié individuellement, on pioche dans la liste screenshots
+‎            if not img_src and len(screenshots) >= idx:
+‎                img_src = screenshots[idx - 1]
+‎
+‎            if img_src and str(img_src).startswith('http'):
+‎                try:
+‎                    res_img = cloudinary.uploader.upload(
+‎                        img_src,
+‎                        folder="novagaming/screenshots",
+‎                        public_id=f"{slug}_screenshot_{idx}"
+‎                    )
+‎                    images_dict[col_name] = res_img.get('secure_url', img_src)
+‎                except Exception as e:
+‎                    print(f"[Cloudinary Warning] Erreur upload {col_name}: {e}")
+‎                    images_dict[col_name] = img_src
+‎            else:
+‎                images_dict[col_name] = img_src or None
+‎
+‎        # 4. Traitement des liens de téléchargement
+‎        download_links = game_data.get('downloadLinks') or []
+‎        if isinstance(download_links, list) and len(download_links) > 0:
+‎            # Récupère le premier lien principal ou formate la liste
+‎            premier_lien = download_links[0].get('url') if isinstance(download_links[0], dict) else str(download_links[0])
+‎            lien_principal = premier_lien
+‎        else:
+‎            lien_principal = game_data.get('lien') or ''
+‎
+‎        # 5. Préparation de la ligne pour votre table Supabase 'jeux'
+‎        jeu_payload = {
+‎            "nom": nom_jeu,
+‎            "console": game_data.get('platform') or game_data.get('console') or 'PC Windows',
+‎            "description": game_data.get('description') or game_data.get('shortDescription') or '',
+‎            "taille": game_data.get('fileSize') or game_data.get('taille') or 'Inconnue',
+‎            "version": game_data.get('version') or '1.0',
+‎            "langue": game_data.get('langue') or 'Français / Multi',
+‎            "couverture": couverture_url,
+‎            "lien": lien_principal,
+‎            "telechargements": 0,
+‎            "date_ajout": datetime.utcnow().isoformat(),
+‎            **images_dict  # Remplit automatiquement image1, image2, ..., image10
+‎        }
+‎
+‎        # 6. Insertion directe dans Supabase (table 'jeux')
+‎        supabase_response = supabase.table('jeux').insert(jeu_payload).execute()
+‎
+‎        print(f"✅ [NovaGaming] Jeu ajouté avec succès dans la table 'jeux' : {nom_jeu}")
+‎
+‎        return jsonify({
+‎            "success": True,
+‎            "message": f"Le jeu '{nom_jeu}' a été enregistré et publié avec succès dans la table 'jeux' !",
+‎            "data": supabase_response.data
+‎        }), 201
+‎
+‎    except Exception as err:
+‎        print(f"❌ [NovaGaming Error] : {err}")
+‎        return jsonify({"success": False, "error": str(err)}), 500
+
 # ==========================
 # LANCEMENT
 # ==========================
