@@ -4058,6 +4058,235 @@ def admin_ai():
         <h2>Erreur AutoPilot</h2>
         <pre>{str(e)}</pre>
         """, 500
+        # ==========================
+# ROUTES NOVAGAMING AUTOPILOT
+# ==========================
+
+@app.route("/admin/autopilot/run", methods=["POST"])
+@admin_required
+def autopilot_run():
+    try:
+        from autopilot import run_daily_autopilot
+
+        result = run_daily_autopilot()
+
+        if isinstance(result, dict):
+            message = result.get(
+                "message",
+                "🤖 Analyse AutoPilot terminée."
+            )
+        else:
+            message = str(result)
+
+        flash(message, "success")
+
+    except Exception as e:
+        flash(f"Erreur AutoPilot : {str(e)}", "error")
+
+    return redirect(url_for("admin_ai"))
+
+
+# ==========================
+# ACTIVER / DÉSACTIVER
+# ==========================
+
+@app.route("/admin/autopilot/toggle", methods=["POST"])
+@admin_required
+def autopilot_toggle():
+    try:
+        import sqlite3
+
+        db_path = os.environ.get(
+            "NOVAGAMING_DB_PATH",
+            "novagaming.db"
+        )
+
+        conn = sqlite3.connect(db_path)
+
+        row = conn.execute("""
+            SELECT value
+            FROM autopilot_settings
+            WHERE key = 'is_enabled'
+        """).fetchone()
+
+        currently_enabled = (
+            row is not None and str(row[0]) == "1"
+        )
+
+        new_value = "0" if currently_enabled else "1"
+
+        conn.execute("""
+            UPDATE autopilot_settings
+            SET value = ?
+            WHERE key = 'is_enabled'
+        """, (new_value,))
+
+        conn.commit()
+        conn.close()
+
+        if new_value == "1":
+            flash("🤖 AutoPilot activé.", "success")
+        else:
+            flash("⏸️ AutoPilot désactivé.", "success")
+
+    except Exception as e:
+        flash(
+            f"Erreur activation AutoPilot : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
+
+
+# ==========================
+# AJOUTER UN PARTENAIRE
+# ==========================
+
+@app.route("/admin/autopilot/partner/add", methods=["POST"])
+@admin_required
+def autopilot_partner_add():
+    try:
+        from autopilot import add_partner
+
+        name = request.form.get("name", "").strip()
+        base_url = request.form.get("base_url", "").strip()
+        allowed_domains = request.form.get(
+            "allowed_domains",
+            ""
+        ).strip()
+
+        if not name or not base_url:
+            flash(
+                "⚠️ Nom et URL obligatoires.",
+                "error"
+            )
+            return redirect(url_for("admin_ai"))
+
+        result = add_partner(
+            name=name,
+            base_url=base_url,
+            allowed_domains=allowed_domains
+        )
+
+        if isinstance(result, dict):
+            message = result.get(
+                "message",
+                "✅ Partenaire ajouté."
+            )
+        else:
+            message = str(result)
+
+        flash(message, "success")
+
+    except Exception as e:
+        flash(
+            f"Erreur ajout partenaire : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
+
+
+# ==========================
+# TESTER UN PARTENAIRE
+# ==========================
+
+@app.route(
+    "/admin/autopilot/partner/test/<int:partner_id>",
+    methods=["POST"]
+)
+@admin_required
+def autopilot_partner_test(partner_id):
+    try:
+        from autopilot import test_partner
+
+        result = test_partner(partner_id)
+
+        if isinstance(result, dict):
+            message = result.get(
+                "message",
+                "🔍 Test terminé."
+            )
+        else:
+            message = str(result)
+
+        flash(message, "success")
+
+    except Exception as e:
+        flash(
+            f"Erreur test partenaire : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
+
+
+# ==========================
+# ACTIVER / PAUSE PARTENAIRE
+# ==========================
+
+@app.route(
+    "/admin/autopilot/partner/toggle/<int:partner_id>",
+    methods=["POST"]
+)
+@admin_required
+def autopilot_partner_toggle(partner_id):
+    try:
+        from autopilot import toggle_partner
+
+        result = toggle_partner(partner_id)
+
+        if isinstance(result, dict):
+            message = result.get(
+                "message",
+                "🔄 Statut du partenaire modifié."
+            )
+        else:
+            message = str(result)
+
+        flash(message, "success")
+
+    except Exception as e:
+        flash(
+            f"Erreur partenaire : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
+
+
+# ==========================
+# SUPPRIMER UN PARTENAIRE
+# ==========================
+
+@app.route(
+    "/admin/autopilot/partner/delete/<int:partner_id>",
+    methods=["POST"]
+)
+@admin_required
+def autopilot_partner_delete(partner_id):
+    try:
+        from autopilot import delete_partner
+
+        result = delete_partner(partner_id)
+
+        if isinstance(result, dict):
+            message = result.get(
+                "message",
+                "🗑️ Partenaire supprimé."
+            )
+        else:
+            message = str(result)
+
+        flash(message, "success")
+
+    except Exception as e:
+        flash(
+            f"Erreur suppression partenaire : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
 
 # ==========================
 # LANCEMENT
