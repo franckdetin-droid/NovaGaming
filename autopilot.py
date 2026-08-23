@@ -1449,6 +1449,44 @@ def get_admin_dashboard_data(db_path: Optional[str] = None) -> Dict[str, Any]:
         "logs": history,
         "stats": stats,
     }
+  def get_autopilot_status(db_path: Optional[str] = None) -> Dict[str, Any]:
+    """Retourne les informations utilisées par la page admin_ai.html."""
+    try:
+        init_autopilot_db(db_path)
+
+        stats = get_autopilot_stats(db_path)
+        history = get_autopilot_history(limit=10, db_path=db_path)
+        games_today = get_games_published_today(db_path)
+        partners = get_partners(db_path=db_path)
+        enabled = is_autopilot_enabled(db_path)
+
+        last_run = stats.get("last_run", "Jamais")
+
+        return {
+            "success": True,
+            "autopilot_status": "active" if enabled else "inactive",
+            "games_today": games_today,
+            "daily_limit": 2,
+            "partners": partners,
+            "last_run": last_run,
+            "next_run": "Demain 10:00",
+            "logs": history,
+            "stats": stats
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "autopilot_status": "error",
+            "games_today": 0,
+            "daily_limit": 2,
+            "partners": [],
+            "last_run": "Jamais",
+            "next_run": "",
+            "logs": [],
+            "stats": {},
+            "message": str(e)[:200]
+          }
 
 
 if __name__ == "__main__":
