@@ -4269,8 +4269,7 @@ def autopilot_status_api():
             "success": False,
             "error": str(e)
         }), 500
-
-
+        
 ‎# =========================================================================
 ‎# ROUTE D'AUTO-PUBLICATION IA VERS VOTRE TABLE 'jeux' (Code: 3004)
 ‎# =========================================================================
@@ -4383,7 +4382,6 @@ def autopilot_status_api():
 ‎    except Exception as err:
 ‎        print(f"❌ [NovaGaming Error] : {err}")
 ‎        return jsonify({"success": False, "error": str(err)}), 500
-
 # ==========================
 # LANCEMENT
 # ==========================
