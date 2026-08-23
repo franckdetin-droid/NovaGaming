@@ -4269,72 +4269,7 @@ def autopilot_status_api():
             "success": False,
             "error": str(e)
         }), 500
-        # ----------------------------------------------------------------------
-# ACTIVER / DESACTIVER AUTOPILOT
-# ----------------------------------------------------------------------
 
-@app.route("/admin/autopilot/toggle", methods=["POST"])
-@admin_required
-def autopilot_toggle():
-    try:
-        from autopilot import (
-            init_autopilot_db,
-            is_autopilot_enabled,
-            toggle_autopilot_status
-        )
-
-        init_autopilot_db()
-
-        current = is_autopilot_enabled()
-        enabled = toggle_autopilot_status(not current)
-
-        flash(
-            "🤖 AutoPilot activé." if enabled else "🛑 AutoPilot désactivé.",
-            "success"
-        )
-
-    except Exception as e:
-        flash(f"Erreur AutoPilot : {str(e)}", "error")
-
-    return redirect(url_for("admin_ai"))
-
-
-# ----------------------------------------------------------------------
-# ACTIVER / DESACTIVER UN PARTENAIRE
-# ----------------------------------------------------------------------
-
-@app.route(
-    "/admin/autopilot/partner/toggle/<int:partner_id>",
-    methods=["POST"]
-)
-@admin_required
-def autopilot_partner_toggle(partner_id):
-    try:
-        from autopilot import toggle_partner
-
-        result = toggle_partner(partner_id)
-
-        if isinstance(result, tuple):
-            success, message = result
-        else:
-            success = bool(result)
-            message = (
-                "Partenaire mis à jour."
-                if success
-                else "Impossible de modifier le partenaire."
-            )
-
-        flash(
-            message,
-            "success" if success else "error"
-        )
-
-    except Exception as e:
-        flash(f"Erreur partenaire : {str(e)}", "error")
-
-    return redirect(url_for("admin_ai"))
-        
-    
 # ==========================
 # LANCEMENT
 # ==========================
