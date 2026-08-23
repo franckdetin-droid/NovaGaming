@@ -1449,7 +1449,7 @@ def get_admin_dashboard_data(db_path: Optional[str] = None) -> Dict[str, Any]:
         "logs": history,
         "stats": stats,
     }
-  def get_autopilot_status(db_path: Optional[str] = None) -> Dict[str, Any]:
+def get_autopilot_status(db_path: Optional[str] = None) -> Dict[str, Any]:
     """Retourne les informations utilisées par la page admin_ai.html."""
     try:
         init_autopilot_db(db_path)
