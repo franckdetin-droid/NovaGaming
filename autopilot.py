@@ -1470,7 +1470,16 @@ def get_autopilot_status(db_path: Optional[str] = None) -> Dict[str, Any]:
             "partners": partners,
             "last_run": last_run,
             "next_run": "Demain 10:00",
-            "logs": history,
+            "logs": [
+    {
+        **log,
+        "games_published_count": log.get(
+            "games_published_count",
+            log.get("games_published", 0)
+        )
+    }
+    for log in history
+],
             "stats": stats
         }
 
