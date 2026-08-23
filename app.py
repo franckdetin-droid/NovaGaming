@@ -3897,239 +3897,148 @@ def ads_clic(pub_id):
         return redirect(
             url_for("accueil")
                 )
-        # ==========================
-# NOVAGAMING AUTOPILOT IA
-# ==========================
+        
+         # ============================================================
+# NOVAGAMING AUTOPILOT - ROUTES ADMIN
+# Supabase + Cloudinary
+# ============================================================
 
-@app.route("/admin/ai", methods=["GET", "POST"])
+@app.route("/admin/ai", methods=["GET"])
 @admin_required
 def admin_ai():
 
     try:
         from autopilot import (
             init_autopilot_db,
-            get_all_partners,
-            get_today_published_count,
-            run_daily_autopilot,
+            get_autopilot_status
         )
 
-        # Initialiser les tables AutoPilot si nécessaire
         init_autopilot_db()
 
-        message = None
-        message_type = None
-
-        # ==========================
-        # ACTIONS AUTOPILOT
-        # ==========================
-
-        if request.method == "POST":
-
-            action = request.form.get("action", "").strip()
-
-            # --------------------------
-            # LANCER L'ANALYSE
-            # --------------------------
-
-            if action == "run":
-
-                try:
-                    result = run_daily_autopilot()
-
-                    message = (
-                        result.get("message")
-                        if isinstance(result, dict)
-                        else str(result)
-                    )
-
-                    message_type = "success"
-
-                except Exception as e:
-
-                    message = f"Erreur AutoPilot : {str(e)}"
-                    message_type = "error"
-
-            # --------------------------
-            # ACTIVER
-            # --------------------------
-
-            elif action == "enable":
-
-                import sqlite3
-
-                conn = sqlite3.connect(
-                    os.environ.get(
-                        "NOVAGAMING_DB_PATH",
-                        "novagaming.db"
-                    )
-                )
-
-                conn.execute("""
-                    UPDATE autopilot_settings
-                    SET value = '1'
-                    WHERE key = 'is_enabled'
-                """)
-
-                conn.commit()
-                conn.close()
-
-                message = "🤖 AutoPilot activé."
-                message_type = "success"
-
-            # --------------------------
-            # DÉSACTIVER
-            # --------------------------
-
-            elif action == "disable":
-
-                import sqlite3
-
-                conn = sqlite3.connect(
-                    os.environ.get(
-                        "NOVAGAMING_DB_PATH",
-                        "novagaming.db"
-                    )
-                )
-
-                conn.execute("""
-                    UPDATE autopilot_settings
-                    SET value = '0'
-                    WHERE key = 'is_enabled'
-                """)
-
-                conn.commit()
-                conn.close()
-
-                message = "⏸️ AutoPilot désactivé."
-                message_type = "success"
-
-        # ==========================
-        # DONNÉES POUR LA PAGE
-        # ==========================
-
-        partners = get_all_partners()
-
-        games_today = get_today_published_count()
-
-        daily_limit = 2
-
-        # ==========================
-        # STATUT
-        # ==========================
-
-        import sqlite3
-
-        conn = sqlite3.connect(
-            os.environ.get(
-                "NOVAGAMING_DB_PATH",
-                "novagaming.db"
-            )
-        )
-
-        row = conn.execute("""
-            SELECT value
-            FROM autopilot_settings
-            WHERE key = 'is_enabled'
-        """).fetchone()
-
-        is_enabled = bool(
-            row and str(row[0]) == "1"
-        )
-
-        conn.close()
-
-        # ==========================
-        # RENDRE LA PAGE
-        # ==========================
+        status = get_autopilot_status()
 
         return render_template(
             "admin_ai.html",
-            autopilot_status=is_enabled,
-            games_today=games_today,
-            daily_limit=daily_limit,
-            partners=partners,
-            message=message,
-            message_type=message_type
+            autopilot_status=status.get("autopilot_status", "inactive"),
+            games_today=status.get("games_today", 0),
+            daily_limit=status.get("daily_limit", 2),
+            partners=status.get("partners", []),
+            last_run=status.get("last_run", ""),
+            next_run=status.get("next_run", ""),
+            logs=status.get("logs", []),
+            stats=status.get("stats", {}),
+            message=None,
+            message_type=None
         )
 
     except Exception as e:
-
         return f"""
         <h2>Erreur AutoPilot</h2>
         <pre>{str(e)}</pre>
         """, 500
-        # ==========================
-# ROUTES NOVAGAMING AUTOPILOT
-# ==========================
+
+
+# ============================================================
+# LANCER MANUELLEMENT L'AUTOPILOT
+# ============================================================
 
 @app.route("/admin/autopilot/run", methods=["POST"])
 @admin_required
 def autopilot_run():
+
     try:
         from autopilot import run_daily_autopilot
 
         result = run_daily_autopilot()
 
-        if isinstance(result, dict):
-            message = result.get(
-                "message",
-                "🤖 Analyse AutoPilot terminée."
+        message = result.get(
+            "message",
+            "Analyse AutoPilot terminée."
+        )
+
+        if result.get("success"):
+            flash(message, "success")
+        else:
+            flash(message, "error")
+
+        return redirect(url_for("admin_ai"))
+
+    except Exception as e:
+
+        flash(
+            f"Erreur AutoPilot : {str(e)}",
+            "error"
+        )
+
+        return redirect(url_for("admin_ai"))
+
+
+# ============================================================
+# FORCER UNE ANALYSE
+# ============================================================
+
+@app.route("/admin/autopilot/run/force", methods=["POST"])
+@admin_required
+def autopilot_force_run():
+
+    try:
+        from autopilot import run_daily_autopilot
+
+        result = run_daily_autopilot(force=True)
+
+        message = result.get(
+            "message",
+            "Analyse forcée terminée."
+        )
+
+        if result.get("success"):
+            flash(message, "success")
+        else:
+            flash(message, "error")
+
+        return redirect(url_for("admin_ai"))
+
+    except Exception as e:
+
+        flash(
+            f"Erreur AutoPilot forcé : {str(e)}",
+            "error"
+        )
+
+        return redirect(url_for("admin_ai"))
+
+
+# ============================================================
+# ACTIVER AUTOPILOT
+# ============================================================
+
+@app.route("/admin/autopilot/enable", methods=["POST"])
+@admin_required
+def autopilot_enable():
+
+    try:
+        from autopilot import (
+            init_autopilot_db,
+            toggle_autopilot_status
+        )
+
+        init_autopilot_db()
+
+        enabled = toggle_autopilot_status(True)
+
+        if enabled:
+            flash(
+                "🤖 AutoPilot activé.",
+                "success"
             )
         else:
-            message = str(result)
-
-        flash(message, "success")
-
-    except Exception as e:
-        flash(f"Erreur AutoPilot : {str(e)}", "error")
-
-    return redirect(url_for("admin_ai"))
-
-
-# ==========================
-# ACTIVER / DÉSACTIVER
-# ==========================
-
-@app.route("/admin/autopilot/toggle", methods=["POST"])
-@admin_required
-def autopilot_toggle():
-    try:
-        import sqlite3
-
-        db_path = os.environ.get(
-            "NOVAGAMING_DB_PATH",
-            "novagaming.db"
-        )
-
-        conn = sqlite3.connect(db_path)
-
-        row = conn.execute("""
-            SELECT value
-            FROM autopilot_settings
-            WHERE key = 'is_enabled'
-        """).fetchone()
-
-        currently_enabled = (
-            row is not None and str(row[0]) == "1"
-        )
-
-        new_value = "0" if currently_enabled else "1"
-
-        conn.execute("""
-            UPDATE autopilot_settings
-            SET value = ?
-            WHERE key = 'is_enabled'
-        """, (new_value,))
-
-        conn.commit()
-        conn.close()
-
-        if new_value == "1":
-            flash("🤖 AutoPilot activé.", "success")
-        else:
-            flash("⏸️ AutoPilot désactivé.", "success")
+            flash(
+                "Impossible d'activer AutoPilot.",
+                "error"
+            )
 
     except Exception as e:
+
         flash(
             f"Erreur activation AutoPilot : {str(e)}",
             "error"
@@ -4138,47 +4047,89 @@ def autopilot_toggle():
     return redirect(url_for("admin_ai"))
 
 
-# ==========================
+# ============================================================
+# DÉSACTIVER AUTOPILOT
+# ============================================================
+
+@app.route("/admin/autopilot/disable", methods=["POST"])
+@admin_required
+def autopilot_disable():
+
+    try:
+        from autopilot import (
+            init_autopilot_db,
+            toggle_autopilot_status
+        )
+
+        init_autopilot_db()
+
+        enabled = toggle_autopilot_status(False)
+
+        if not enabled:
+            flash(
+                "⏸️ AutoPilot désactivé.",
+                "success"
+            )
+        else:
+            flash(
+                "Impossible de désactiver AutoPilot.",
+                "error"
+            )
+
+    except Exception as e:
+
+        flash(
+            f"Erreur désactivation AutoPilot : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
+
+
+# ============================================================
 # AJOUTER UN PARTENAIRE
-# ==========================
+# ============================================================
 
 @app.route("/admin/autopilot/partner/add", methods=["POST"])
 @admin_required
 def autopilot_partner_add():
-    try:
-        from autopilot import add_partner
 
-        name = request.form.get("name", "").strip()
-        base_url = request.form.get("base_url", "").strip()
+    try:
+        from autopilot import (
+            init_autopilot_db,
+            add_partner
+        )
+
+        init_autopilot_db()
+
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
+
+        base_url = request.form.get(
+            "base_url",
+            ""
+        ).strip()
+
         allowed_domains = request.form.get(
             "allowed_domains",
             ""
         ).strip()
 
-        if not name or not base_url:
-            flash(
-                "⚠️ Nom et URL obligatoires.",
-                "error"
-            )
-            return redirect(url_for("admin_ai"))
-
-        result = add_partner(
-            name=name,
-            base_url=base_url,
-            allowed_domains=allowed_domains
+        success, message = add_partner(
+            name,
+            base_url,
+            allowed_domains
         )
 
-        if isinstance(result, dict):
-            message = result.get(
-                "message",
-                "✅ Partenaire ajouté."
-            )
-        else:
-            message = str(result)
-
-        flash(message, "success")
+        flash(
+            message,
+            "success" if success else "error"
+        )
 
     except Exception as e:
+
         flash(
             f"Erreur ajout partenaire : {str(e)}",
             "error"
@@ -4187,32 +4138,100 @@ def autopilot_partner_add():
     return redirect(url_for("admin_ai"))
 
 
-# ==========================
-# TESTER UN PARTENAIRE
-# ==========================
+# ============================================================
+# SUPPRIMER UN PARTENAIRE
+# ============================================================
 
 @app.route(
-    "/admin/autopilot/partner/test/<int:partner_id>",
+    "/admin/autopilot/partner/<int:partner_id>/delete",
+    methods=["POST"]
+)
+@admin_required
+def autopilot_partner_delete(partner_id):
+
+    try:
+        from autopilot import delete_partner
+
+        success, message = delete_partner(
+            partner_id
+        )
+
+        flash(
+            message,
+            "success" if success else "error"
+        )
+
+    except Exception as e:
+
+        flash(
+            f"Erreur suppression partenaire : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
+
+
+# ============================================================
+# ACTIVER / DÉSACTIVER UN PARTENAIRE
+# ============================================================
+
+@app.route(
+    "/admin/autopilot/partner/<int:partner_id>/toggle",
+    methods=["POST"]
+)
+@admin_required
+def autopilot_partner_toggle(partner_id):
+
+    try:
+        from autopilot import toggle_partner
+
+        success, message = toggle_partner(
+            partner_id
+        )
+
+        flash(
+            message,
+            "success" if success else "error"
+        )
+
+    except Exception as e:
+
+        flash(
+            f"Erreur changement statut : {str(e)}",
+            "error"
+        )
+
+    return redirect(url_for("admin_ai"))
+
+
+# ============================================================
+# TESTER UN PARTENAIRE
+# ============================================================
+
+@app.route(
+    "/admin/autopilot/partner/<int:partner_id>/test",
     methods=["POST"]
 )
 @admin_required
 def autopilot_partner_test(partner_id):
+
     try:
         from autopilot import test_partner
 
-        result = test_partner(partner_id)
+        result = test_partner(
+            partner_id
+        )
 
-        if isinstance(result, dict):
-            message = result.get(
+        flash(
+            result.get(
                 "message",
-                "🔍 Test terminé."
-            )
-        else:
-            message = str(result)
-
-        flash(message, "success")
+                "Test terminé."
+            ),
+            "success" if result.get("success") else "error"
+        )
 
     except Exception as e:
+
         flash(
             f"Erreur test partenaire : {str(e)}",
             "error"
@@ -4221,73 +4240,37 @@ def autopilot_partner_test(partner_id):
     return redirect(url_for("admin_ai"))
 
 
-# ==========================
-# ACTIVER / PAUSE PARTENAIRE
-# ==========================
+# ============================================================
+# API STATUT AUTOPILOT
+# ============================================================
 
-@app.route(
-    "/admin/autopilot/partner/toggle/<int:partner_id>",
-    methods=["POST"]
-)
+@app.route("/admin/autopilot/status", methods=["GET"])
 @admin_required
-def autopilot_partner_toggle(partner_id):
+def autopilot_status_api():
+
     try:
-        from autopilot import toggle_partner
-
-        result = toggle_partner(partner_id)
-
-        if isinstance(result, dict):
-            message = result.get(
-                "message",
-                "🔄 Statut du partenaire modifié."
-            )
-        else:
-            message = str(result)
-
-        flash(message, "success")
-
-    except Exception as e:
-        flash(
-            f"Erreur partenaire : {str(e)}",
-            "error"
+        from autopilot import (
+            init_autopilot_db,
+            get_autopilot_status
         )
 
-    return redirect(url_for("admin_ai"))
+        init_autopilot_db()
 
+        status = get_autopilot_status()
 
-# ==========================
-# SUPPRIMER UN PARTENAIRE
-# ==========================
-
-@app.route(
-    "/admin/autopilot/partner/delete/<int:partner_id>",
-    methods=["POST"]
-)
-@admin_required
-def autopilot_partner_delete(partner_id):
-    try:
-        from autopilot import delete_partner
-
-        result = delete_partner(partner_id)
-
-        if isinstance(result, dict):
-            message = result.get(
-                "message",
-                "🗑️ Partenaire supprimé."
-            )
-        else:
-            message = str(result)
-
-        flash(message, "success")
+        return jsonify({
+            "success": True,
+            **status
+        })
 
     except Exception as e:
-        flash(
-            f"Erreur suppression partenaire : {str(e)}",
-            "error"
-        )
 
-    return redirect(url_for("admin_ai"))
-
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500       
+        
+    
 # ==========================
 # LANCEMENT
 # ==========================
