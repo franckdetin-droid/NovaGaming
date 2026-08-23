@@ -3897,6 +3897,167 @@ def ads_clic(pub_id):
         return redirect(
             url_for("accueil")
                 )
+        # ==========================
+# NOVAGAMING AUTOPILOT IA
+# ==========================
+
+@app.route("/admin/ai", methods=["GET", "POST"])
+@admin_required
+def admin_ai():
+
+    try:
+        from autopilot import (
+            init_autopilot_db,
+            get_all_partners,
+            get_today_published_count,
+            run_daily_autopilot,
+        )
+
+        # Initialiser les tables AutoPilot si nécessaire
+        init_autopilot_db()
+
+        message = None
+        message_type = None
+
+        # ==========================
+        # ACTIONS AUTOPILOT
+        # ==========================
+
+        if request.method == "POST":
+
+            action = request.form.get("action", "").strip()
+
+            # --------------------------
+            # LANCER L'ANALYSE
+            # --------------------------
+
+            if action == "run":
+
+                try:
+                    result = run_daily_autopilot()
+
+                    message = (
+                        result.get("message")
+                        if isinstance(result, dict)
+                        else str(result)
+                    )
+
+                    message_type = "success"
+
+                except Exception as e:
+
+                    message = f"Erreur AutoPilot : {str(e)}"
+                    message_type = "error"
+
+            # --------------------------
+            # ACTIVER
+            # --------------------------
+
+            elif action == "enable":
+
+                import sqlite3
+
+                conn = sqlite3.connect(
+                    os.environ.get(
+                        "NOVAGAMING_DB_PATH",
+                        "novagaming.db"
+                    )
+                )
+
+                conn.execute("""
+                    UPDATE autopilot_settings
+                    SET value = '1'
+                    WHERE key = 'is_enabled'
+                """)
+
+                conn.commit()
+                conn.close()
+
+                message = "🤖 AutoPilot activé."
+                message_type = "success"
+
+            # --------------------------
+            # DÉSACTIVER
+            # --------------------------
+
+            elif action == "disable":
+
+                import sqlite3
+
+                conn = sqlite3.connect(
+                    os.environ.get(
+                        "NOVAGAMING_DB_PATH",
+                        "novagaming.db"
+                    )
+                )
+
+                conn.execute("""
+                    UPDATE autopilot_settings
+                    SET value = '0'
+                    WHERE key = 'is_enabled'
+                """)
+
+                conn.commit()
+                conn.close()
+
+                message = "⏸️ AutoPilot désactivé."
+                message_type = "success"
+
+        # ==========================
+        # DONNÉES POUR LA PAGE
+        # ==========================
+
+        partners = get_all_partners()
+
+        games_today = get_today_published_count()
+
+        daily_limit = 2
+
+        # ==========================
+        # STATUT
+        # ==========================
+
+        import sqlite3
+
+        conn = sqlite3.connect(
+            os.environ.get(
+                "NOVAGAMING_DB_PATH",
+                "novagaming.db"
+            )
+        )
+
+        row = conn.execute("""
+            SELECT value
+            FROM autopilot_settings
+            WHERE key = 'is_enabled'
+        """).fetchone()
+
+        is_enabled = bool(
+            row and str(row[0]) == "1"
+        )
+
+        conn.close()
+
+        # ==========================
+        # RENDRE LA PAGE
+        # ==========================
+
+        return render_template(
+            "admin_ai.html",
+            autopilot_status=is_enabled,
+            games_today=games_today,
+            daily_limit=daily_limit,
+            partners=partners,
+            message=message,
+            message_type=message_type
+        )
+
+    except Exception as e:
+
+        return f"""
+        <h2>Erreur AutoPilot</h2>
+        <pre>{str(e)}</pre>
+        """, 500
 
 # ==========================
 # LANCEMENT
