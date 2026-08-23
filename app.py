@@ -4006,7 +4006,6 @@ def autopilot_force_run():
         )
 
         return redirect(url_for("admin_ai"))
-
 ‎# =========================================================================
 ‎# ROUTE D'AUTO-PUBLICATION IA VERS VOTRE TABLE 'jeux' (Code: 3004)
 ‎# =========================================================================
