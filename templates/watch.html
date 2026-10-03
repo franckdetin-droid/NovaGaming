@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<a class="back" href="{{ url_for('home') }}">← Toutes les chaînes</a>
+<a class="back" href="{{ url_for('home') }}">
+  ← Toutes les chaînes
+</a>
 
 <section class="player-card">
 
@@ -20,33 +22,40 @@
       preload="metadata"
     ></video>
 
-    <div id="playerError" class="player-error" hidden>
-      Ce flux ne peut pas être lu directement dans ce navigateur.
-    </div>
-
   </div>
 
   <div class="player-info">
 
     <div class="status">
-      <span></span> EN DIRECT
+      <span></span>
+      EN DIRECT
     </div>
 
     <h1>{{ ch["name"] }}</h1>
 
-    <p>{{ ch["description"] or "" }}</p>
+    {% if ch["description"] %}
+      <p>{{ ch["description"] }}</p>
+    {% endif %}
 
-    <button
-      class="sound"
-      onclick="
-        const video = document.getElementById('video');
-        video.muted = false;
-        video.volume = 1;
-        video.play();
-      "
-    >
-      🔊 Activer le son
-    </button>
+    <div class="player-actions">
+
+      <button
+        class="sound"
+        type="button"
+        id="soundButton"
+      >
+        🔊 Activer le son
+      </button>
+
+      <button
+        class="reload"
+        type="button"
+        id="reloadButton"
+      >
+        ↻ Recharger le flux
+      </button>
+
+    </div>
 
   </div>
 
@@ -55,16 +64,88 @@
 <script>
 const video = document.getElementById("video");
 const src = {{ ch["stream_url"]|tojson }};
-const errorBox = document.getElementById("playerError");
+const soundButton = document.getElementById("soundButton");
+const reloadButton = document.getElementById("reloadButton");
 
+/* Chargement du flux */
 video.src = src;
+video.load();
 
-video.addEventListener("error", function () {
-  errorBox.hidden = false;
+/* Lecture automatique si le navigateur l'autorise */
+video.play().catch(() => {});
+
+/* =========================
+   BOUTON SON
+========================= */
+
+soundButton.addEventListener("click", function () {
+
+  if (video.muted) {
+    video.muted = false;
+    video.volume = 1;
+    soundButton.textContent = "🔇 Couper le son";
+  } else {
+    video.muted = true;
+    soundButton.textContent = "🔊 Activer le son";
+  }
+
+  video.play().catch(() => {});
 });
 
-video.addEventListener("loadeddata", function () {
-  errorBox.hidden = true;
+
+/* =========================
+   RECHARGER LE FLUX
+========================= */
+
+reloadButton.addEventListener("click", function () {
+
+  reloadButton.disabled = true;
+  reloadButton.textContent = "⟳ Chargement...";
+
+  const currentTime = video.currentTime;
+
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
+  setTimeout(function () {
+
+    video.src = src;
+    video.load();
+
+    video.play().catch(() => {});
+
+    reloadButton.disabled = false;
+    reloadButton.textContent = "↻ Recharger le flux";
+
+  }, 500);
+});
+
+
+/* =========================
+   LECTEUR
+========================= */
+
+video.addEventListener("playing", function () {
+  reloadButton.disabled = false;
+  reloadButton.textContent = "↻ Recharger le flux";
+});
+
+video.addEventListener("waiting", function () {
+  reloadButton.textContent = "⟳ Chargement...";
+});
+
+video.addEventListener("canplay", function () {
+  reloadButton.disabled = false;
+  reloadButton.textContent = "↻ Recharger le flux";
+});
+
+video.addEventListener("error", function () {
+
+  reloadButton.disabled = false;
+  reloadButton.textContent = "↻ Recharger le flux";
+
+  console.log("Le flux ne peut pas être lu par le lecteur natif.");
 });
 </script>
 
