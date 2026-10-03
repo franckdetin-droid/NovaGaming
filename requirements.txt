@@ -1,10 +1,2 @@
-Flask
-gunicorn
-requests
-firebase-admin
-python-dotenv
-Pillow
-cloudinary
-supabase
-beautifulsoup4
-requests
+Flask==3.1.0
+gunicorn==23.0.0
