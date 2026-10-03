@@ -3,26 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>{% block title %}Flux TV{% endblock %}</title>
+
+<!-- MONETAG -->
+<meta name="monetag" content="12c236e62ad7ecaf4156ac13124a9fc6">
+
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 {% block head %}{% endblock %}
 </head>
+
 <body>
+
 <header class="topbar">
   <a class="brand" href="{{ url_for('home') }}">📺 Flux TV</a>
   <a class="admin-link" href="{{ url_for('admin_login') }}">Administration</a>
 </header>
+
 <main class="container">
-  <!-- PUBLICITÉ MONETAG — HAUT
-       COLLER ICI LE CODE OFFICIEL FOURNI PAR MONETAG -->
+
+  <!-- PUBLICITÉ MONETAG — HAUT -->
   <div class="ad-slot" id="ad-top"></div>
 
   {% block content %}{% endblock %}
 
-  <!-- PUBLICITÉ MONETAG — BAS
-       COLLER ICI LE CODE OFFICIEL FOURNI PAR MONETAG -->
+  <!-- PUBLICITÉ MONETAG — BAS -->
   <div class="ad-slot" id="ad-bottom"></div>
+
 </main>
-<footer>Flux TV · Diffusion de contenus autorisés</footer>
+
+<footer>
+  Flux TV · Diffusion de contenus autorisés
+</footer>
+
 </body>
 </html>
