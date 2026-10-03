@@ -9,7 +9,46 @@
 <!-- MONETAG -->
 <meta name="monetag" content="12c236e62ad7ecaf4156ac13124a9fc6">
 
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<!-- MONETAG — ZONE 290143 -->
+<script src="https://quge5.com/88/tag.min.js"
+        data-zone="290143"
+        async
+        data-cfasync="false"></script>
+
+<!-- MONETAG — ZONE 11947840 -->
+<script>
+(function(s){
+    s.dataset.zone='11947840';
+    s.src='https://al5sm.com/tag.min.js';
+})(
+    [document.documentElement, document.body]
+    .filter(Boolean)
+    .pop()
+    .appendChild(document.createElement('script'))
+);
+</script>
+
+<!-- MONETAG — ZONE 11947841 -->
+<script src="https://5gvci.com/act/files/tag.min.js?z=11947841"
+        data-cfasync="false"
+        async></script>
+
+<!-- MONETAG — BANNIÈRE VIGNETTE — ZONE 11947916 -->
+<script>
+(function(s){
+    s.dataset.zone='11947916';
+    s.src='https://n6wxm.com/vignette.min.js';
+})(
+    [document.documentElement, document.body]
+    .filter(Boolean)
+    .pop()
+    .appendChild(document.createElement('script'))
+);
+</script>
+
+<!-- CSS DU SITE -->
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
 
 {% block head %}{% endblock %}
 </head>
@@ -17,25 +56,33 @@
 <body>
 
 <header class="topbar">
-  <a class="brand" href="{{ url_for('home') }}">📺 Flux TV</a>
-  <a class="admin-link" href="{{ url_for('admin_login') }}">Administration</a>
+
+  <a class="brand" href="{{ url_for('home') }}">
+    📺 Flux TV
+  </a>
+
+  <a class="admin-link" href="{{ url_for('admin_login') }}">
+    Administration
+  </a>
+
 </header>
 
 <main class="container">
 
-  <!-- PUBLICITÉ MONETAG — HAUT -->
+  <!-- PUBLICITÉ HAUT -->
   <div class="ad-slot" id="ad-top"></div>
 
   {% block content %}{% endblock %}
 
-  <!-- PUBLICITÉ MONETAG — BAS -->
+  <!-- PUBLICITÉ BAS -->
   <div class="ad-slot" id="ad-bottom"></div>
 
 </main>
 
 <footer>
-  Flux TV · Diffusion de contenus autorisés
+  <div>Flux TV · Diffusion de contenus autorisés</div>
+  <div>Fait par Franck</div>
 </footer>
 
 </body>
-</html>
+  </html>
