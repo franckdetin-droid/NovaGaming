@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Modifier · {{ ch["name"] }}{% endblock %}
+{% block content %}
+<a class="back" href="{{ url_for('admin') }}">← Dashboard</a>
+<section class="panel">
+<h1>Modifier la chaîne</h1>
+<form class="form-grid" method="post">
+<input name="name" value="{{ ch['name'] }}" required>
+<input name="stream_url" value="{{ ch['stream_url'] }}" required>
+<input name="logo" value="{{ ch['logo'] or '' }}" placeholder="URL du logo">
+<input name="description" value="{{ ch['description'] or '' }}" placeholder="Description">
+<label>Début <input type="date" name="start_date" value="{{ ch['start_date'] or '' }}"></label>
+<label>Fin <input type="date" name="end_date" value="{{ ch['end_date'] or '' }}"></label>
+<label>Heure début <input type="time" name="start_time" value="{{ ch['start_time'] or '' }}"></label>
+<label>Heure fin <input type="time" name="end_time" value="{{ ch['end_time'] or '' }}"></label>
+<input name="days" value="{{ ch['days'] or '0,1,2,3,4,5,6' }}">
+<button class="btn" type="submit">Enregistrer les modifications</button>
+</form>
+</section>
+{% endblock %}
