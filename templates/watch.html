@@ -1,41 +1,71 @@
 {% extends "base.html" %}
+
 {% block title %}{{ ch["name"] }} · Flux TV{% endblock %}
-{% block head %}
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-{% endblock %}
+
 {% block content %}
+
 <a class="back" href="{{ url_for('home') }}">← Toutes les chaînes</a>
+
 <section class="player-card">
+
   <div class="player">
-    <video id="video" controls playsinline autoplay muted></video>
+
+    <!-- LECTEUR NATIF DU NAVIGATEUR -->
+    <video
+      id="video"
+      controls
+      playsinline
+      autoplay
+      muted
+      preload="metadata"
+    ></video>
+
     <div id="playerError" class="player-error" hidden>
       Ce flux ne peut pas être lu directement dans ce navigateur.
     </div>
+
   </div>
+
   <div class="player-info">
-    <div class="status"><span></span> EN DIRECT</div>
+
+    <div class="status">
+      <span></span> EN DIRECT
+    </div>
+
     <h1>{{ ch["name"] }}</h1>
+
     <p>{{ ch["description"] or "" }}</p>
-    <button class="sound" onclick="document.getElementById('video').muted=false; document.getElementById('video').volume=1;">
+
+    <button
+      class="sound"
+      onclick="
+        const video = document.getElementById('video');
+        video.muted = false;
+        video.volume = 1;
+        video.play();
+      "
+    >
       🔊 Activer le son
     </button>
+
   </div>
+
 </section>
+
 <script>
 const video = document.getElementById("video");
 const src = {{ ch["stream_url"]|tojson }};
-if (video.canPlayType("application/vnd.apple.mpegurl")) {
-  video.src = src;
-} else if (window.Hls && Hls.isSupported()) {
-  const hls = new Hls({enableWorker:true, lowLatencyMode:true});
-  hls.loadSource(src);
-  hls.attachMedia(video);
-  hls.on(Hls.Events.ERROR, (_, data) => {
-    if (data.fatal) document.getElementById("playerError").hidden=false;
-  });
-} else {
-  video.src = src;
-  video.addEventListener("error",()=>document.getElementById("playerError").hidden=false);
-}
+const errorBox = document.getElementById("playerError");
+
+video.src = src;
+
+video.addEventListener("error", function () {
+  errorBox.hidden = false;
+});
+
+video.addEventListener("loadeddata", function () {
+  errorBox.hidden = true;
+});
 </script>
+
 {% endblock %}
