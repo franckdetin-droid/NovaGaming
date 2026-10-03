@@ -22,6 +22,19 @@
 );
 </script>
 
+<!-- MONETAG — ZONE 11948361 -->
+<script>
+(function(s){
+    s.dataset.zone='11948361';
+    s.src='https://nap5k.com/tag.min.js';
+})(
+    [document.documentElement, document.body]
+    .filter(Boolean)
+    .pop()
+    .appendChild(document.createElement('script'))
+);
+</script>
+
 <!-- CSS DU SITE -->
 <link rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}">
@@ -45,12 +58,12 @@
 
 <main class="container">
 
-  <!-- EMPLACEMENT PUBLICITAIRE HAUT -->
+  <!-- PUBLICITÉ HAUT -->
   <div class="ad-slot" id="ad-top"></div>
 
   {% block content %}{% endblock %}
 
-  <!-- EMPLACEMENT PUBLICITAIRE BAS -->
+  <!-- PUBLICITÉ BAS -->
   <div class="ad-slot" id="ad-bottom"></div>
 
 </main>
