@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ game["name"] }} · PPSSPP{% endblock %}
+
+{% block content %}
+
+<a class="back" href="{{ url_for('ppsspp') }}">
+  ← Tous les jeux
+</a>
+
+<section class="panel"
+         style="max-width:760px;margin:20px auto;">
+
+  {% if game["image"] %}
+    <div style="width:100%;max-height:420px;overflow:hidden;border-radius:14px;background:#111;">
+      <img
+        src="{{ game['image'] }}"
+        alt="{{ game['name'] }}"
+        style="width:100%;max-height:420px;object-fit:contain;display:block;"
+      >
+    </div>
+  {% endif %}
+
+  <div style="padding-top:18px;">
+
+    <div class="status">
+      <span></span> PPSSPP
+    </div>
+
+    <h1>{{ game["name"] }}</h1>
+
+    {% if game["description"] %}
+      <p>{{ game["description"] }}</p>
+    {% endif %}
+
+    {% if game["size"] %}
+      <p><strong>📦 Taille :</strong> {{ game["size"] }}</p>
+    {% endif %}
+
+    <p style="opacity:.7;">
+      {{ game["downloads"] }} téléchargement(s)
+    </p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;">
+
+      <a
+        class="btn"
+        href="{{ url_for('ppsspp_download', game_id=game['id']) }}"
+        rel="noopener"
+      >
+        ⬇️ Télécharger
+      </a>
+
+      <a
+        class="btn secondary"
+        href="{{ url_for('ppsspp') }}"
+      >
+        ← Retour aux jeux
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}

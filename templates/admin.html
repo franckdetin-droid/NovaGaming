@@ -1,8 +1,14 @@
 {% extends "base.html" %}
+
 {% block title %}Dashboard · Flux TV{% endblock %}
+
 {% block content %}
+
 <div class="admin-head">
-  <div><h1>Dashboard</h1><p>Gestion des chaînes et statistiques.</p></div>
+  <div>
+    <h1>Dashboard</h1>
+    <p>Gestion des chaînes, des jeux PPSSPP et statistiques.</p>
+  </div>
   <a class="btn secondary" href="{{ url_for('admin_logout') }}">Déconnexion</a>
 </div>
 
@@ -10,51 +16,174 @@
   <div><b>{{ channels|length }}</b><span>Chaînes</span></div>
   <div><b>{{ total_views }}</b><span>Vues totales</span></div>
   <div><b>{{ today_views }}</b><span>Vues aujourd'hui</span></div>
+  <div><b>{{ total_downloads }}</b><span>Téléchargements</span></div>
 </div>
 
 <section class="panel">
-<h2>Ajouter une chaîne</h2>
-<form class="form-grid" method="post" action="{{ url_for('add_channel') }}">
-<input name="name" placeholder="Nom de la chaîne" required>
-<input name="stream_url" placeholder="URL du flux (.m3u8, etc.)" required>
-<input name="logo" placeholder="URL du logo">
-<input name="description" placeholder="Description">
-<label>Début <input type="date" name="start_date"></label>
-<label>Fin <input type="date" name="end_date"></label>
-<label>Heure début <input type="time" name="start_time"></label>
-<label>Heure fin <input type="time" name="end_time"></label>
-<input name="days" value="0,1,2,3,4,5,6" placeholder="Jours : 0=lundi ... 6=dimanche">
-<button class="btn" type="submit">+ Ajouter la chaîne</button>
-</form>
+  <h2>Ajouter une chaîne</h2>
+
+  <form class="form-grid" method="post" action="{{ url_for('add_channel') }}">
+    <input name="name" placeholder="Nom de la chaîne" required>
+    <input name="stream_url" placeholder="URL du flux (.m3u8, etc.)" required>
+    <input name="logo" placeholder="URL du logo">
+    <input name="description" placeholder="Description">
+
+    <label>Début <input type="date" name="start_date"></label>
+    <label>Fin <input type="date" name="end_date"></label>
+    <label>Heure début <input type="time" name="start_time"></label>
+    <label>Heure fin <input type="time" name="end_time"></label>
+
+    <input name="days" value="0,1,2,3,4,5,6"
+           placeholder="Jours : 0=lundi ... 6=dimanche">
+
+    <button class="btn" type="submit">+ Ajouter la chaîne</button>
+  </form>
 </section>
 
 <section class="panel">
-<h2>Chaînes</h2>
-{% for ch in channels %}
-<div class="channel-row">
-  <div>
-    <strong>{{ ch["name"] }}</strong>
-    <small>{{ ch["stream_url"] }}</small>
+  <h2>Chaînes</h2>
+
+  {% for ch in channels %}
+  <div class="channel-row">
+    <div>
+      <strong>{{ ch["name"] }}</strong>
+      <small>{{ ch["stream_url"] }}</small>
+    </div>
+
+    <div class="actions">
+      <a class="btn small"
+         href="{{ url_for('edit_channel', channel_id=ch['id']) }}">
+        Modifier
+      </a>
+
+      <a class="btn small secondary"
+         href="{{ url_for('toggle_channel', channel_id=ch['id']) }}">
+        {% if ch["active"] %}Désactiver{% else %}Activer{% endif %}
+      </a>
+
+      <form method="post"
+            action="{{ url_for('delete_channel', channel_id=ch['id']) }}"
+            onsubmit="return confirm('Supprimer cette chaîne ?')">
+        <button class="danger small" type="submit">Supprimer</button>
+      </form>
+    </div>
   </div>
-  <div class="actions">
-    <a class="btn small" href="{{ url_for('edit_channel',channel_id=ch['id']) }}">Modifier</a>
-    <a class="btn small secondary" href="{{ url_for('toggle_channel',channel_id=ch['id']) }}">
-      {% if ch["active"] %}Désactiver{% else %}Activer{% endif %}
-    </a>
-    <form method="post" action="{{ url_for('delete_channel',channel_id=ch['id']) }}" onsubmit="return confirm('Supprimer cette chaîne ?')">
-      <button class="danger small" type="submit">Supprimer</button>
-    </form>
-  </div>
-</div>
-{% else %}<p>Aucune chaîne.</p>{% endfor %}
+  {% else %}
+    <p>Aucune chaîne.</p>
+  {% endfor %}
 </section>
+
+
+<!-- =========================
+     PPSSPP
+========================= -->
+
+<section class="panel" id="ppsspp-admin">
+  <h2>🎮 Ajouter un jeu PPSSPP</h2>
+
+  <p style="opacity:.75;">
+    Aucun fichier n'est stocké sur le serveur. Seules les informations
+    et le lien externe sont enregistrés.
+  </p>
+
+  <form class="form-grid"
+        method="post"
+        action="{{ url_for('add_ppsspp_game') }}">
+
+    <input name="name"
+           placeholder="Nom du jeu"
+           required>
+
+    <input name="image"
+           placeholder="URL de la couverture">
+
+    <input name="size"
+           placeholder="Taille, ex. 850 MB">
+
+    <input name="download_url"
+           placeholder="Lien externe de téléchargement"
+           required>
+
+    <input name="description"
+           placeholder="Description du jeu">
+
+    <button class="btn" type="submit">
+      + Ajouter le jeu
+    </button>
+
+  </form>
+</section>
+
+
+<section class="panel">
+  <h2>🎮 Jeux PPSSPP</h2>
+
+  {% for game in games %}
+  <div class="channel-row">
+
+    <div>
+      <strong>{{ game["name"] }}</strong>
+
+      {% if game["size"] %}
+        <small>📦 {{ game["size"] }}</small>
+      {% endif %}
+
+      <small>⬇️ {{ game["downloads"] }} téléchargement(s)</small>
+
+      <small>{{ game["download_url"] }}</small>
+    </div>
+
+    <div class="actions">
+
+      <a class="btn small"
+         href="{{ url_for('edit_ppsspp_game', game_id=game['id']) }}">
+        Modifier
+      </a>
+
+      <a class="btn small secondary"
+         href="{{ url_for('toggle_ppsspp_game', game_id=game['id']) }}">
+        {% if game["active"] %}Désactiver{% else %}Activer{% endif %}
+      </a>
+
+      <form method="post"
+            action="{{ url_for('delete_ppsspp_game', game_id=game['id']) }}"
+            onsubmit="return confirm('Supprimer ce jeu ?')">
+        <button class="danger small" type="submit">
+          Supprimer
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  {% else %}
+    <p>Aucun jeu PPSSPP.</p>
+  {% endfor %}
+</section>
+
 
 <section class="two-cols">
-<section class="panel"><h2>Vues par chaîne</h2>
-{% for s in stats %}<p class="statline"><span>{{ s["name"] }}</span><b>{{ s["total"] }}</b></p>{% endfor %}
+
+  <section class="panel">
+    <h2>Vues par chaîne</h2>
+    {% for s in stats %}
+      <p class="statline">
+        <span>{{ s["name"] }}</span>
+        <b>{{ s["total"] }}</b>
+      </p>
+    {% endfor %}
+  </section>
+
+  <section class="panel">
+    <h2>Pays</h2>
+    {% for c in countries %}
+      <p class="statline">
+        <span>{{ c["country"] }}</span>
+        <b>{{ c["total"] }}</b>
+      </p>
+    {% endfor %}
+  </section>
+
 </section>
-<section class="panel"><h2>Pays</h2>
-{% for c in countries %}<p class="statline"><span>{{ c["country"] }}</span><b>{{ c["total"] }}</b></p>{% endfor %}
-</section>
-</section>
+
 {% endblock %}

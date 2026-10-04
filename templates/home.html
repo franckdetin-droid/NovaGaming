@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+
 {% block title %}Chaînes en direct{% endblock %}
+
 {% block content %}
+
 <section class="hero">
   <div>
     <span class="live-badge">● EN DIRECT</span>
@@ -9,13 +12,23 @@
   </div>
 </section>
 
+<div style="margin:16px 0;">
+  <a class="btn secondary" href="{{ url_for('ppsspp') }}">🎮 Jeux PPSSPP</a>
+</div>
+
 <h2>Chaînes disponibles</h2>
+
 <div class="grid">
 {% for ch in channels %}
   <article class="card">
     <div class="logo-wrap">
-      {% if ch["logo"] %}<img src="{{ ch['logo'] }}" alt="{{ ch['name'] }}">{% else %}<span>📺</span>{% endif %}
+      {% if ch["logo"] %}
+        <img src="{{ ch['logo'] }}" alt="{{ ch['name'] }}">
+      {% else %}
+        <span>📺</span>
+      {% endif %}
     </div>
+
     <div class="card-body">
       <div class="status"><span></span> En direct</div>
       <h3>{{ ch["name"] }}</h3>
@@ -27,4 +40,5 @@
   <div class="empty">Aucune chaîne n'est actuellement disponible.</div>
 {% endfor %}
 </div>
+
 {% endblock %}

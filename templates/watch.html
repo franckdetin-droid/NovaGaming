@@ -12,7 +12,6 @@
 
   <div class="player">
 
-    <!-- LECTEUR NATIF DU NAVIGATEUR -->
     <video
       id="video"
       controls
@@ -27,35 +26,29 @@
   <div class="player-info">
 
     <div class="status">
-      <span></span>
-      EN DIRECT
+      <span></span> EN DIRECT
     </div>
 
     <h1>{{ ch["name"] }}</h1>
 
-    {% if ch["description"] %}
-      <p>{{ ch["description"] }}</p>
-    {% endif %}
+    <p>{{ ch["description"] or "" }}</p>
 
-    <div class="player-actions">
+    <button
+      class="sound"
+      type="button"
+      id="soundButton"
+    >
+      🔊 Activer le son
+    </button>
 
-      <button
-        class="sound"
-        type="button"
-        id="soundButton"
-      >
-        🔊 Activer le son
-      </button>
-
-      <button
-        class="reload"
-        type="button"
-        id="reloadButton"
-      >
-        ↻ Recharger le flux
-      </button>
-
-    </div>
+    <button
+      class="sound"
+      type="button"
+      id="reloadButton"
+      style="margin-left:8px;"
+    >
+      ↻ Recharger le flux
+    </button>
 
   </div>
 
@@ -67,19 +60,12 @@ const src = {{ ch["stream_url"]|tojson }};
 const soundButton = document.getElementById("soundButton");
 const reloadButton = document.getElementById("reloadButton");
 
-/* Chargement du flux */
 video.src = src;
 video.load();
 
-/* Lecture automatique si le navigateur l'autorise */
 video.play().catch(() => {});
 
-/* =========================
-   BOUTON SON
-========================= */
-
 soundButton.addEventListener("click", function () {
-
   if (video.muted) {
     video.muted = false;
     video.volume = 1;
@@ -92,39 +78,23 @@ soundButton.addEventListener("click", function () {
   video.play().catch(() => {});
 });
 
-
-/* =========================
-   RECHARGER LE FLUX
-========================= */
-
 reloadButton.addEventListener("click", function () {
-
   reloadButton.disabled = true;
   reloadButton.textContent = "⟳ Chargement...";
-
-  const currentTime = video.currentTime;
 
   video.pause();
   video.removeAttribute("src");
   video.load();
 
   setTimeout(function () {
-
     video.src = src;
     video.load();
-
     video.play().catch(() => {});
 
     reloadButton.disabled = false;
     reloadButton.textContent = "↻ Recharger le flux";
-
   }, 500);
 });
-
-
-/* =========================
-   LECTEUR
-========================= */
 
 video.addEventListener("playing", function () {
   reloadButton.disabled = false;
@@ -141,10 +111,8 @@ video.addEventListener("canplay", function () {
 });
 
 video.addEventListener("error", function () {
-
   reloadButton.disabled = false;
   reloadButton.textContent = "↻ Recharger le flux";
-
   console.log("Le flux ne peut pas être lu par le lecteur natif.");
 });
 </script>

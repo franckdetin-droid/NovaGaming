@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier · {{ game["name"] }}{% endblock %}
+
+{% block content %}
+
+<a class="back" href="{{ url_for('admin') }}">
+  ← Dashboard
+</a>
+
+<section class="panel">
+
+  <h1>Modifier le jeu PPSSPP</h1>
+
+  <form class="form-grid" method="post">
+
+    <input
+      name="name"
+      value="{{ game['name'] }}"
+      placeholder="Nom du jeu"
+      required
+    >
+
+    <input
+      name="image"
+      value="{{ game['image'] or '' }}"
+      placeholder="URL de la couverture"
+    >
+
+    <input
+      name="size"
+      value="{{ game['size'] or '' }}"
+      placeholder="Taille"
+    >
+
+    <input
+      name="download_url"
+      value="{{ game['download_url'] }}"
+      placeholder="Lien externe de téléchargement"
+      required
+    >
+
+    <input
+      name="description"
+      value="{{ game['description'] or '' }}"
+      placeholder="Description"
+    >
+
+    <button class="btn" type="submit">
+      Enregistrer les modifications
+    </button>
+
+  </form>
+
+</section>
+
+{% endblock %}
