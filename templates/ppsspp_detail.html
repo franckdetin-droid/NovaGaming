@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ game.name }}{% endblock %}
+{% block brand %}<a class="brand" href="{{ url_for('ppsspp_home') }}">🎮 PPSSPP GAMES</a>{% endblock %}
+{% block content %}
+<article class="detail">
+{% if game.image %}<img class="cover" src="{{ game.image }}" alt="" loading="lazy">{% endif %}
+<div><h1>{{ game.name }}</h1><p>{{ game.description }}</p><p class="tag">{{ game.size }}</p><br><a class="btn big" href="{{ url_for('ppsspp_download',game_id=game.id) }}">Télécharger</a></div>
+</article>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Flux TV{% endblock %}
+{% block brand %}<a class="brand" href="{{ url_for('flux_home') }}">📺 FLUX TV</a>{% endblock %}
+{% block content %}
+<section class="hero"><h1>Chaînes disponibles</h1><p>Regardez les flux autorisés.</p></section>
+<div class="grid">
+{% for channel in channels %}
+<article class="card">
+{% if channel.logo %}<img src="{{ channel.logo }}" alt="" loading="lazy">{% else %}<div class="placeholder">📺</div>{% endif %}
+<div class="card-body"><h2>{{ channel.name }}</h2><p>{{ channel.description|truncate(140) }}</p><a class="btn" href="{{ url_for('flux_watch',channel_id=channel.id) }}">Regarder</a></div>
+</article>
+{% else %}<div class="empty">Aucune chaîne disponible.</div>{% endfor %}
+</div>
+{% endblock %}

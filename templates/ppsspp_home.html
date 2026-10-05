@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Jeux PPSSPP{% endblock %}
+{% block brand %}<a class="brand" href="{{ url_for('ppsspp_home') }}">🎮 PPSSPP GAMES</a>{% endblock %}
+{% block content %}
+<section class="hero"><h1>Jeux PPSSPP</h1><p>Catalogue de jeux et liens externes.</p></section>
+<div class="grid">
+{% for game in games %}
+<article class="card">
+{% if game.image %}<img src="{{ game.image }}" alt="" loading="lazy">{% else %}<div class="placeholder">🎮</div>{% endif %}
+<div class="card-body"><h2>{{ game.name }}</h2><p>{{ game.description|truncate(140) }}</p><small>{{ game.size }}</small><a class="btn" href="{{ url_for('ppsspp_detail',game_id=game.id) }}">Voir le jeu</a></div>
+</article>
+{% else %}<div class="empty">Aucun jeu disponible.</div>{% endfor %}
+</div>
+{% endblock %}

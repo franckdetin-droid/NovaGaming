@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Administration{% endblock %}
+{% block content %}
+<div class="admin-header"><div><h1>Dashboard</h1><p>Administration PPSSPP + Flux TV</p></div><a class="btn" href="{{ url_for('admin_logout') }}">Déconnexion</a></div>
+
+<div class="stats">
+<div><b>{{ games|length }}</b><span>Jeux PPSSPP</span></div>
+<div><b>{{ ppsspp_downloads }}</b><span>Téléchargements</span></div>
+<div><b>{{ channels|length }}</b><span>Chaînes Flux</span></div>
+<div><b>{{ flux_views }}</b><span>Vues Flux</span></div>
+<div><b>{{ visitors }}</b><span>Visites</span></div>
+</div>
+
+<section class="admin-section">
+<h2>🎮 Jeux PPSSPP</h2>
+<a class="btn" href="{{ url_for('admin_ppsspp_add') }}">+ Ajouter un jeu</a>
+<div class="table-wrap"><table><tr><th>Nom</th><th>Téléchargements</th><th>Statut</th><th>Actions</th></tr>
+{% for game in games %}<tr><td>{{game.name}}</td><td>{{game.downloads}}</td><td>{{'Actif' if game.active else 'Masqué'}}</td><td><a href="{{url_for('admin_ppsspp_edit',game_id=game.id)}}">Modifier</a> <form class="inline" method="post" action="{{url_for('admin_ppsspp_toggle',game_id=game.id)}}"><button>Activer/Masquer</button></form> <form class="inline" method="post" action="{{url_for('admin_ppsspp_delete',game_id=game.id)}}"><button>Supprimer</button></form></td></tr>{% endfor %}
+</table></div>
+</section>
+
+<section class="admin-section">
+<h2>📺 Flux TV</h2>
+<a class="btn" href="{{ url_for('admin_flux_add') }}">+ Ajouter une chaîne</a>
+<div class="table-wrap"><table><tr><th>Nom</th><th>Vues</th><th>Statut</th><th>Actions</th></tr>
+{% for channel in channels %}<tr><td>{{channel.name}}</td><td>{{channel.views}}</td><td>{{'Active' if channel.active else 'Masquée'}}</td><td><a href="{{url_for('admin_flux_edit',channel_id=channel.id)}}">Modifier</a> <form class="inline" method="post" action="{{url_for('admin_flux_toggle',channel_id=channel.id)}}"><button>Activer/Masquer</button></form> <form class="inline" method="post" action="{{url_for('admin_flux_delete',channel_id=channel.id)}}"><button>Supprimer</button></form></td></tr>{% endfor %}
+</table></div>
+</section>
+
+<section class="admin-section"><h2>🌍 Pays</h2>{% for row in countries %}<p>{{row.country}} — {{row.n}}</p>{% endfor %}</section>
+{% endblock %}
