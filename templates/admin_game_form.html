@@ -1,3 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Jeu PPSSPP{% endblock %}
-{% block content %}<div class="form-card"><h1>{{'Modifier' if game else 'Ajouter'}} un jeu</h1><form method="post"><label>Nom<input name="name" value="{{game.name if game else ''}}" required></label><label>Image URL<input name="image" value="{{game.image if game else ''}}"></label><label>Description<textarea name="description">{{game.description if game else ''}}</textarea></label><label>Taille<input name="size" value="{{game.size if game else ''}}"></label><label>Lien externe<input name="download_url" value="{{game.download_url if game else ''}}" required></label><button class="btn">Enregistrer</button></form></div>{% endblock %}
+{% block title %}{{'Modifier' if game else 'Nouveau'}} jeu · Admin{% endblock %}
+{% block brand %}<a class="brand" href="{{url_for('admin_dashboard')}}">⚙️ <span>ADMIN</span><em>CONTROL</em></a>{% endblock %}
+{% block content %}
+<div class="form-page">
+<a class="back-link" href="{{url_for('admin_dashboard')}}">← Retour au tableau de bord</a>
+<div class="form-card">
+<div class="eyebrow">CATALOGUE PPSSPP</div><h1>{{'Modifier le jeu' if game else 'Ajouter un jeu'}}</h1>
+<p class="muted">Renseigne uniquement des liens de fichiers que tu es autorisé à distribuer.</p>
+<form method="post">
+<div class="form-grid">
+<label>Nom du jeu<input name="name" value="{{game.name if game else ''}}" required></label>
+<label>Taille<input name="size" value="{{game.size if game else ''}}" placeholder="ex. 1,4 Go"></label>
+</div>
+<label>URL de l'image<input name="image" type="url" value="{{game.image if game else ''}}" placeholder="https://..."></label>
+<label>Description<textarea name="description" placeholder="Description du jeu...">{{game.description if game else ''}}</textarea></label>
+<label>Lien externe du fichier<input name="download_url" type="url" value="{{game.download_url if game else ''}}" required placeholder="https://..."></label>
+<div class="pay-panel">
+<h3>💳 Accès et paiement</h3>
+<div class="form-grid">
+<label>Type d'accès<select name="access_type"><option value="free" {% if not game or game.access_type!='paid' %}selected{% endif %}>🆓 Gratuit</option><option value="paid" {% if game and game.access_type=='paid' %}selected{% endif %}>💳 Payant</option></select></label>
+<label>Prix<input name="price" value="{{game.price if game else ''}}" placeholder="ex. 2 €"></label>
+</div>
+<label>Lien de paiement<input name="paypal_url" type="url" value="{{game.paypal_url if game else ''}}" placeholder="https://..."></label>
+<p class="hint">Sans API/webhook, le bouton « J'ai terminé le paiement » repose sur une confirmation déclarative et ne vérifie pas réellement le paiement.</p>
+</div>
+<button class="btn big full">💾 Enregistrer le jeu</button>
+</form></div></div>
+{% endblock %}

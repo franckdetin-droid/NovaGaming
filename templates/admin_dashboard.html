@@ -1,31 +1,74 @@
 {% extends "base.html" %}
-{% block title %}Administration{% endblock %}
+{% block title %}Administration · PPSSPP HUB{% endblock %}
+{% block brand %}<a class="brand" href="{{url_for('admin_dashboard')}}">⚙️ <span>ADMIN</span><em>CONTROL</em></a>{% endblock %}
 {% block content %}
-<div class="admin-header"><div><h1>Dashboard</h1><p>Administration PPSSPP + Flux TV</p></div><a class="btn" href="{{ url_for('admin_logout') }}">Déconnexion</a></div>
+<div class="admin-shell">
+  <div class="admin-top">
+    <div>
+      <div class="eyebrow">CENTRE DE CONTRÔLE</div>
+      <h1>Tableau de bord</h1>
+      <p>Gère les jeux, les accès payants, Flux TV et les statistiques depuis un seul espace.</p>
+    </div>
+    <a class="btn btn-dark" href="{{url_for('admin_logout')}}">Déconnexion</a>
+  </div>
 
-<div class="stats">
-<div><b>{{ games|length }}</b><span>Jeux PPSSPP</span></div>
-<div><b>{{ ppsspp_downloads }}</b><span>Téléchargements</span></div>
-<div><b>{{ channels|length }}</b><span>Chaînes Flux</span></div>
-<div><b>{{ flux_views }}</b><span>Vues Flux</span></div>
-<div><b>{{ visitors }}</b><span>Visites</span></div>
+  <div class="stats">
+    <div class="stat"><span>🎮 Jeux</span><b>{{metrics.games}}</b><small>{{metrics.active_games}} actifs</small></div>
+    <div class="stat"><span>⬇️ Téléchargements</span><b>{{metrics.downloads}}</b><small>Total</small></div>
+    <div class="stat"><span>📺 Chaînes</span><b>{{metrics.channels}}</b><small>Flux TV</small></div>
+    <div class="stat"><span>👁️ Vues Flux</span><b>{{metrics.flux_views}}</b><small>Total</small></div>
+    <div class="stat"><span>🌍 Visiteurs</span><b>{{metrics.visitors}}</b><small>{{metrics.today_visitors}} aujourd'hui</small></div>
+  </div>
+
+  <section class="admin-section">
+    <div class="section-head"><div><span class="eyebrow">CATALOGUE</span><h2>🎮 Jeux PPSSPP</h2></div><a class="btn" href="{{url_for('admin_ppsspp_add')}}">＋ Nouveau jeu</a></div>
+    <div class="admin-grid">
+      {% for game in games %}
+      <article class="admin-card">
+        <div class="mini-cover">{% if game.image %}<img src="{{game.image}}" alt="">{% else %}🎮{% endif %}</div>
+        <div class="admin-card-body">
+          <div class="row-between"><h3>{{game.name}}</h3><span class="status {{'on' if game.active else 'off'}}">{{'ACTIF' if game.active else 'MASQUÉ'}}</span></div>
+          <div class="meta">{{'💳 '~(game.price or 'Payant') if game.access_type=='paid' else '🆓 Gratuit'}} · {{game.downloads}} téléchargement(s)</div>
+          <div class="actions">
+            <a class="btn small" href="{{url_for('admin_ppsspp_edit',game_id=game.id)}}">Modifier</a>
+            <form method="post" action="{{url_for('admin_ppsspp_toggle',game_id=game.id)}}"><button class="btn small btn-muted">{{'Masquer' if game.active else 'Publier'}}</button></form>
+            <form method="post" action="{{url_for('admin_ppsspp_delete',game_id=game.id)}}" onsubmit="return confirm('Supprimer ce jeu ?')"><button class="btn small btn-danger">Supprimer</button></form>
+          </div>
+        </div>
+      </article>
+      {% else %}<div class="empty">Aucun jeu. Commence par créer ton premier jeu.</div>{% endfor %}
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <div class="section-head"><div><span class="eyebrow">DIFFUSION</span><h2>📺 Flux TV</h2></div><a class="btn" href="{{url_for('admin_flux_add')}}">＋ Nouvelle chaîne</a></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Chaîne</th><th>Accès</th><th>Vues</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for channel in channels %}
+      <tr>
+        <td><strong>{{channel.name}}</strong></td>
+        <td>{{'🔒 Protégée' if channel.access_type=='protected' else '🔓 Libre'}}</td>
+        <td>{{channel.views}}</td>
+        <td><span class="status {{'on' if channel.active else 'off'}}">{{'ACTIVE' if channel.active else 'MASQUÉE'}}</span></td>
+        <td class="actions">
+          <a class="btn small" href="{{url_for('admin_flux_edit',channel_id=channel.id)}}">Modifier</a>
+          <form method="post" action="{{url_for('admin_flux_toggle',channel_id=channel.id)}}"><button class="btn small btn-muted">{{'Masquer' if channel.active else 'Publier'}}</button></form>
+          <form method="post" action="{{url_for('admin_flux_delete',channel_id=channel.id)}}" onsubmit="return confirm('Supprimer cette chaîne ?')"><button class="btn small btn-danger">Supprimer</button></form>
+        </td>
+      </tr>
+      {% else %}<tr><td colspan="5" class="empty">Aucune chaîne.</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="two-cols">
+    <section class="admin-section compact"><div class="section-head"><div><span class="eyebrow">AUDIENCE</span><h2>🌍 Pays</h2></div></div>
+      {% for row in countries %}<div class="country-row"><span>{{row.country or 'Unknown'}}</span><b>{{row.n}}</b></div>{% else %}<div class="empty">Pas encore de données.</div>{% endfor %}
+    </section>
+    <section class="admin-section compact"><div class="section-head"><div><span class="eyebrow">ACTIVITÉ</span><h2>🕒 Dernières visites</h2></div></div>
+      {% for row in recent_visits %}<div class="visit-row"><span>{{'🎮 PPSSPP' if row.section=='ppsspp' else '📺 Flux'}}</span><b>{{row.country}}</b><small>{{row.created_at[:16].replace('T',' ')}}</small></div>{% else %}<div class="empty">Aucune visite.</div>{% endfor %}
+    </section>
+  </div>
 </div>
-
-<section class="admin-section">
-<h2>🎮 Jeux PPSSPP</h2>
-<a class="btn" href="{{ url_for('admin_ppsspp_add') }}">+ Ajouter un jeu</a>
-<div class="table-wrap"><table><tr><th>Nom</th><th>Téléchargements</th><th>Statut</th><th>Actions</th></tr>
-{% for game in games %}<tr><td>{{game.name}}</td><td>{{game.downloads}}</td><td>{{'Actif' if game.active else 'Masqué'}}</td><td><a href="{{url_for('admin_ppsspp_edit',game_id=game.id)}}">Modifier</a> <form class="inline" method="post" action="{{url_for('admin_ppsspp_toggle',game_id=game.id)}}"><button>Activer/Masquer</button></form> <form class="inline" method="post" action="{{url_for('admin_ppsspp_delete',game_id=game.id)}}"><button>Supprimer</button></form></td></tr>{% endfor %}
-</table></div>
-</section>
-
-<section class="admin-section">
-<h2>📺 Flux TV</h2>
-<a class="btn" href="{{ url_for('admin_flux_add') }}">+ Ajouter une chaîne</a>
-<div class="table-wrap"><table><tr><th>Nom</th><th>Vues</th><th>Statut</th><th>Actions</th></tr>
-{% for channel in channels %}<tr><td>{{channel.name}}</td><td>{{channel.views}}</td><td>{{'Active' if channel.active else 'Masquée'}}</td><td><a href="{{url_for('admin_flux_edit',channel_id=channel.id)}}">Modifier</a> <form class="inline" method="post" action="{{url_for('admin_flux_toggle',channel_id=channel.id)}}"><button>Activer/Masquer</button></form> <form class="inline" method="post" action="{{url_for('admin_flux_delete',channel_id=channel.id)}}"><button>Supprimer</button></form></td></tr>{% endfor %}
-</table></div>
-</section>
-
-<section class="admin-section"><h2>🌍 Pays</h2>{% for row in countries %}<p>{{row.country}} — {{row.n}}</p>{% endfor %}</section>
 {% endblock %}

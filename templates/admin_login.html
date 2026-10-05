@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% block title %}Administration{% endblock %}
-{% block content %}
-<div class="admin-login"><h1>Administration</h1><form method="post"><input name="username" placeholder="Identifiant" required><input type="password" name="password" placeholder="Mot de passe" required><button class="btn">Se connecter</button></form></div>
-{% endblock %}
+{% block title %}Connexion Admin{% endblock %}
+{% block brand %}<a class="brand" href="{{url_for('ppsspp_home')}}">🎮 <span>PPSSPP</span><em>HUB</em></a>{% endblock %}
+{% block content %}<div class="form-page"><div class="admin-login"><div class="login-logo">⚙️</div><div class="eyebrow">ESPACE PRIVÉ</div><h1>Administration</h1><p class="muted">Connecte-toi pour gérer le catalogue et Flux TV.</p><form method="post"><label>Identifiant<input name="username" type="email" autocomplete="username" required></label><label>Mot de passe<input name="password" type="password" autocomplete="current-password" required></label><button class="btn big full">Se connecter</button></form></div></div>{% endblock %}

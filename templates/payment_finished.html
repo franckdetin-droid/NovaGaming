@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Paiement · {{game.name}}{% endblock %}
+{% block content %}
+<div class="form-page">
+<div class="form-card payment-finished">
+<div class="payment-icon">✓</div>
+<div class="eyebrow">ÉTAPE SUIVANTE</div>
+<h1>Paiement terminé ?</h1>
+<p>Tu peux continuer vers le téléchargement si tu as réellement effectué le paiement.</p>
+<form method="post"><button class="btn btn-download big full">⬇️ J'ai terminé le paiement</button></form>
+<a class="back-link" href="{{url_for('ppsspp_detail',game_id=game.id)}}">← Retour au jeu</a>
+</div></div>
+{% endblock %}

@@ -1,3 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Chaîne Flux{% endblock %}
-{% block content %}<div class="form-card"><h1>{{'Modifier' if channel else 'Ajouter'}} une chaîne</h1><form method="post"><label>Nom<input name="name" value="{{channel.name if channel else ''}}" required></label><label>Logo URL<input name="logo" value="{{channel.logo if channel else ''}}"></label><label>Description<textarea name="description">{{channel.description if channel else ''}}</textarea></label><label>URL du flux<input name="stream_url" value="{{channel.stream_url if channel else ''}}" required></label><button class="btn">Enregistrer</button></form></div>{% endblock %}
+{% block title %}{{'Modifier' if channel else 'Nouvelle'}} chaîne · Admin{% endblock %}
+{% block brand %}<a class="brand" href="{{url_for('admin_dashboard')}}">⚙️ <span>ADMIN</span><em>CONTROL</em></a>{% endblock %}
+{% block content %}
+<div class="form-page"><a class="back-link" href="{{url_for('admin_dashboard')}}">← Retour au tableau de bord</a>
+<div class="form-card"><div class="eyebrow">FLUX TV</div><h1>{{'Modifier la chaîne' if channel else 'Ajouter une chaîne'}}</h1>
+<form method="post">
+<label>Nom<input name="name" value="{{channel.name if channel else ''}}" required></label>
+<label>Logo URL<input name="logo" value="{{channel.logo if channel else ''}}" placeholder="https://..."></label>
+<label>Description<textarea name="description">{{channel.description if channel else ''}}</textarea></label>
+<label>URL du flux<input name="stream_url" value="{{channel.stream_url if channel else ''}}" required placeholder="https://...m3u8"></label>
+<div class="pay-panel"><h3>🔐 Accès</h3>
+<label>Type<select name="access_type"><option value="free" {% if not channel or channel.access_type!='protected' %}selected{% endif %}>🔓 Libre</option><option value="protected" {% if channel and channel.access_type=='protected' %}selected{% endif %}>🔒 Protégée par code</option></select></label>
+<label>Code d'accès<input name="access_code" value="{{channel.access_code if channel else ''}}" placeholder="Laisser vide pour générer automatiquement"></label>
+{% if channel and channel.access_type=='protected' %}
+<form method="post" action="{{url_for('admin_flux_regenerate_code')}}" class="regenerate"><button class="btn btn-muted">🔄 Régénérer le code</button></form>
+{% endif %}
+</div>
+<button class="btn big full">💾 Enregistrer la chaîne</button>
+</form></div></div></div>
+{% endblock %}

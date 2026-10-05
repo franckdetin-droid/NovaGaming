@@ -1,9 +1,15 @@
 {% extends "base.html" %}
-{% block title %}{{ game.name }}{% endblock %}
-{% block brand %}<a class="brand" href="{{ url_for('ppsspp_home') }}">🎮 PPSSPP GAMES</a>{% endblock %}
+{% block title %}{{game.name}} · PPSSPP HUB{% endblock %}
 {% block content %}
+<a class="back-link" href="{{url_for('ppsspp_home')}}">← Retour au catalogue</a>
 <article class="detail">
-{% if game.image %}<img class="cover" src="{{ game.image }}" alt="" loading="lazy">{% endif %}
-<div><h1>{{ game.name }}</h1><p>{{ game.description }}</p><p class="tag">{{ game.size }}</p><br><a class="btn big" href="{{ url_for('ppsspp_download',game_id=game.id) }}">Télécharger</a></div>
-</article>
+<div class="detail-media">{% if game.image %}<img class="cover" src="{{game.image}}" alt="{{game.name}}">{% else %}<div class="placeholder large">🎮</div>{% endif %}</div>
+<div class="detail-content"><span class="eyebrow">JEU PPSSPP</span><h1>{{game.name}}</h1>
+<div class="chips">{% if game.size %}<span class="tag">📦 {{game.size}}</span>{% endif %}<span class="tag {{'tag-paid' if game.access_type=='paid' else 'tag-free'}}">{{'💳 '~(game.price or 'Payant') if game.access_type=='paid' else '🆓 Gratuit'}}</span></div>
+<p class="description">{{game.description or 'Aucune description.'}}</p>
+{% if game.access_type=='paid' and not unlocked %}
+<div class="payment-box"><strong>Accès payant</strong><div class="price">{{game.price or 'Payant'}}</div>
+{% if game.paypal_url %}<a class="btn btn-paypal full" href="{{url_for('ppsspp_pay',game_id=game.id)}}">💳 Payer maintenant</a>{% else %}<div class="notice">Lien de paiement non configuré.</div>{% endif %}
+{% else %}<a class="btn btn-download full" href="{{url_for('ppsspp_download',game_id=game.id)}}">⬇️ Télécharger</a>{% endif %}
+</div></article>
 {% endblock %}

@@ -1,14 +1,25 @@
 {% extends "base.html" %}
-{% block title %}Jeux PPSSPP{% endblock %}
-{% block brand %}<a class="brand" href="{{ url_for('ppsspp_home') }}">🎮 PPSSPP GAMES</a>{% endblock %}
+{% block title %}PPSSPP HUB · Jeux{% endblock %}
 {% block content %}
-<section class="hero"><h1>Jeux PPSSPP</h1><p>Catalogue de jeux et liens externes.</p></section>
-<div class="grid">
+<section class="hero">
+<div class="hero-copy"><span class="eyebrow">CATALOGUE GAMING</span><h1>Trouve ton prochain jeu.</h1><p>Un catalogue simple, rapide et pensé pour mobile.</p></div>
+<div class="search-box"><span>⌕</span><input id="gameSearch" placeholder="Rechercher un jeu..." autocomplete="off"></div>
+</section>
+<div class="section-title"><h2>🎮 Jeux disponibles</h2><span>{{games|length}} jeu(x)</span></div>
+<div class="grid" id="gamesGrid">
 {% for game in games %}
-<article class="card">
-{% if game.image %}<img src="{{ game.image }}" alt="" loading="lazy">{% else %}<div class="placeholder">🎮</div>{% endif %}
-<div class="card-body"><h2>{{ game.name }}</h2><p>{{ game.description|truncate(140) }}</p><small>{{ game.size }}</small><a class="btn" href="{{ url_for('ppsspp_detail',game_id=game.id) }}">Voir le jeu</a></div>
+<article class="card game-card" data-name="{{game.name|lower}}">
+<a href="{{url_for('ppsspp_detail',game_id=game.id)}}" class="cover-link">
+{% if game.image %}<img src="{{game.image}}" alt="{{game.name}}" loading="lazy">{% else %}<div class="placeholder">🎮</div>{% endif %}
+<span class="badge {{'paid' if game.access_type=='paid' else 'free'}}">{{'💳 '~(game.price or 'Payant') if game.access_type=='paid' else '🆓 Gratuit'}}</span>
+</a>
+<div class="card-body"><h2>{{game.name}}</h2>{% if game.size %}<span class="muted smalltext">📦 {{game.size}}</span>{% endif %}<p>{{game.description|truncate(100)}}</p><a class="btn full" href="{{url_for('ppsspp_detail',game_id=game.id)}}">Voir le jeu</a></div>
 </article>
-{% else %}<div class="empty">Aucun jeu disponible.</div>{% endfor %}
+{% else %}<div class="empty">Aucun jeu disponible pour le moment.</div>{% endfor %}
 </div>
+<div id="noResults" class="empty hidden">Aucun résultat.</div>
+<script>
+const input=document.getElementById('gameSearch'), cards=[...document.querySelectorAll('.game-card')], no=document.getElementById('noResults');
+input?.addEventListener('input',()=>{const q=input.value.toLowerCase().trim();let n=0;cards.forEach(c=>{const ok=c.dataset.name.includes(q);c.style.display=ok?'':'none';if(ok)n++});no.classList.toggle('hidden',n!==0)});
+</script>
 {% endblock %}
