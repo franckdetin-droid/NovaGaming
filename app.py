@@ -1,66 +1,60 @@
-import os, sqlite3
-from datetime import datetime
+import os
+import sqlite3
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, abort, flash
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+DB = os.path.join(BASE, "data.db")
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "CHANGE_ME")
+app.secret_key = os.environ.get("SECRET_KEY", "change-this-secret-key")
 
-ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "monetise4@gmail.com")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "CHANGE_ME")
-
-DB = os.path.join(os.path.dirname(__file__), "data.db")
-
+# Administration commune aux deux sites
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "monetise4@gmail.com")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "monetise4@gmail.com")
 
 def db():
-    c = sqlite3.connect(DB)
-    c.row_factory = sqlite3.Row
-    return c
-
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def init_db():
-    c = db()
-
-    c.execute("""CREATE TABLE IF NOT EXISTS channels(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        stream_url TEXT NOT NULL,
-        logo TEXT DEFAULT '',
-        description TEXT DEFAULT '',
-        start_date TEXT DEFAULT '',
-        end_date TEXT DEFAULT '',
-        start_time TEXT DEFAULT '',
-        end_time TEXT DEFAULT '',
-        days TEXT DEFAULT '0,1,2,3,4,5,6',
-        active INTEGER DEFAULT 1,
-        created_at TEXT
-    )""")
-
-    c.execute("""CREATE TABLE IF NOT EXISTS views(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        channel_id INTEGER,
-        country TEXT,
-        user_agent TEXT,
-        created_at TEXT
-    )""")
-
-    # Jeux PPSSPP : seuls les informations et les liens externes
-    # sont enregistrés. Aucun fichier de jeu n'est stocké sur Render.
-    c.execute("""CREATE TABLE IF NOT EXISTS ppsspp_games(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        image TEXT DEFAULT '',
-        description TEXT DEFAULT '',
-        size TEXT DEFAULT '',
-        download_url TEXT NOT NULL,
-        active INTEGER DEFAULT 1,
-        downloads INTEGER DEFAULT 0,
-        created_at TEXT
-    )""")
-
-    c.commit()
-    c.close()
-
+    conn = db()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS ppsspp_games (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            image TEXT DEFAULT '',
+            description TEXT DEFAULT '',
+            size TEXT DEFAULT '',
+            download_url TEXT NOT NULL,
+            active INTEGER DEFAULT 1,
+            downloads INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS channels (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            logo TEXT DEFAULT '',
+            description TEXT DEFAULT '',
+            stream_url TEXT NOT NULL,
+            active INTEGER DEFAULT 1,
+            views INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS visitors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            section TEXT NOT NULL,
+            country TEXT DEFAULT 'Unknown',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    conn.close()
 
 def admin_required(fn):
     @wraps(fn)
@@ -70,464 +64,344 @@ def admin_required(fn):
         return fn(*args, **kwargs)
     return wrapper
 
+@app.before_request
+def track_public_visit():
+    if (
+        request.endpoint
+        and not request.path.startswith("/admin")
+        and request.endpoint != "static"
+    ):
+        section = "ppsspp" if request.path.startswith("/ppsspp") else "flux"
+        country = request.headers.get("CF-IPCountry", "Unknown")[:80]
+        conn = db()
+        conn.execute(
+            "INSERT INTO visitors(section,country) VALUES(?,?)",
+            (section, country)
+        )
+        conn.commit()
+        conn.close()
 
-def channel_active(ch):
-    if not ch["active"]:
-        return False
-
-    now = datetime.now()
-    today = now.date().isoformat()
-
-    if ch["start_date"] and today < ch["start_date"]:
-        return False
-    if ch["end_date"] and today > ch["end_date"]:
-        return False
-
-    if ch["days"]:
-        allowed = {
-            int(x) for x in ch["days"].split(",")
-            if x.strip().isdigit()
-        }
-        if now.weekday() not in allowed:
-            return False
-
-    if ch["start_time"] and ch["end_time"]:
-        current = now.strftime("%H:%M")
-        if not (ch["start_time"] <= current <= ch["end_time"]):
-            return False
-
-    return True
-
-
-# =========================
-# FLUX TV
-# =========================
+# ---------------- PUBLIC PPSSPP ----------------
 
 @app.route("/")
-def home():
-    c = db()
-    rows = c.execute(
-        "SELECT * FROM channels ORDER BY id DESC"
-    ).fetchall()
-    c.close()
-
-    channels = [dict(x) for x in rows if channel_active(x)]
-    return render_template("home.html", channels=channels)
-
-
-@app.route("/watch/<int:channel_id>")
-def watch(channel_id):
-    c = db()
-    ch = c.execute(
-        "SELECT * FROM channels WHERE id=?",
-        (channel_id,)
-    ).fetchone()
-
-    if not ch or not channel_active(ch):
-        c.close()
-        return render_template("unavailable.html"), 404
-
-    c.execute(
-        """INSERT INTO views(channel_id,country,user_agent,created_at)
-           VALUES(?,?,?,?)""",
-        (
-            channel_id,
-            request.headers.get("CF-IPCountry", "Unknown"),
-            request.headers.get("User-Agent", ""),
-            datetime.utcnow().isoformat()
-        )
-    )
-    c.commit()
-    c.close()
-
-    return render_template("watch.html", ch=ch)
-
-
-# =========================
-# PPSSPP PUBLIC
-# =========================
+def root():
+    return redirect(url_for("ppsspp_home"))
 
 @app.route("/ppsspp")
-def ppsspp():
-    c = db()
-    games = c.execute(
+def ppsspp_home():
+    conn = db()
+    games = conn.execute(
         "SELECT * FROM ppsspp_games WHERE active=1 ORDER BY id DESC"
     ).fetchall()
-    c.close()
-
-    return render_template("ppsspp.html", games=games)
-
+    conn.close()
+    return render_template("ppsspp_home.html", games=games)
 
 @app.route("/ppsspp/<int:game_id>")
-def ppsspp_game(game_id):
-    c = db()
-    game = c.execute(
+def ppsspp_detail(game_id):
+    conn = db()
+    game = conn.execute(
         "SELECT * FROM ppsspp_games WHERE id=? AND active=1",
         (game_id,)
     ).fetchone()
-    c.close()
-
+    conn.close()
     if not game:
-        return "Jeu introuvable", 404
-
-    return render_template("ppsspp_game.html", game=game)
-
+        abort(404)
+    return render_template("ppsspp_detail.html", game=game)
 
 @app.route("/ppsspp/<int:game_id>/download")
 def ppsspp_download(game_id):
-    c = db()
-    game = c.execute(
+    conn = db()
+    game = conn.execute(
         "SELECT * FROM ppsspp_games WHERE id=? AND active=1",
         (game_id,)
     ).fetchone()
-
     if not game:
-        c.close()
-        return "Jeu introuvable", 404
+        conn.close()
+        abort(404)
 
-    # Le compteur augmente avant la redirection vers le lien externe.
-    c.execute(
-        "UPDATE ppsspp_games SET downloads = downloads + 1 WHERE id=?",
+    conn.execute(
+        "UPDATE ppsspp_games SET downloads=downloads+1 WHERE id=?",
         (game_id,)
     )
-    c.commit()
+    conn.commit()
+    conn.close()
 
-    download_url = game["download_url"]
-    c.close()
+    # Le site ne stocke pas le jeu : il redirige vers le lien externe fourni.
+    return redirect(game["download_url"])
 
-    return redirect(download_url)
+# ---------------- PUBLIC FLUX ----------------
 
+@app.route("/flux")
+def flux_home():
+    conn = db()
+    channels = conn.execute(
+        "SELECT * FROM channels WHERE active=1 ORDER BY id DESC"
+    ).fetchall()
+    conn.close()
+    return render_template("flux_home.html", channels=channels)
 
-# =========================
-# ADMIN LOGIN
-# =========================
+@app.route("/flux/<int:channel_id>")
+def flux_watch(channel_id):
+    conn = db()
+    channel = conn.execute(
+        "SELECT * FROM channels WHERE id=? AND active=1",
+        (channel_id,)
+    ).fetchone()
+    if not channel:
+        conn.close()
+        abort(404)
+
+    conn.execute(
+        "UPDATE channels SET views=views+1 WHERE id=?",
+        (channel_id,)
+    )
+    conn.commit()
+    conn.close()
+
+    return render_template("flux_watch.html", channel=channel)
+
+# ---------------- ADMIN COMMUN ----------------
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
-    error = None
-
     if request.method == "POST":
         if (
-            request.form.get("email") == ADMIN_EMAIL
+            request.form.get("username") == ADMIN_USERNAME
             and request.form.get("password") == ADMIN_PASSWORD
         ):
             session["admin"] = True
-            return redirect(url_for("admin"))
+            return redirect(url_for("admin_dashboard"))
 
-        error = "Identifiants incorrects."
+        flash("Identifiants incorrects.", "error")
 
-    return render_template("login.html", error=error)
-
+    return render_template("admin_login.html")
 
 @app.route("/admin/logout")
 def admin_logout():
     session.clear()
     return redirect(url_for("admin_login"))
 
-
-# =========================
-# ADMIN DASHBOARD
-# =========================
-
 @app.route("/admin")
 @admin_required
-def admin():
-    c = db()
+def admin_dashboard():
+    conn = db()
 
-    channels = c.execute(
-        "SELECT * FROM channels ORDER BY id DESC"
-    ).fetchall()
-
-    games = c.execute(
+    games = conn.execute(
         "SELECT * FROM ppsspp_games ORDER BY id DESC"
     ).fetchall()
 
-    total_views = c.execute(
-        "SELECT COUNT(*) n FROM views"
-    ).fetchone()["n"]
+    channels = conn.execute(
+        "SELECT * FROM channels ORDER BY id DESC"
+    ).fetchall()
 
-    today_views = c.execute(
-        "SELECT COUNT(*) n FROM views WHERE date(created_at)=date('now')"
-    ).fetchone()["n"]
-
-    total_downloads = c.execute(
+    ppsspp_downloads = conn.execute(
         "SELECT COALESCE(SUM(downloads),0) n FROM ppsspp_games"
     ).fetchone()["n"]
 
-    stats = c.execute(
-        """SELECT channels.name, COUNT(views.id) AS total
-           FROM channels
-           LEFT JOIN views ON channels.id=views.channel_id
-           GROUP BY channels.id
-           ORDER BY total DESC"""
-    ).fetchall()
+    flux_views = conn.execute(
+        "SELECT COALESCE(SUM(views),0) n FROM channels"
+    ).fetchone()["n"]
 
-    countries = c.execute(
-        """SELECT country, COUNT(*) total
-           FROM views
-           GROUP BY country
-           ORDER BY total DESC
-           LIMIT 20"""
-    ).fetchall()
+    visitors = conn.execute(
+        "SELECT COUNT(*) n FROM visitors"
+    ).fetchone()["n"]
 
-    c.close()
+    countries = conn.execute("""
+        SELECT country, COUNT(*) n
+        FROM visitors
+        GROUP BY country
+        ORDER BY n DESC
+        LIMIT 20
+    """).fetchall()
+
+    conn.close()
 
     return render_template(
-        "admin.html",
-        channels=channels,
+        "admin_dashboard.html",
         games=games,
-        total_views=total_views,
-        today_views=today_views,
-        total_downloads=total_downloads,
-        stats=stats,
+        channels=channels,
+        ppsspp_downloads=ppsspp_downloads,
+        flux_views=flux_views,
+        visitors=visitors,
         countries=countries
     )
 
+# ---------- ADMIN PPSSPP ----------
 
-# =========================
-# ADMIN CHANNELS
-# =========================
-
-def form_data():
-    return (
-        request.form.get("name", "").strip(),
-        request.form.get("stream_url", "").strip(),
-        request.form.get("logo", "").strip(),
-        request.form.get("description", "").strip(),
-        request.form.get("start_date", ""),
-        request.form.get("end_date", ""),
-        request.form.get("start_time", ""),
-        request.form.get("end_time", ""),
-        request.form.get("days", "0,1,2,3,4,5,6")
-    )
-
-
-@app.route("/admin/channel/add", methods=["POST"])
+@app.route("/admin/ppsspp/add", methods=["GET", "POST"])
 @admin_required
-def add_channel():
-    data = form_data()
-
-    if not data[0] or not data[1]:
-        return redirect(url_for("admin"))
-
-    c = db()
-    c.execute(
-        """INSERT INTO channels
-        (name,stream_url,logo,description,start_date,end_date,
-         start_time,end_time,days,active,created_at)
-        VALUES(?,?,?,?,?,?,?,?,?,1,?)""",
-        (*data, datetime.utcnow().isoformat())
-    )
-    c.commit()
-    c.close()
-
-    return redirect(url_for("admin"))
-
-
-@app.route("/admin/channel/<int:channel_id>/edit", methods=["GET", "POST"])
-@admin_required
-def edit_channel(channel_id):
-    c = db()
-    ch = c.execute(
-        "SELECT * FROM channels WHERE id=?",
-        (channel_id,)
-    ).fetchone()
-
-    if not ch:
-        c.close()
-        return "Chaîne introuvable", 404
-
+def admin_ppsspp_add():
     if request.method == "POST":
-        data = form_data()
+        values = [
+            request.form.get("name", "").strip(),
+            request.form.get("image", "").strip(),
+            request.form.get("description", "").strip(),
+            request.form.get("size", "").strip(),
+            request.form.get("download_url", "").strip()
+        ]
 
-        c.execute(
-            """UPDATE channels SET
-               name=?,stream_url=?,logo=?,description=?,
-               start_date=?,end_date=?,start_time=?,end_time=?,days=?
-               WHERE id=?""",
-            (*data, channel_id)
-        )
-        c.commit()
-        c.close()
+        if not values[0] or not values[4]:
+            flash("Le nom et le lien externe sont obligatoires.", "error")
+            return render_template("admin_game_form.html", game=None)
 
-        return redirect(url_for("admin"))
+        conn = db()
+        conn.execute("""
+            INSERT INTO ppsspp_games
+            (name,image,description,size,download_url)
+            VALUES (?,?,?,?,?)
+        """, values)
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin_dashboard"))
 
-    c.close()
-    return render_template("edit.html", ch=ch)
-
-
-@app.route("/admin/channel/<int:channel_id>/toggle")
-@admin_required
-def toggle_channel(channel_id):
-    c = db()
-    c.execute(
-        """UPDATE channels
-           SET active=CASE active WHEN 1 THEN 0 ELSE 1 END
-           WHERE id=?""",
-        (channel_id,)
-    )
-    c.commit()
-    c.close()
-
-    return redirect(url_for("admin"))
-
-
-@app.route("/admin/channel/<int:channel_id>/delete", methods=["POST"])
-@admin_required
-def delete_channel(channel_id):
-    c = db()
-
-    c.execute(
-        "DELETE FROM views WHERE channel_id=?",
-        (channel_id,)
-    )
-    c.execute(
-        "DELETE FROM channels WHERE id=?",
-        (channel_id,)
-    )
-
-    c.commit()
-    c.close()
-
-    return redirect(url_for("admin"))
-
-
-# =========================
-# ADMIN PPSSPP
-# =========================
-
-def game_form_data():
-    return (
-        request.form.get("name", "").strip(),
-        request.form.get("image", "").strip(),
-        request.form.get("description", "").strip(),
-        request.form.get("size", "").strip(),
-        request.form.get("download_url", "").strip()
-    )
-
-
-@app.route("/admin/ppsspp/add", methods=["POST"])
-@admin_required
-def add_ppsspp_game():
-    data = game_form_data()
-
-    if not data[0] or not data[4]:
-        return redirect(url_for("admin"))
-
-    c = db()
-    c.execute(
-        """INSERT INTO ppsspp_games
-           (name,image,description,size,download_url,active,downloads,created_at)
-           VALUES(?,?,?,?,?,1,0,?)""",
-        (*data, datetime.utcnow().isoformat())
-    )
-    c.commit()
-    c.close()
-
-    return redirect(url_for("admin"))
-
+    return render_template("admin_game_form.html", game=None)
 
 @app.route("/admin/ppsspp/<int:game_id>/edit", methods=["GET", "POST"])
 @admin_required
-def edit_ppsspp_game(game_id):
-    c = db()
-    game = c.execute(
+def admin_ppsspp_edit(game_id):
+    conn = db()
+    game = conn.execute(
         "SELECT * FROM ppsspp_games WHERE id=?",
         (game_id,)
     ).fetchone()
 
     if not game:
-        c.close()
-        return "Jeu introuvable", 404
+        conn.close()
+        abort(404)
 
     if request.method == "POST":
-        data = game_form_data()
+        values = [
+            request.form.get("name", "").strip(),
+            request.form.get("image", "").strip(),
+            request.form.get("description", "").strip(),
+            request.form.get("size", "").strip(),
+            request.form.get("download_url", "").strip()
+        ]
 
-        if not data[0] or not data[4]:
-            c.close()
-            return redirect(url_for("admin"))
+        conn.execute("""
+            UPDATE ppsspp_games
+            SET name=?, image=?, description=?, size=?, download_url=?
+            WHERE id=?
+        """, (*values, game_id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin_dashboard"))
 
-        c.execute(
-            """UPDATE ppsspp_games SET
-               name=?,image=?,description=?,size=?,download_url=?
-               WHERE id=?""",
-            (*data, game_id)
-        )
-        c.commit()
-        c.close()
+    conn.close()
+    return render_template("admin_game_form.html", game=game)
 
-        return redirect(url_for("admin"))
-
-    c.close()
-    return render_template("edit_ppsspp.html", game=game)
-
-
-@app.route("/admin/ppsspp/<int:game_id>/toggle")
+@app.post("/admin/ppsspp/<int:game_id>/toggle")
 @admin_required
-def toggle_ppsspp_game(game_id):
-    c = db()
-    c.execute(
-        """UPDATE ppsspp_games
-           SET active=CASE active WHEN 1 THEN 0 ELSE 1 END
-           WHERE id=?""",
+def admin_ppsspp_toggle(game_id):
+    conn = db()
+    conn.execute(
+        "UPDATE ppsspp_games SET active=1-active WHERE id=?",
         (game_id,)
     )
-    c.commit()
-    c.close()
+    conn.commit()
+    conn.close()
+    return redirect(url_for("admin_dashboard"))
 
-    return redirect(url_for("admin"))
-
-
-@app.route("/admin/ppsspp/<int:game_id>/delete", methods=["POST"])
+@app.post("/admin/ppsspp/<int:game_id>/delete")
 @admin_required
-def delete_ppsspp_game(game_id):
-    c = db()
-    c.execute(
-        "DELETE FROM ppsspp_games WHERE id=?",
-        (game_id,)
+def admin_ppsspp_delete(game_id):
+    conn = db()
+    conn.execute("DELETE FROM ppsspp_games WHERE id=?", (game_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("admin_dashboard"))
+
+# ---------- ADMIN FLUX ----------
+
+@app.route("/admin/flux/add", methods=["GET", "POST"])
+@admin_required
+def admin_flux_add():
+    if request.method == "POST":
+        values = [
+            request.form.get("name", "").strip(),
+            request.form.get("logo", "").strip(),
+            request.form.get("description", "").strip(),
+            request.form.get("stream_url", "").strip()
+        ]
+
+        if not values[0] or not values[3]:
+            flash("Le nom et le flux sont obligatoires.", "error")
+            return render_template("admin_channel_form.html", channel=None)
+
+        conn = db()
+        conn.execute("""
+            INSERT INTO channels(name,logo,description,stream_url)
+            VALUES(?,?,?,?)
+        """, values)
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin_dashboard"))
+
+    return render_template("admin_channel_form.html", channel=None)
+
+@app.route("/admin/flux/<int:channel_id>/edit", methods=["GET", "POST"])
+@admin_required
+def admin_flux_edit(channel_id):
+    conn = db()
+    channel = conn.execute(
+        "SELECT * FROM channels WHERE id=?",
+        (channel_id,)
+    ).fetchone()
+
+    if not channel:
+        conn.close()
+        abort(404)
+
+    if request.method == "POST":
+        values = [
+            request.form.get("name", "").strip(),
+            request.form.get("logo", "").strip(),
+            request.form.get("description", "").strip(),
+            request.form.get("stream_url", "").strip()
+        ]
+
+        conn.execute("""
+            UPDATE channels
+            SET name=?, logo=?, description=?, stream_url=?
+            WHERE id=?
+        """, (*values, channel_id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin_dashboard"))
+
+    conn.close()
+    return render_template("admin_channel_form.html", channel=channel)
+
+@app.post("/admin/flux/<int:channel_id>/toggle")
+@admin_required
+def admin_flux_toggle(channel_id):
+    conn = db()
+    conn.execute(
+        "UPDATE channels SET active=1-active WHERE id=?",
+        (channel_id,)
     )
-    c.commit()
-    c.close()
+    conn.commit()
+    conn.close()
+    return redirect(url_for("admin_dashboard"))
 
-    return redirect(url_for("admin"))
+@app.post("/admin/flux/<int:channel_id>/delete")
+@admin_required
+def admin_flux_delete(channel_id):
+    conn = db()
+    conn.execute("DELETE FROM channels WHERE id=?", (channel_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("admin_dashboard"))
 
-
-# =========================
-# API
-# =========================
-
-@app.route("/api/channels")
-def api_channels():
-    c = db()
-    rows = c.execute(
-        "SELECT * FROM channels ORDER BY id DESC"
-    ).fetchall()
-    c.close()
-
-    return jsonify([
-        dict(x) for x in rows if channel_active(x)
-    ])
-
-
-@app.route("/api/ppsspp")
-def api_ppsspp():
-    c = db()
-    rows = c.execute(
-        """SELECT id,name,image,description,size,download_url,downloads
-           FROM ppsspp_games
-           WHERE active=1
-           ORDER BY id DESC"""
-    ).fetchall()
-    c.close()
-
-    return jsonify([dict(x) for x in rows])
-
+@app.errorhandler(404)
+def not_found(_):
+    return render_template("404.html"), 404
 
 init_db()
-
 
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000))
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
     )
