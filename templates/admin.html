@@ -1,89 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard · Flux TV{% endblock %}
+{% block title %}Dashboard · Nova Gaming{% endblock %}
 
 {% block content %}
 
 <div class="admin-head">
   <div>
-    <h1>Dashboard</h1>
-    <p>Gestion des chaînes, des jeux PPSSPP et statistiques.</p>
+    <h1>🎮 Dashboard Nova Gaming</h1>
+    <p>Administration de ta plateforme gaming.</p>
   </div>
-  <a class="btn secondary" href="{{ url_for('admin_logout') }}">Déconnexion</a>
+  <a class="btn secondary" href="{{ url_for('admin_logout') }}">
+    Déconnexion
+  </a>
 </div>
 
+<!-- STATISTIQUES -->
 <div class="stats">
-  <div><b>{{ channels|length }}</b><span>Chaînes</span></div>
-  <div><b>{{ total_views }}</b><span>Vues totales</span></div>
-  <div><b>{{ today_views }}</b><span>Vues aujourd'hui</span></div>
-  <div><b>{{ total_downloads }}</b><span>Téléchargements</span></div>
+  <div>
+    <b>{{ games|length }}</b>
+    <span>Jeux PPSSPP</span>
+  </div>
+
+  <div>
+    <b>{{ total_downloads }}</b>
+    <span>Téléchargements</span>
+  </div>
+
+  <div>
+    <b>{{ total_views }}</b>
+    <span>Vues totales</span>
+  </div>
+
+  <div>
+    <b>{{ today_views }}</b>
+    <span>Vues aujourd'hui</span>
+  </div>
 </div>
 
-<section class="panel">
-  <h2>Ajouter une chaîne</h2>
-
-  <form class="form-grid" method="post" action="{{ url_for('add_channel') }}">
-    <input name="name" placeholder="Nom de la chaîne" required>
-    <input name="stream_url" placeholder="URL du flux (.m3u8, etc.)" required>
-    <input name="logo" placeholder="URL du logo">
-    <input name="description" placeholder="Description">
-
-    <label>Début <input type="date" name="start_date"></label>
-    <label>Fin <input type="date" name="end_date"></label>
-    <label>Heure début <input type="time" name="start_time"></label>
-    <label>Heure fin <input type="time" name="end_time"></label>
-
-    <input name="days" value="0,1,2,3,4,5,6"
-           placeholder="Jours : 0=lundi ... 6=dimanche">
-
-    <button class="btn" type="submit">+ Ajouter la chaîne</button>
-  </form>
-</section>
-
-<section class="panel">
-  <h2>Chaînes</h2>
-
-  {% for ch in channels %}
-  <div class="channel-row">
-    <div>
-      <strong>{{ ch["name"] }}</strong>
-      <small>{{ ch["stream_url"] }}</small>
-    </div>
-
-    <div class="actions">
-      <a class="btn small"
-         href="{{ url_for('edit_channel', channel_id=ch['id']) }}">
-        Modifier
-      </a>
-
-      <a class="btn small secondary"
-         href="{{ url_for('toggle_channel', channel_id=ch['id']) }}">
-        {% if ch["active"] %}Désactiver{% else %}Activer{% endif %}
-      </a>
-
-      <form method="post"
-            action="{{ url_for('delete_channel', channel_id=ch['id']) }}"
-            onsubmit="return confirm('Supprimer cette chaîne ?')">
-        <button class="danger small" type="submit">Supprimer</button>
-      </form>
-    </div>
-  </div>
-  {% else %}
-    <p>Aucune chaîne.</p>
-  {% endfor %}
-</section>
-
-
-<!-- =========================
-     PPSSPP
-========================= -->
-
+<!-- AJOUTER UN JEU -->
 <section class="panel" id="ppsspp-admin">
-  <h2>🎮 Ajouter un jeu PPSSPP</h2>
+  <h2>➕ Ajouter un jeu PPSSPP</h2>
 
   <p style="opacity:.75;">
-    Aucun fichier n'est stocké sur le serveur. Seules les informations
-    et le lien externe sont enregistrés.
+    Ajoute un jeu à ta bibliothèque avec sa couverture,
+    sa description et son lien de téléchargement.
   </p>
 
   <form class="form-grid"
@@ -101,7 +61,7 @@
            placeholder="Taille, ex. 850 MB">
 
     <input name="download_url"
-           placeholder="Lien externe de téléchargement"
+           placeholder="Lien de téléchargement"
            required>
 
     <input name="description"
@@ -114,9 +74,9 @@
   </form>
 </section>
 
-
+<!-- LISTE DES JEUX -->
 <section class="panel">
-  <h2>🎮 Jeux PPSSPP</h2>
+  <h2>🎮 Bibliothèque PPSSPP</h2>
 
   {% for game in games %}
   <div class="channel-row">
@@ -128,7 +88,9 @@
         <small>📦 {{ game["size"] }}</small>
       {% endif %}
 
-      <small>⬇️ {{ game["downloads"] }} téléchargement(s)</small>
+      <small>
+        ⬇️ {{ game["downloads"] }} téléchargement(s)
+      </small>
 
       <small>{{ game["download_url"] }}</small>
     </div>
@@ -142,46 +104,60 @@
 
       <a class="btn small secondary"
          href="{{ url_for('toggle_ppsspp_game', game_id=game['id']) }}">
-        {% if game["active"] %}Désactiver{% else %}Activer{% endif %}
+        {% if game["active"] %}
+          Désactiver
+        {% else %}
+          Activer
+        {% endif %}
       </a>
 
       <form method="post"
             action="{{ url_for('delete_ppsspp_game', game_id=game['id']) }}"
             onsubmit="return confirm('Supprimer ce jeu ?')">
+
         <button class="danger small" type="submit">
           Supprimer
         </button>
+
       </form>
 
     </div>
   </div>
 
   {% else %}
-    <p>Aucun jeu PPSSPP.</p>
+    <p>Aucun jeu PPSSPP pour le moment.</p>
   {% endfor %}
 </section>
 
-
+<!-- STATISTIQUES -->
 <section class="two-cols">
 
   <section class="panel">
-    <h2>Vues par chaîne</h2>
-    {% for s in stats %}
+    <h2>📊 Téléchargements</h2>
+
+    {% for game in games %}
       <p class="statline">
-        <span>{{ s["name"] }}</span>
-        <b>{{ s["total"] }}</b>
+        <span>{{ game["name"] }}</span>
+        <b>{{ game["downloads"] }}</b>
       </p>
+    {% else %}
+      <p>Aucune statistique disponible.</p>
     {% endfor %}
+
   </section>
 
   <section class="panel">
-    <h2>Pays</h2>
+    <h2>🌍 Pays des visiteurs</h2>
+
     {% for c in countries %}
       <p class="statline">
         <span>{{ c["country"] }}</span>
         <b>{{ c["total"] }}</b>
       </p>
+    {% else %}
+      <p>Aucune donnée disponible.</p>
     {% endfor %}
+
   </section>
 
 </section>
