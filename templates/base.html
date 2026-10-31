@@ -25,10 +25,14 @@ atOptions={'key':'b997cf1a54b1cdf8ff82b1722b13b653','format':'iframe','height':2
 
 <header class="topbar">
   <div class="topbar-inner">
-    {% block brand %}<a class="brand" href="{{ url_for('ppsspp_home') }}">🎮 <span>PPSSPP</span><em>HUB</em></a>{% endblock %}
+    {% block brand %}
+    <a class="brand" href="{{ url_for('ppsspp_home') }}">
+      🎮 <span>PPSSPP</span><em>HUB</em>
+    </a>
+    {% endblock %}
 
     {% if not request.path.startswith('/admin') %}
-    <a class="top-link" href="{{ url_for('flux_home') }}">📺 Flux TV</a>
+    <a class="top-link" href="{{ url_for('ppsspp_home') }}">🎮 Jeux</a>
     {% endif %}
   </div>
 </header>
@@ -66,5 +70,4 @@ atOptions={'key':'b81bd019ce5f9f0da9246b92c9c5434a','format':'iframe','height':5
 <footer>Fait par Franck · PPSSPP HUB</footer>
 
 </body>
-  </html>
-  
+</html>
