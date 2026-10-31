@@ -15,7 +15,7 @@
 
 <link rel="canonical" href="https://novagaming.onrender.com/">
 
-<!-- LOGO DU SITE : NAVIGATEUR ET GOOGLE -->
+<!-- LOGO NOVA GAMING -->
 <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
@@ -28,6 +28,11 @@
 <meta property="og:url" content="https://novagaming.onrender.com/">
 <meta property="og:image" content="https://novagaming.onrender.com/static/logo.png">
 <meta property="og:image:alt" content="Logo Nova Gaming">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Nova Gaming - Jeux PPSSPP">
+<meta name="twitter:description" content="Découvrez les jeux PPSSPP sur Nova Gaming.">
+<meta name="twitter:image" content="https://novagaming.onrender.com/static/logo.png">
 
 <!-- DONNÉES STRUCTURÉES POUR GOOGLE -->
 <script type="application/ld+json">
@@ -78,7 +83,11 @@ atOptions={
 
     {% block brand %}
     <a class="brand" href="{{ url_for('ppsspp_home') }}">
-      🎮 <span>PPSSPP</span><em>HUB</em>
+      <img
+        src="{{ url_for('static', filename='logo.png') }}"
+        alt="Nova Gaming"
+        class="site-logo">
+      <span class="brand-name">NOVA GAMING</span>
     </a>
     {% endblock %}
 
@@ -127,8 +136,8 @@ atOptions={
 
 </main>
 
-<footer>Fait par Franck · PPSSPP HUB</footer>
+<footer>Fait par Franck · NOVA GAMING</footer>
 
 </body>
-  </html>
-  
+        </html>
+        
