@@ -10,27 +10,46 @@
 <title>{% block title %}Nova Gaming - Jeux PPSSPP{% endblock %}</title>
 
 <meta name="description" content="Nova Gaming : découvrez des jeux PPSSPP, leurs informations et leurs téléchargements.">
-
 <meta name="robots" content="index, follow">
+<meta name="theme-color" content="#080d18">
 
 <link rel="canonical" href="https://novagaming.onrender.com/">
 
-<link rel="icon" type="image/png"
-href="{{ url_for('static', filename='logo.png') }}">
+<!-- LOGO DU SITE : NAVIGATEUR ET GOOGLE -->
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
 
+<!-- PARTAGE SUR LES RÉSEAUX SOCIAUX -->
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Nova Gaming">
 <meta property="og:title" content="Nova Gaming - Jeux PPSSPP">
 <meta property="og:description" content="Découvrez les jeux PPSSPP sur Nova Gaming.">
 <meta property="og:url" content="https://novagaming.onrender.com/">
 <meta property="og:image" content="https://novagaming.onrender.com/static/logo.png">
+<meta property="og:image:alt" content="Logo Nova Gaming">
 
+<!-- DONNÉES STRUCTURÉES POUR GOOGLE -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Nova Gaming",
   "url": "https://novagaming.onrender.com/",
-  "logo": "https://novagaming.onrender.com/static/logo.png"
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://novagaming.onrender.com/static/logo.png"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nova Gaming",
+  "alternateName": "Nova Gaming PPSSPP",
+  "url": "https://novagaming.onrender.com/"
 }
 </script>
 
@@ -111,4 +130,5 @@ atOptions={
 <footer>Fait par Franck · PPSSPP HUB</footer>
 
 </body>
-</html>
+  </html>
+  
