@@ -15,7 +15,7 @@
 
 <link rel="canonical" href="https://novagaming.onrender.com/">
 
-<!-- LOGO NOVA GAMING -->
+<!-- LOGO POUR GOOGLE ET LE NAVIGATEUR -->
 <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
@@ -83,10 +83,6 @@ atOptions={
 
     {% block brand %}
     <a class="brand" href="{{ url_for('ppsspp_home') }}">
-      <img
-        src="{{ url_for('static', filename='logo.png') }}"
-        alt="Nova Gaming"
-        class="site-logo">
       <span class="brand-name">NOVA GAMING</span>
     </a>
     {% endblock %}
@@ -139,5 +135,4 @@ atOptions={
 <footer>Fait par Franck · NOVA GAMING</footer>
 
 </body>
-        </html>
-        
+</html>
