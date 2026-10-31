@@ -5,15 +5,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<meta name="google-site-verification" content="-Lk3UcZfPv6ZbKl6rMfvtHEfluIa2tJ6NNLwqYPGaSA" />
+<meta name="google-site-verification" content="-Lk3UcZfPv6ZbKl6rMfvtHEfluIa2tJ6NNLwqYPGaSA">
 
-<title>{% block title %}PPSSPP Games{% endblock %}</title>
+<title>{% block title %}Nova Gaming - Jeux PPSSPP{% endblock %}</title>
+
+<meta name="description" content="Nova Gaming : découvrez des jeux PPSSPP, leurs informations et leurs téléchargements.">
+
+<meta name="robots" content="index, follow">
+
+<link rel="canonical" href="https://novagaming.onrender.com/">
+
+<link rel="icon" type="image/png"
+href="{{ url_for('static', filename='logo.png') }}">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nova Gaming - Jeux PPSSPP">
+<meta property="og:description" content="Découvrez les jeux PPSSPP sur Nova Gaming.">
+<meta property="og:url" content="https://novagaming.onrender.com/">
+<meta property="og:image" content="https://novagaming.onrender.com/static/logo.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Nova Gaming",
+  "url": "https://novagaming.onrender.com/",
+  "logo": "https://novagaming.onrender.com/static/logo.png"
+}
+</script>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 {% if not request.path.startswith('/admin') %}
 <script>
-atOptions={'key':'b997cf1a54b1cdf8ff82b1722b13b653','format':'iframe','height':250,'width':300,'params':{}};
+atOptions={
+'key':'b997cf1a54b1cdf8ff82b1722b13b653',
+'format':'iframe',
+'height':250,
+'width':300,
+'params':{}
+};
 </script>
 <script src="https://www.highrevenueformat.com/b997cf1a54b1cdf8ff82b1722b13b653/invoke.js"></script>
 {% endif %}
@@ -25,6 +56,7 @@ atOptions={'key':'b997cf1a54b1cdf8ff82b1722b13b653','format':'iframe','height':2
 
 <header class="topbar">
   <div class="topbar-inner">
+
     {% block brand %}
     <a class="brand" href="{{ url_for('ppsspp_home') }}">
       🎮 <span>PPSSPP</span><em>HUB</em>
@@ -34,6 +66,7 @@ atOptions={'key':'b997cf1a54b1cdf8ff82b1722b13b653','format':'iframe','height':2
     {% if not request.path.startswith('/admin') %}
     <a class="top-link" href="{{ url_for('ppsspp_home') }}">🎮 Jeux</a>
     {% endif %}
+
   </div>
 </header>
 
@@ -52,9 +85,16 @@ atOptions={'key':'b997cf1a54b1cdf8ff82b1722b13b653','format':'iframe','height':2
 {% block content %}{% endblock %}
 
 {% if not request.path.startswith('/admin') %}
+
 <div class="ad-slot ad-320">
 <script>
-atOptions={'key':'b81bd019ce5f9f0da9246b92c9c5434a','format':'iframe','height':50,'width':320,'params':{}};
+atOptions={
+'key':'b81bd019ce5f9f0da9246b92c9c5434a',
+'format':'iframe',
+'height':50,
+'width':320,
+'params':{}
+};
 </script>
 <script src="https://www.highrevenueformat.com/b81bd019ce5f9f0da9246b92c9c5434a/invoke.js"></script>
 </div>
@@ -63,6 +103,7 @@ atOptions={'key':'b81bd019ce5f9f0da9246b92c9c5434a','format':'iframe','height':5
 <script async="async" data-cfasync="false" src="https://pl31671915.profitableratecpmnetwork.com/314bbff9b3915de790e83c706dcb904f/invoke.js"></script>
 <div id="container-314bbff9b3915de790e83c706dcb904f"></div>
 </div>
+
 {% endif %}
 
 </main>
